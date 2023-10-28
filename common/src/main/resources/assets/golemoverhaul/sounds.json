@@ -1,0 +1,24 @@
+{
+    "coal_golem_ambient": {
+        "sounds": [
+            "golemoverhaul:coal/idle1",
+            "golemoverhaul:coal/idle2",
+            "golemoverhaul:coal/idle3",
+            "golemoverhaul:coal/idle4"
+        ],
+        "subtitle": "subtitles.golemoverhaul.entity.coal_golem.ambient"
+    },
+    "coal_golem_hurt": {
+        "sounds": [
+            "golemoverhaul:coal/hit1"
+        ],
+        "subtitle": "subtitles.golemoverhaul.entity.coal_golem.hurt"
+    },
+    "coal_golem_death": {
+        "sounds": [
+            "golemoverhaul:coal/death1",
+            "golemoverhaul:coal/death2"
+        ],
+        "subtitle": "subtitles.golemoverhaul.entity.coal_golem.death"
+    }
+}

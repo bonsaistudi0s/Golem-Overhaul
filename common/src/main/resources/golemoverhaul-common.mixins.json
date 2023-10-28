@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "tech.alexnijjar.golemoverhaul.mixins",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "common.IronGolemMixin",
+        "common.PiglinSpecificSensorMixin"
+    ],
+    "client": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+  }
+}

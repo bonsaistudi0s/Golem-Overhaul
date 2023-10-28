@@ -1,0 +1,41 @@
+ {
+    "schemaVersion": 1,
+    "id": "golemoverhaul",
+    "version": "${version}",
+    "name": "Golem Overhaul",
+    "description": "Golem overhaul adds awesome Golems!",
+    "authors": ["Alex Nijjar", "Joosh"],
+    "contributors": [""],
+    "contact": {
+        "website": "https://modrinth.com/mod/golem-overhaul",
+        "repo": "https://github.com/bonsaistudi0s/golem-overhaul",
+        "issues": "https://github.com/bonsaistudi0s/golem-overhaul/issues"
+    },
+    "license": "ARR",
+    "icon": "icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "tech.alexnijjar.golemoverhaul.fabric.GolemOverhaulFabric::init",
+            "tech.alexnijjar.golemoverhaul.GolemOverhaul::postInit"
+        ],
+        "client": [
+            "tech.alexnijjar.golemoverhaul.client.fabric.GolemOverhaulClientFabric::init"
+        ],
+        "modmenu": [
+            "tech.alexnijjar.golemoverhaul.common.config.fabric.ModMenuConfig"
+        ]
+    },
+    "mixins": [
+        "golemoverhaul-common.mixins.json",
+        "golemoverhaul.mixins.json"
+    ],
+    "depends": {
+        "fabric": "*",
+        "minecraft": ">=1.20",
+        "java": ">=17",
+        "resourcefullib": ">=2.1.13",
+        "resourcefulconfig": ">=2.0.0",
+        "geckolib": ">=4.2.3"
+  }
+}
