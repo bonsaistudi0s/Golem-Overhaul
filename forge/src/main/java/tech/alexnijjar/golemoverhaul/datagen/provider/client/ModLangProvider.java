@@ -6,6 +6,7 @@ import net.minecraftforge.common.data.LanguageProvider;
 import org.codehaus.plexus.util.StringUtils;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantComponents;
+import tech.alexnijjar.golemoverhaul.common.registry.ModBlocks;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 import tech.alexnijjar.golemoverhaul.common.registry.ModItems;
 
@@ -16,6 +17,13 @@ public class ModLangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        ModBlocks.BLOCKS.stream()
+            .forEach(entry -> addBlock(entry,
+                StringUtils.capitaliseAllWords(entry
+                    .getId()
+                    .getPath()
+                    .replace("_", " "))));
+
         ModItems.ITEMS.stream()
             .filter(i -> !(i.get() instanceof BlockItem))
             .forEach(entry -> addItem(entry,
@@ -31,11 +39,14 @@ public class ModLangProvider extends LanguageProvider {
                     .getPath()
                     .replace("_", " "))));
 
+        add("itemGroup.golemoverhaul.main", "Golem Overhaul");
+
         add(ConstantComponents.NETHERITE_GOLEM_SUMMON_KEY.getString(), "Summon Netherite Golem");
         add(ConstantComponents.GOLEM_OVERHAUL_CATEGORY.getString(), "Golem Overhaul");
 
         add("subtitles.golemoverhaul.entity.coal_golem.ambient", "Coal Golem burns");
         add("subtitles.golemoverhaul.entity.coal_golem.hurt", "Coal Golem hurts");
         add("subtitles.golemoverhaul.entity.coal_golem.death", "Coal Golem dies");
+        add("subtitles.golemoverhaul.entity.coal_golem.explode", "Coal Golem explodes");
     }
 }

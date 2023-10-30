@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "golemoverhaul:block/candle_golem_block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "golemoverhaul:block/candle_golem_block"
+    },
+    "facing=south": {
+      "model": "golemoverhaul:block/candle_golem_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "golemoverhaul:block/candle_golem_block",
+      "y": 270
+    }
+  }
+}

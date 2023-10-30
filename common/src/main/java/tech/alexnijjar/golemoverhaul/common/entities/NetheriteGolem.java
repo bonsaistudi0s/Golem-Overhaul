@@ -50,16 +50,17 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
         super.registerControllers(controllerRegistrar);
-        controllerRegistrar.add(new AnimationController<>(this, "death_controller", 20, state -> {
+        controllerRegistrar.add(new AnimationController<>(this, "death_controller", 5, state -> {
             if (deathTime == 0) return PlayState.STOP;
-            state.getController().setAnimation(ConstantAnimations.DIE);
-            return PlayState.CONTINUE;
+            return state.setAndContinue(ConstantAnimations.DIE);
         }));
 
-        controllerRegistrar.add(new AnimationController<>(this, "summon_controller", 20, state -> {
-            if (getSummoningTicks() == 0) return PlayState.STOP;
-            state.getController().setAnimation(ConstantAnimations.SUMMON);
-            return PlayState.CONTINUE;
+        controllerRegistrar.add(new AnimationController<>(this, "summon_controller", 0, state -> {
+            if (getSummoningTicks() == 0) {
+                state.resetCurrentAnimation();
+                return PlayState.STOP;
+            }
+            return state.setAndContinue(ConstantAnimations.SUMMON);
         }));
     }
 
@@ -383,7 +384,6 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
         for (int i = 0; i < 5; i++) {
             var golem = ModEntityTypes.COAL_GOLEM.get().create(level());
             if (golem == null) return;
-            // set pos to front of golem
             Vec3 lookAngle = getLookAngle();
             golem.setPos(getX() + lookAngle.x * 0.5, getY() + 0.35, getZ() + lookAngle.z * 0.5);
             golem.setLit(true);

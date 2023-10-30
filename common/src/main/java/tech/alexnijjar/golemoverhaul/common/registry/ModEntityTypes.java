@@ -19,14 +19,14 @@ public class ModEntityTypes {
 
     public static final RegistryEntry<EntityType<NetheriteGolem>> NETHERITE_GOLEM = ENTITY_TYPES.register("netherite_golem", () ->
         EntityType.Builder.of(NetheriteGolem::new, MobCategory.MISC)
-            .sized(2.0f, 2.1f)
+            .sized(1.75f, 2.1f)
             .clientTrackingRange(10)
             .fireImmune()
             .build("netherite_golem"));
 
     public static final RegistryEntry<EntityType<CoalGolem>> COAL_GOLEM = ENTITY_TYPES.register("coal_golem", () ->
         EntityType.Builder.of(CoalGolem::new, MobCategory.MISC)
-            .sized(0.21f, 0.35f)
+            .sized(0.23f, 0.34f)
             .clientTrackingRange(10)
             .fireImmune()
             .build("coal_golem"));

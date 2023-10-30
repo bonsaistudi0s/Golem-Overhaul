@@ -1,11 +1,14 @@
 {
+  "block.golemoverhaul.candle_golem_block": "Candle Golem Block",
   "entity.golemoverhaul.coal_golem": "Coal Golem",
   "entity.golemoverhaul.netherite_golem": "Netherite Golem",
   "item.golemoverhaul.coal_golem_spawn_egg": "Coal Golem Spawn Egg",
   "item.golemoverhaul.netherite_golem_spawn_egg": "Netherite Golem Spawn Egg",
+  "itemGroup.golemoverhaul.main": "Golem Overhaul",
   "key.categories.golemoverhaul": "Golem Overhaul",
   "key.golemoverhaul.netherite_golem_summon": "Summon Netherite Golem",
   "subtitles.golemoverhaul.entity.coal_golem.ambient": "Coal Golem burns",
   "subtitles.golemoverhaul.entity.coal_golem.death": "Coal Golem dies",
+  "subtitles.golemoverhaul.entity.coal_golem.explode": "Coal Golem explodes",
   "subtitles.golemoverhaul.entity.coal_golem.hurt": "Coal Golem hurts"
 }

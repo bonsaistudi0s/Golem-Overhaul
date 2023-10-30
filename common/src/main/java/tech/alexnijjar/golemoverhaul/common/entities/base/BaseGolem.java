@@ -44,18 +44,19 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
         controllerRegistrar.add(new AnimationController<>(this, 5, state -> {
             boolean moving = state.getLimbSwingAmount() > 0.1 || state.getLimbSwingAmount() < -0.1;
-            state.getController().setAnimation(moving ?
+            return state.setAndContinue(moving ?
                 ConstantAnimations.WALK :
                 ConstantAnimations.IDLE);
-            return PlayState.CONTINUE;
         }));
 
 
-        controllerRegistrar.add(new AnimationController<>(this, "attack_controller", 20, state -> {
+        controllerRegistrar.add(new AnimationController<>(this, "attack_controller", 0, state -> {
             if (!hasAttackAnimation()) return PlayState.STOP;
-            if (attackAnimationTick == 0) return PlayState.STOP;
-            state.getController().setAnimation(ConstantAnimations.ATTACK);
-            return PlayState.CONTINUE;
+            if (attackAnimationTick == 0) {
+                state.resetCurrentAnimation();
+                return PlayState.STOP;
+            }
+            return state.setAndContinue(ConstantAnimations.ATTACK);
         }));
     }
 
@@ -151,7 +152,7 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
     public void aiStep() {
         super.aiStep();
         if (this.attackAnimationTick > 0) {
-            --this.attackAnimationTick;
+            this.attackAnimationTick--;
         }
     }
 

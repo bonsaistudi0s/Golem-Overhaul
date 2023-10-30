@@ -20,5 +20,11 @@
             "golemoverhaul:coal/death2"
         ],
         "subtitle": "subtitles.golemoverhaul.entity.coal_golem.death"
+    },
+    "coal_golem_explode": {
+        "sounds": [
+            "golemoverhaul:coal/explode"
+        ],
+        "subtitle": "subtitles.golemoverhaul.entity.coal_golem.explode"
     }
 }

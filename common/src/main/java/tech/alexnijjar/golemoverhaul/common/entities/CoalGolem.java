@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
+import tech.alexnijjar.golemoverhaul.common.ModUtils;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
@@ -52,10 +54,9 @@ public class CoalGolem extends BaseGolem {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
         super.registerControllers(controllerRegistrar);
-        controllerRegistrar.add(new AnimationController<>(this, "death_controller", 20, state -> {
+        controllerRegistrar.add(new AnimationController<>(this, "death_controller", 5, state -> {
             if (deathTime == 0) return PlayState.STOP;
-            state.getController().setAnimation(ConstantAnimations.DIE);
-            return PlayState.CONTINUE;
+            return state.setAndContinue(ConstantAnimations.DIE);
         }));
     }
 
@@ -197,9 +198,21 @@ public class CoalGolem extends BaseGolem {
     @Override
     public boolean doHurtTarget(@NotNull Entity target) {
         if (super.doHurtTarget(target)) {
-            if (isLit()) {
+            if (isLit() && !level().isClientSide()) {
                 target.setSecondsOnFire(5);
                 kill();
+                deathTime = 10;
+
+                playSound(ModSoundEvents.COAL_GOLEM_EXPLODE.get());
+
+                for (int i = 0; i < 10; i++) {
+                    ModUtils.sendParticles((ServerLevel) level(), ParticleTypes.FLAME,
+                        getX() + random.nextGaussian() * 0.3,
+                        getY() + 0.5 + random.nextGaussian() * 0.3,
+                        getZ() + random.nextGaussian() * 0.3,
+                        1, 0, 0, 0, 0);
+
+                }
             }
             return true;
         }
@@ -240,6 +253,7 @@ public class CoalGolem extends BaseGolem {
     public void tick() {
         if (!level().isClientSide() && tickCount > 2400 && isSummoned()) {
             kill();
+            playSound(ModSoundEvents.COAL_GOLEM_EXPLODE.get());
         }
         super.tick();
     }

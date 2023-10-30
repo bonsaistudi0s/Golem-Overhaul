@@ -20,5 +20,6 @@ public class ModSoundEvents {
     public static final RegistryEntry<SoundEvent> COAL_GOLEM_DEATH = SOUND_EVENTS.register("coal_golem_death", () ->
         SoundEvent.createVariableRangeEvent(new ResourceLocation(GolemOverhaul.MOD_ID, "coal_golem_death")));
 
-
+    public static final RegistryEntry<SoundEvent> COAL_GOLEM_EXPLODE = SOUND_EVENTS.register("coal_golem_explode", () ->
+        SoundEvent.createVariableRangeEvent(new ResourceLocation(GolemOverhaul.MOD_ID, "coal_golem_explode")));
 }
