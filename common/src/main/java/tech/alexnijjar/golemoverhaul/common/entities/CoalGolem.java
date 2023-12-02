@@ -102,6 +102,11 @@ public class CoalGolem extends BaseGolem {
     }
 
     @Override
+    public boolean canFloatInWater() {
+        return true;
+    }
+
+    @Override
     public int getDeathAnimationTicks() {
         return 13;
     }

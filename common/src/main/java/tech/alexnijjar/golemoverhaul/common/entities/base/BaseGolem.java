@@ -62,11 +62,16 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
 
     @Override
     protected void registerGoals() {
+        if (canFloatInWater()) {
+            goalSelector.addGoal(0, new FloatGoal(this));
+        }
         goalSelector.addGoal(1, new GolemMeleeAttackGoal(1.0, true));
         goalSelector.addGoal(2, new GolemMoveTowardsTargetGoal(0.9, 32.0F));
         if (villageBound()) {
             goalSelector.addGoal(2, new MoveBackToVillageGoal(this, 0.6, false));
             goalSelector.addGoal(4, new GolemRandomStrollInVillageGoal(this, 0.6));
+        } else {
+            goalSelector.addGoal(2, new RandomStrollGoal(this, 0.6));
         }
         if (offersFlowers()) {
             goalSelector.addGoal(5, new OfferFlowerGoal(this));
@@ -125,6 +130,10 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
 
     public boolean canMoveTowardsTarget() {
         return true;
+    }
+
+    public boolean canFloatInWater() {
+        return false;
     }
 
     @Override

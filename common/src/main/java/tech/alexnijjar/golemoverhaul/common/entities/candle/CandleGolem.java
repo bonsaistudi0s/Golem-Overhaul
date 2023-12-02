@@ -90,6 +90,11 @@ public class CandleGolem extends BaseGolem {
     }
 
     @Override
+    public boolean canFloatInWater() {
+        return true;
+    }
+
+    @Override
     public boolean canDoMeleeAttack() {
         return !isLit() || isSitting();
     }
@@ -194,7 +199,7 @@ public class CandleGolem extends BaseGolem {
     protected void actuallyHurt(DamageSource damageSource, float damageAmount) {
         if (damageSource.is(DamageTypeTags.IS_FIRE)) setLit(true);
         if (isSitting()) {
-            damageAmount *= 0.1f;
+            damageAmount *= 0.2f;
         }
         super.actuallyHurt(damageSource, damageAmount);
     }
@@ -234,9 +239,18 @@ public class CandleGolem extends BaseGolem {
         @Override
         public void start() {
             super.start();
-            attackTicks = 20;
-            var projectile = new CandleFlameProjectile(level(), getTarget());
-            projectile.setPos(getX(), getY() + 0.5, getZ());
+            var target = getTarget();
+            if (target == null) return;
+            attackTicks = isSitting() ? 60 : 20;
+            var projectile = new CandleFlameProjectile(level(), CandleGolem.this, target);
+            projectile.setPos(getX(), getY(), getZ());
+
+            double d = target.getX() - getX();
+            double e = target.getY() - projectile.getY();
+            double f = target.getZ() - getZ();
+            double g = Math.sqrt(d * d + f * f) * 0.2f;
+            projectile.shoot(d, e + g, f, 0.2f, 5.0f);
+
             level().addFreshEntity(projectile);
             level().playSound(null, getX(), getY(), getZ(), SoundEvents.BLAZE_SHOOT, getSoundSource(), 0.3f, random.nextFloat() * 0.4f + 0.8f);
             setHealth(getHealth() - 0.02f);
