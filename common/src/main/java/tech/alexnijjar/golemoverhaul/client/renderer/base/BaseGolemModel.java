@@ -12,14 +12,14 @@ import tech.alexnijjar.golemoverhaul.common.entities.base.BaseGolem;
 public class BaseGolemModel<T extends BaseGolem> extends DefaultedEntityGeoModel<T> {
     private final boolean turnsHead;
     private final int maxHeadRotation;
-    private ResourceLocation textureDamaged;
-    private ResourceLocation textureVeryDamaged;
+    private final ResourceLocation textureDamaged;
+    private final ResourceLocation textureVeryDamaged;
 
     public BaseGolemModel(ResourceLocation assetSubpath, boolean turnsHead, ResourceLocation texture, ResourceLocation animation, int maxHeadRotation) {
         this(
             assetSubpath,
             turnsHead,
-            new ResourceLocation(texture.getNamespace(), "%s_0".formatted(texture.getPath())),
+            new ResourceLocation(texture.getNamespace(), "%s".formatted(texture.getPath())),
             new ResourceLocation(texture.getNamespace(), "textures/entity/%s_1.png".formatted(texture.getPath())),
             new ResourceLocation(texture.getNamespace(), "textures/entity/%s_2.png".formatted(texture.getPath())),
             animation,

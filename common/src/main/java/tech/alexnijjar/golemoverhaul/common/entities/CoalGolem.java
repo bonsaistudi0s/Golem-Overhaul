@@ -220,11 +220,6 @@ public class CoalGolem extends BaseGolem {
     }
 
     @Override
-    public boolean fireImmune() {
-        return super.fireImmune();
-    }
-
-    @Override
     public void lavaHurt() {
         super.lavaHurt();
         setLit(true);

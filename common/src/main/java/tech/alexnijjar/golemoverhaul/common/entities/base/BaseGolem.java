@@ -62,8 +62,8 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
 
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0, true));
-        goalSelector.addGoal(2, new MoveTowardsTargetGoal(this, 0.9, 32.0F));
+        goalSelector.addGoal(1, new GolemMeleeAttackGoal(1.0, true));
+        goalSelector.addGoal(2, new GolemMoveTowardsTargetGoal(0.9, 32.0F));
         if (villageBound()) {
             goalSelector.addGoal(2, new MoveBackToVillageGoal(this, 0.6, false));
             goalSelector.addGoal(4, new GolemRandomStrollInVillageGoal(this, 0.6));
@@ -116,6 +116,14 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
     }
 
     public boolean doesSwingAttack() {
+        return true;
+    }
+
+    public boolean canDoMeleeAttack() {
+        return true;
+    }
+
+    public boolean canMoveTowardsTarget() {
         return true;
     }
 
@@ -195,6 +203,28 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
             }
 
             return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+    }
+
+    private class GolemMeleeAttackGoal extends MeleeAttackGoal {
+        public GolemMeleeAttackGoal(double speedModifier, boolean followingTargetEvenIfNotSeen) {
+            super(BaseGolem.this, speedModifier, followingTargetEvenIfNotSeen);
+        }
+
+        @Override
+        public boolean canUse() {
+            return canDoMeleeAttack() && super.canUse();
+        }
+    }
+
+    private class GolemMoveTowardsTargetGoal extends MoveTowardsTargetGoal {
+        public GolemMoveTowardsTargetGoal(double speedModifier, float within) {
+            super(BaseGolem.this, speedModifier, within);
+        }
+
+        @Override
+        public boolean canUse() {
+            return canMoveTowardsTarget() && super.canUse();
         }
     }
 }

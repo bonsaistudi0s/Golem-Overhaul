@@ -28,6 +28,8 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import tech.alexnijjar.golemoverhaul.common.entities.candle.CandleGolem;
+import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -80,6 +82,15 @@ public class CandleGolemBlock extends AbstractCandleBlock {
     }
 
     @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        if (level.isClientSide()) return;
+        if (level.hasNeighborSignal(pos)) {
+            spawnGolem(level, pos);
+            level.destroyBlock(pos, false);
+        }
+    }
+
+    @Override
     protected Iterable<Vec3> getParticleOffsets(BlockState state) {
         return List.of(OFFSET);
     }
@@ -96,6 +107,7 @@ public class CandleGolemBlock extends AbstractCandleBlock {
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         var stack = player.getItemInHand(hand);
         if (!state.getValue(WATERLOGGED) && !state.getValue(LIT) && !stack.isEmpty()) {
             boolean isFlintAndSteel = stack.is(Items.FLINT_AND_STEEL);
@@ -108,12 +120,27 @@ public class CandleGolemBlock extends AbstractCandleBlock {
                     }
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide());
-
             }
         }
 
+        spawnGolem(level, pos);
         level.destroyBlock(pos, false);
         return InteractionResult.sidedSuccess(level.isClientSide());
+    }
+
+    private void spawnGolem(Level level, BlockPos pos) {
+        var golem = createGolem(level, level.random.nextInt(3));
+        golem.setLit(level.getBlockState(pos).getValue(LIT));
+        golem.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        level.addFreshEntity(golem);
+    }
+
+    public static CandleGolem createGolem(Level level, int id) {
+        return switch (id) {
+            case 1 -> ModEntityTypes.CANDLE_GOLEM.get().create(level);
+            case 2 -> ModEntityTypes.MEDIUM_CANDLE_GOLEM.get().create(level);
+            default -> ModEntityTypes.MELTED_CANDLE_GOLEM.get().create(level);
+        };
     }
 
     @Override

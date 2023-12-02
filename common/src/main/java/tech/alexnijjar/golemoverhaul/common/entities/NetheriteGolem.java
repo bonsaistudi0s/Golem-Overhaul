@@ -43,7 +43,6 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
     public NetheriteGolem(EntityType<? extends IronGolem> type, Level level) {
         super(type, level);
         xpReward = 24;
-        setMaxUpStep(1);
         setPathfindingMalus(BlockPathTypes.WATER, -1);
     }
 
@@ -400,5 +399,15 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
                 (this.random.nextDouble() - 0.5) * 0.5, -this.random.nextDouble(),
                 (this.random.nextDouble() - 0.5) * 0.5);
         }
+    }
+
+    @Override
+    public boolean isPushable() {
+        return false;
+    }
+
+    @Override
+    public boolean isPushedByFluid() {
+        return false;
     }
 }

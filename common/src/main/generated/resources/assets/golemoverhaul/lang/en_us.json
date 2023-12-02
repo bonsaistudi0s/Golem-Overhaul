@@ -1,6 +1,9 @@
 {
   "block.golemoverhaul.candle_golem_block": "Candle Golem Block",
+  "entity.golemoverhaul.candle_golem": "Candle Golem",
   "entity.golemoverhaul.coal_golem": "Coal Golem",
+  "entity.golemoverhaul.medium_candle_golem": "Medium Candle Golem",
+  "entity.golemoverhaul.melted_candle_golem": "Melted Candle Golem",
   "entity.golemoverhaul.netherite_golem": "Netherite Golem",
   "item.golemoverhaul.coal_golem_spawn_egg": "Coal Golem Spawn Egg",
   "item.golemoverhaul.netherite_golem_spawn_egg": "Netherite Golem Spawn Egg",
