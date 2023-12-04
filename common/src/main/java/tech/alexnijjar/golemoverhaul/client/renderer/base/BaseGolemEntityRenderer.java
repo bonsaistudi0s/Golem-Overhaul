@@ -15,6 +15,8 @@ public class BaseGolemEntityRenderer<T extends BaseGolem> extends GeoEntityRende
     public static final ResourceLocation ANIMATION = new ResourceLocation(GolemOverhaul.MOD_ID, "golem");
     public static final ResourceLocation NETHERITE_GOLEM_ANIMATION = new ResourceLocation(GolemOverhaul.MOD_ID, "netherite_golem");
     public static final ResourceLocation CANDLE_GOLEM_ANIMATION = new ResourceLocation(GolemOverhaul.MOD_ID, "candle_golem");
+    public static final ResourceLocation TERRACOTTA_GOLEM_ANIMATION = new ResourceLocation(GolemOverhaul.MOD_ID, "terracotta_golem");
+
     @Nullable
     protected final ResourceLocation glow;
 

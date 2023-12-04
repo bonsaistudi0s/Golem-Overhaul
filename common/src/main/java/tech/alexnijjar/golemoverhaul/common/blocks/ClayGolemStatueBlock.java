@@ -2,9 +2,16 @@ package tech.alexnijjar.golemoverhaul.common.blocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,10 +20,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import tech.alexnijjar.golemoverhaul.common.entities.terracotta.TerracottaGolem;
+import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 
 import java.util.stream.Stream;
 
@@ -83,6 +93,15 @@ public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        if (level.isClientSide()) return;
+        if (level.hasNeighborSignal(pos)) {
+            spawnGolem(level, pos);
+            level.destroyBlock(pos, false);
+        }
+    }
+
+    @Override
     public FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
@@ -100,5 +119,31 @@ public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
         FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite())
             .setValue(WATERLOGGED, fluidState.getType().equals(Fluids.WATER));
+    }
+
+    @Override
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (level.getBrightness(LightLayer.BLOCK, pos) > 11 - state.getLightBlock(level, pos)) {
+            spawnGolem(level, pos);
+        }
+    }
+
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!level.isClientSide()) {
+            spawnGolem(level, pos);
+            level.destroyBlock(pos, false);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide());
+    }
+
+    private void spawnGolem(Level level, BlockPos pos) {
+        var golem = createGolem(level);
+        golem.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+        level.addFreshEntity(golem);
+    }
+
+    public static TerracottaGolem createGolem(Level level) {
+        return ModEntityTypes.TERRACOTTA_GOLEM.get().create(level);
     }
 }

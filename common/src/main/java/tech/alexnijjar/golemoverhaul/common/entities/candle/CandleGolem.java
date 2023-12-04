@@ -1,6 +1,5 @@
 package tech.alexnijjar.golemoverhaul.common.entities.candle;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -17,15 +16,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -33,7 +31,7 @@ import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.CandleFlameProjectile;
 
-public class CandleGolem extends BaseGolem {
+public class CandleGolem extends BaseGolem implements RangedAttackMob {
     private static final EntityDataAccessor<Boolean> LIT = SynchedEntityData.defineId(CandleGolem.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SITTING = SynchedEntityData.defineId(CandleGolem.class, EntityDataSerializers.BOOLEAN);
 
@@ -65,13 +63,13 @@ public class CandleGolem extends BaseGolem {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(3, new ShootCandleFlameGoal());
+        goalSelector.addGoal(1, new RangedAttackGoal(this, 1.25, 40, 10.0F));
     }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
-        entityData.define(LIT, false);
+        entityData.define(LIT, true);
         entityData.define(SITTING, false);
     }
 
@@ -120,6 +118,11 @@ public class CandleGolem extends BaseGolem {
     }
 
     @Override
+    public int getRepairItemHealAmount() {
+        return 10;
+    }
+
+    @Override
     public boolean shouldAttack(LivingEntity entity) {
         if (entity instanceof Creeper) return isLit();
         return super.shouldAttack(entity);
@@ -157,9 +160,8 @@ public class CandleGolem extends BaseGolem {
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
-        SoundType soundType = state.getSoundType();
-        playSound(soundType.getStepSound(), soundType.getVolume() * 0.15f, soundType.getPitch());
+    public boolean playDefaultStepSound() {
+        return false;
     }
 
     @Override
@@ -228,43 +230,19 @@ public class CandleGolem extends BaseGolem {
         return super.mobInteract(player, hand);
     }
 
-    private class ShootCandleFlameGoal extends Goal {
-        private int attackTicks;
+    @Override
+    public void performRangedAttack(LivingEntity target, float velocity) {
+        var projectile = new CandleFlameProjectile(level(), CandleGolem.this);
+        projectile.setPos(getX(), getY(), getZ());
 
-        @Override
-        public boolean canUse() {
-            return isLit() && getTarget() != null && getSensing().hasLineOfSight(getTarget());
-        }
+        double d = target.getX() - getX();
+        double e = target.getY() - projectile.getY();
+        double f = target.getZ() - getZ();
+        double g = Math.sqrt(d * d + f * f) * 0.2f;
+        projectile.shoot(d, e + g, f, 0.2f, 5.0f);
 
-        @Override
-        public void start() {
-            super.start();
-            var target = getTarget();
-            if (target == null) return;
-            attackTicks = isSitting() ? 60 : 20;
-            var projectile = new CandleFlameProjectile(level(), CandleGolem.this, target);
-            projectile.setPos(getX(), getY(), getZ());
-
-            double d = target.getX() - getX();
-            double e = target.getY() - projectile.getY();
-            double f = target.getZ() - getZ();
-            double g = Math.sqrt(d * d + f * f) * 0.2f;
-            projectile.shoot(d, e + g, f, 0.2f, 5.0f);
-
-            level().addFreshEntity(projectile);
-            level().playSound(null, getX(), getY(), getZ(), SoundEvents.BLAZE_SHOOT, getSoundSource(), 0.3f, random.nextFloat() * 0.4f + 0.8f);
-            setHealth(getHealth() - 0.02f);
-            stop();
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return super.canContinueToUse() && attackTicks > 0;
-        }
-
-        @Override
-        public void tick() {
-            attackTicks--;
-        }
+        level().addFreshEntity(projectile);
+        level().playSound(null, getX(), getY(), getZ(), SoundEvents.BLAZE_SHOOT, getSoundSource(), 0.3f, random.nextFloat() * 0.4f + 0.8f);
+        setHealth(getHealth() - 0.02f);
     }
 }

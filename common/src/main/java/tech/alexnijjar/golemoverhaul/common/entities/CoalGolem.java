@@ -1,6 +1,5 @@
 package tech.alexnijjar.golemoverhaul.common.entities;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -27,8 +26,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -174,9 +171,8 @@ public class CoalGolem extends BaseGolem {
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
-        SoundType soundType = state.getSoundType();
-        playSound(soundType.getStepSound(), soundType.getVolume() * 0.15f, soundType.getPitch());
+    public boolean playDefaultStepSound() {
+        return false;
     }
 
     @Override

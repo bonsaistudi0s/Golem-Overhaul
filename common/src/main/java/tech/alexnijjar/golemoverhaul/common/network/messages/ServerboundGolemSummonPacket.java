@@ -1,29 +1,38 @@
 package tech.alexnijjar.golemoverhaul.common.network.messages;
 
-import com.teamresourceful.resourcefullib.common.networking.base.Packet;
-import com.teamresourceful.resourcefullib.common.networking.base.PacketContext;
-import com.teamresourceful.resourcefullib.common.networking.base.PacketHandler;
+
+import com.teamresourceful.resourcefullib.common.network.Packet;
+import com.teamresourceful.resourcefullib.common.network.base.PacketType;
+import com.teamresourceful.resourcefullib.common.network.base.ServerboundPacketType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.common.entities.NetheriteGolem;
 
+import java.util.function.Consumer;
+
 public class ServerboundGolemSummonPacket implements Packet<ServerboundGolemSummonPacket> {
 
-    public static final ResourceLocation ID = new ResourceLocation(GolemOverhaul.MOD_ID, "golem_summon");
-    public static final Handler HANDLER = new Handler();
+    public static final ServerboundPacketType<ServerboundGolemSummonPacket> TYPE = new Type();
 
     @Override
-    public ResourceLocation getID() {
-        return ID;
+    public PacketType<ServerboundGolemSummonPacket> type() {
+        return TYPE;
     }
 
-    @Override
-    public PacketHandler<ServerboundGolemSummonPacket> getHandler() {
-        return HANDLER;
-    }
+    private static class Type implements ServerboundPacketType<ServerboundGolemSummonPacket> {
 
-    private static class Handler implements PacketHandler<ServerboundGolemSummonPacket> {
+        @Override
+        public Class<ServerboundGolemSummonPacket> type() {
+            return ServerboundGolemSummonPacket.class;
+        }
+
+        @Override
+        public ResourceLocation id() {
+            return new ResourceLocation(GolemOverhaul.MOD_ID, "golem_summon");
+        }
+
         @Override
         public void encode(ServerboundGolemSummonPacket message, FriendlyByteBuf buffer) {}
 
@@ -33,8 +42,8 @@ public class ServerboundGolemSummonPacket implements Packet<ServerboundGolemSumm
         }
 
         @Override
-        public PacketContext handle(ServerboundGolemSummonPacket message) {
-            return (player, level) -> {
+        public Consumer<Player> handle(ServerboundGolemSummonPacket message) {
+            return player -> {
                 if (player.getVehicle() instanceof NetheriteGolem golem) {
                     golem.startSummon();
                 }

@@ -223,7 +223,7 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
             Vec3 lookAngle = getLookAngle();
-            target.setDeltaMovement(target.getDeltaMovement().add(lookAngle.x * 0.4, 0.2, lookAngle.z * 0.4));
+            target.setDeltaMovement(target.getDeltaMovement().add(lookAngle.x * 0.4, 0.5, lookAngle.z * 0.4));
             doAoeAttack(target, (float) getAttributeValue(Attributes.ATTACK_DAMAGE), 2);
             return true;
         }
@@ -239,7 +239,7 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
                 if (entity.equals(getFirstPassenger())) continue;
                 entity.hurt(damageSources().mobAttack(this), damage);
                 Vec3 lookAngle = getLookAngle();
-                entity.setDeltaMovement(entity.getDeltaMovement().add(lookAngle.x * 0.6, 0.4, lookAngle.z * 0.6));
+                entity.setDeltaMovement(entity.getDeltaMovement().add(lookAngle.x * 0.6, 0.5, lookAngle.z * 0.6));
             }
         }
     }

@@ -6,6 +6,7 @@ public class ConstantAnimations {
     public static final RawAnimation IDLE = RawAnimation.begin().thenLoop("animation.golem.idle");
     public static final RawAnimation SITTING_IDLE = RawAnimation.begin().thenLoop("animation.golem.sitting_idle");
     public static final RawAnimation WALK = RawAnimation.begin().thenLoop("animation.golem.walk");
+    public static final RawAnimation RUN = RawAnimation.begin().thenLoop("animation.golem.run");
     public static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("animation.golem.attack");
     public static final RawAnimation DIE = RawAnimation.begin().thenPlayAndHold("animation.golem.die");
     public static final RawAnimation SUMMON = RawAnimation.begin().thenPlay("animation.golem.summon");

@@ -10,6 +10,8 @@ import net.minecraft.core.particles.SimpleParticleType;
 import tech.alexnijjar.golemoverhaul.client.renderer.CandleGolemRenderer;
 import tech.alexnijjar.golemoverhaul.client.renderer.CoalGolemRenderer;
 import tech.alexnijjar.golemoverhaul.client.renderer.NetheriteGolemRenderer;
+import tech.alexnijjar.golemoverhaul.client.renderer.TerracottaGolemRenderer;
+import tech.alexnijjar.golemoverhaul.client.renderer.projectile.MudBallProjectileRenderer;
 import tech.alexnijjar.golemoverhaul.client.utils.ClientPlatformUtils;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantComponents;
 import tech.alexnijjar.golemoverhaul.common.entities.NetheriteGolem;
@@ -35,9 +37,13 @@ public class GolemOverhaulClient {
         ClientPlatformUtils.registerRenderer(ModEntityTypes.CANDLE_GOLEM, c -> new CandleGolemRenderer<>(c, ModEntityTypes.CANDLE_GOLEM.get()));
         ClientPlatformUtils.registerRenderer(ModEntityTypes.MEDIUM_CANDLE_GOLEM, c -> new CandleGolemRenderer<>(c, ModEntityTypes.MEDIUM_CANDLE_GOLEM.get()));
         ClientPlatformUtils.registerRenderer(ModEntityTypes.MELTED_CANDLE_GOLEM, c -> new CandleGolemRenderer<>(c, ModEntityTypes.MELTED_CANDLE_GOLEM.get()));
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.TERRACOTTA_GOLEM, c -> new TerracottaGolemRenderer<>(c, ModEntityTypes.TERRACOTTA_GOLEM.get()));
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.CACTUS_TERRACOTTA_GOLEM, c -> new TerracottaGolemRenderer<>(c, ModEntityTypes.CACTUS_TERRACOTTA_GOLEM.get()));
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.DEAD_BUSH_TERRACOTTA_GOLEM, c -> new TerracottaGolemRenderer<>(c, ModEntityTypes.DEAD_BUSH_TERRACOTTA_GOLEM.get()));
 
         // Projectiles
         ClientPlatformUtils.registerRenderer(ModEntityTypes.CANDLE_FLAME, NoopRenderer::new);
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.MUD_BALL, MudBallProjectileRenderer::new);
     }
 
     public static void onRegisterParticles(BiConsumer<ParticleType<SimpleParticleType>, ClientPlatformUtils.SpriteParticleRegistration<SimpleParticleType>> register) {

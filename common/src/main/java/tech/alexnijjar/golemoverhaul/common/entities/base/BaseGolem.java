@@ -1,5 +1,7 @@
 package tech.alexnijjar.golemoverhaul.common.entities.base;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -17,6 +19,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -29,7 +33,7 @@ import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 public abstract class BaseGolem extends IronGolem implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    private int attackAnimationTick;
+    protected int attackAnimationTick;
 
     public BaseGolem(EntityType<? extends IronGolem> entityType, Level level) {
         super(entityType, level);
@@ -81,7 +85,7 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
         if (villageBound()) {
             this.targetSelector.addGoal(1, new DefendVillageTargetGoal(this));
         }
-        targetSelector.addGoal(2, new HurtByTargetGoal(this));
+        targetSelector.addGoal(2, new HurtByTargetGoal(this, BaseGolem.class));
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 5, false, false, this::shouldAttack));
         targetSelector.addGoal(4, new ResetUniversalAngerTargetGoal<>(this, false));
@@ -141,6 +145,24 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
         return true;
     }
 
+    public boolean playDefaultStepSound() {
+        return true;
+    }
+
+    public SoundEvent getDamageSound() {
+        return SoundEvents.IRON_GOLEM_DAMAGE;
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        if (!playDefaultStepSound()) {
+            SoundType soundType = state.getSoundType();
+            playSound(soundType.getStepSound(), soundType.getVolume() * 0.15f, soundType.getPitch());
+        } else {
+            super.playStepSound(pos, state);
+        }
+    }
+
     @Override
     public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
         return false;
@@ -155,6 +177,12 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
         boolean result = super.doHurtTarget(target);
         attackAnimationTick = getAttackSwingTicks();
         return result;
+    }
+
+    @Override
+    public void playSound(SoundEvent sound, float volume, float pitch) {
+        if (sound.equals(SoundEvents.IRON_GOLEM_DAMAGE)) sound = getDamageSound();
+        super.playSound(sound, volume, pitch);
     }
 
     @Override
