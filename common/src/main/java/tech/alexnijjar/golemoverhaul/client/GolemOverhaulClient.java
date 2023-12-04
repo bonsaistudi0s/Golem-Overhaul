@@ -7,11 +7,11 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import tech.alexnijjar.golemoverhaul.client.renderer.CandleGolemRenderer;
-import tech.alexnijjar.golemoverhaul.client.renderer.CoalGolemRenderer;
-import tech.alexnijjar.golemoverhaul.client.renderer.NetheriteGolemRenderer;
-import tech.alexnijjar.golemoverhaul.client.renderer.TerracottaGolemRenderer;
-import tech.alexnijjar.golemoverhaul.client.renderer.projectile.MudBallProjectileRenderer;
+import net.minecraft.core.registries.BuiltInRegistries;
+import software.bernie.geckolib.model.DefaultedEntityGeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import tech.alexnijjar.golemoverhaul.client.renderer.*;
+import tech.alexnijjar.golemoverhaul.client.renderer.projectile.HoneyBlobProjectileRenderer;
 import tech.alexnijjar.golemoverhaul.client.utils.ClientPlatformUtils;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantComponents;
 import tech.alexnijjar.golemoverhaul.common.entities.NetheriteGolem;
@@ -40,10 +40,12 @@ public class GolemOverhaulClient {
         ClientPlatformUtils.registerRenderer(ModEntityTypes.TERRACOTTA_GOLEM, c -> new TerracottaGolemRenderer<>(c, ModEntityTypes.TERRACOTTA_GOLEM.get()));
         ClientPlatformUtils.registerRenderer(ModEntityTypes.CACTUS_TERRACOTTA_GOLEM, c -> new TerracottaGolemRenderer<>(c, ModEntityTypes.CACTUS_TERRACOTTA_GOLEM.get()));
         ClientPlatformUtils.registerRenderer(ModEntityTypes.DEAD_BUSH_TERRACOTTA_GOLEM, c -> new TerracottaGolemRenderer<>(c, ModEntityTypes.DEAD_BUSH_TERRACOTTA_GOLEM.get()));
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.HONEY_GOLEM, c -> new HoneyGolemRenderer(c, ModEntityTypes.HONEY_GOLEM.get()));
 
         // Projectiles
         ClientPlatformUtils.registerRenderer(ModEntityTypes.CANDLE_FLAME, NoopRenderer::new);
-        ClientPlatformUtils.registerRenderer(ModEntityTypes.MUD_BALL, MudBallProjectileRenderer::new);
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.MUD_BALL, c -> new GeoEntityRenderer<>(c, new DefaultedEntityGeoModel<>(BuiltInRegistries.ENTITY_TYPE.getKey(ModEntityTypes.MUD_BALL.get()))));
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.HONEY_BLOB, HoneyBlobProjectileRenderer::new);
     }
 
     public static void onRegisterParticles(BiConsumer<ParticleType<SimpleParticleType>, ClientPlatformUtils.SpriteParticleRegistration<SimpleParticleType>> register) {

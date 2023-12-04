@@ -9,10 +9,12 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.level.levelgen.Heightmap;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.common.entities.CoalGolem;
+import tech.alexnijjar.golemoverhaul.common.entities.HoneyGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.NetheriteGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.candle.CandleGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.candle.MeltedCandleGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.CandleFlameProjectile;
+import tech.alexnijjar.golemoverhaul.common.entities.projectiles.HoneyBlobProjectile;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.MudBallProjectile;
 import tech.alexnijjar.golemoverhaul.common.entities.terracotta.CactusTerracottaGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.terracotta.DeadBushTerracottaGolem;
@@ -74,6 +76,12 @@ public class ModEntityTypes {
             .clientTrackingRange(10)
             .build("dead_bush_terracotta_golem"));
 
+    public static final RegistryEntry<EntityType<HoneyGolem>> HONEY_GOLEM = ENTITY_TYPES.register("honey_golem", () ->
+        EntityType.Builder.of(HoneyGolem::new, MobCategory.MISC)
+            .sized(0.85f, 1.0f)
+            .clientTrackingRange(10)
+            .build("honey_golem"));
+
     // Projectiles
     public static final RegistryEntry<EntityType<CandleFlameProjectile>> CANDLE_FLAME = ENTITY_TYPES.register("candle_flame", () ->
         EntityType.Builder.<CandleFlameProjectile>of(CandleFlameProjectile::new, MobCategory.MISC)
@@ -89,6 +97,13 @@ public class ModEntityTypes {
             .updateInterval(10)
             .build("mud_ball"));
 
+    public static final RegistryEntry<EntityType<HoneyBlobProjectile>> HONEY_BLOB = ENTITY_TYPES.register("honey_blob", () ->
+        EntityType.Builder.<HoneyBlobProjectile>of(HoneyBlobProjectile::new, MobCategory.MISC)
+            .sized(0.25F, 0.25F)
+            .clientTrackingRange(4)
+            .updateInterval(10)
+            .build("honey_blob"));
+
     public static void registerAttributes(BiConsumer<Supplier<? extends EntityType<? extends LivingEntity>>, Supplier<AttributeSupplier.Builder>> attributes) {
         attributes.accept(NETHERITE_GOLEM, NetheriteGolem::createAttributes);
         attributes.accept(COAL_GOLEM, CoalGolem::createAttributes);
@@ -98,6 +113,7 @@ public class ModEntityTypes {
         attributes.accept(TERRACOTTA_GOLEM, TerracottaGolem::createAttributes);
         attributes.accept(CACTUS_TERRACOTTA_GOLEM, CactusTerracottaGolem::createAttributes);
         attributes.accept(DEAD_BUSH_TERRACOTTA_GOLEM, DeadBushTerracottaGolem::createAttributes);
+        attributes.accept(HONEY_GOLEM, HoneyGolem::createAttributes);
     }
 
     public static void registerSpawnPlacements() {
@@ -109,5 +125,6 @@ public class ModEntityTypes {
         SpawnPlacements.register(TERRACOTTA_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
         SpawnPlacements.register(CACTUS_TERRACOTTA_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
         SpawnPlacements.register(DEAD_BUSH_TERRACOTTA_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
+        SpawnPlacements.register(HONEY_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
     }
 }

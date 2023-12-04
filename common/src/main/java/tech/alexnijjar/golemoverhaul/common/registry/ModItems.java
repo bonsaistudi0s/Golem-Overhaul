@@ -34,6 +34,7 @@ public class ModItems {
     public static final RegistryEntry<Item> TERRACOTTA_GOLEM_SPAWN_EGG = SPAWN_EGGS.register("terracotta_golem_spawn_egg", createSpawnEggItem(ModEntityTypes.TERRACOTTA_GOLEM, 0xae8737, 0x87593c, new Item.Properties()));
     public static final RegistryEntry<Item> CACTUS_TERRACOTTA_GOLEM_SPAWN_EGG = SPAWN_EGGS.register("cactus_terracotta_golem_spawn_egg", createSpawnEggItem(ModEntityTypes.CACTUS_TERRACOTTA_GOLEM, 0x8e6026, 0x949831, new Item.Properties()));
     public static final RegistryEntry<Item> DEAD_BUSH_TERRACOTTA_GOLEM_SPAWN_EGG = SPAWN_EGGS.register("dead_bush_terracotta_golem_spawn_egg", createSpawnEggItem(ModEntityTypes.DEAD_BUSH_TERRACOTTA_GOLEM, 0xa3732b, 0x39251d, new Item.Properties()));
+    public static final RegistryEntry<Item> HONEY_GOLEM_SPAWN_EGG = SPAWN_EGGS.register("honey_golem_spawn_egg", createSpawnEggItem(ModEntityTypes.HONEY_GOLEM, 0xedb043, 0xdb914c, new Item.Properties()));
 
     public static final RegistryEntry<Item> CANDLE_GOLEM_BLOCK = ITEMS.register("candle_golem_block", () -> new BlockItem(ModBlocks.CANDLE_GOLEM_BLOCK.get(), new Item.Properties()));
     public static final RegistryEntry<Item> CLAY_GOLEM_STATUE = ITEMS.register("clay_golem_statue", () -> new BlockItem(ModBlocks.CLAY_GOLEM_STATUE.get(), new Item.Properties()));
