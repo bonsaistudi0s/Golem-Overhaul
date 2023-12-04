@@ -10,6 +10,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
@@ -60,6 +61,7 @@ public class HoneyBlobProjectile extends AbstractArrow implements GeoEntity {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (result.getEntity() instanceof HoneyGolem) return;
+        if (result.getEntity() instanceof Bee) return;
         if (getOwner() != null && result.getEntity().equals(getOwner())) return;
         int arrowCount = -1;
         if (result.getEntity() instanceof LivingEntity livingEntity) {

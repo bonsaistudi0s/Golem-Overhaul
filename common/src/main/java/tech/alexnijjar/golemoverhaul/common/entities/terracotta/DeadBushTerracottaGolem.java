@@ -78,12 +78,8 @@ public class DeadBushTerracottaGolem extends TerracottaGolem implements RangedAt
                 shear(SoundSource.PLAYERS);
                 itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
                 return InteractionResult.SUCCESS;
-            } else {
-                return InteractionResult.CONSUME;
-            }
-        } else {
-            return super.mobInteract(player, hand);
-        }
+            } else return InteractionResult.CONSUME;
+        } else return super.mobInteract(player, hand);
     }
 
     @Override
