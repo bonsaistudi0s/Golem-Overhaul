@@ -21,6 +21,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         ModItems.SPAWN_EGGS.getEntries().stream().map(RegistryEntry::get).forEach(this::spawnEggItem);
+        basicItem(ModItems.HONEY_BLOB.get());
     }
 
     public void spawnEggItem(Item item) {

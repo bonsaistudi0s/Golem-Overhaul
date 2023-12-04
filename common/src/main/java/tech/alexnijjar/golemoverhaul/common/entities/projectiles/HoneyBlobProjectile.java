@@ -10,6 +10,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -59,11 +60,21 @@ public class HoneyBlobProjectile extends AbstractArrow implements GeoEntity {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (result.getEntity() instanceof HoneyGolem) return;
+        if (getOwner() != null && result.getEntity().equals(getOwner())) return;
+        int arrowCount = -1;
+        if (result.getEntity() instanceof LivingEntity livingEntity) {
+            arrowCount = livingEntity.getArrowCount();
+        }
         super.onHitEntity(result);
+        if (result.getEntity() instanceof LivingEntity livingEntity) {
+            livingEntity.setArrowCount(arrowCount);
+        }
         Entity entity = result.getEntity();
         entity.hurt(damageSources().thrown(this, getOwner()), 6);
         if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2));
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,
+                getOwner() instanceof Player ? 180 : 60,
+                2));
         }
         if (!level().isClientSide()) {
             level().broadcastEntityEvent(this, (byte) 3);
