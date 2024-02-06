@@ -52,7 +52,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
     public static @NotNull AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
             .add(Attributes.MAX_HEALTH, 30.0)
-            .add(Attributes.MOVEMENT_SPEED, 0.25)
+            .add(Attributes.MOVEMENT_SPEED, 0.3)
             .add(Attributes.ATTACK_DAMAGE, 6.0);
     }
 
@@ -65,7 +65,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(1, new RangedAttackGoal(this, 1.35, 20, 15.0F));
+        goalSelector.addGoal(1, new RangedAttackGoal(this, 1.35, 20, 7.5f));
     }
 
     @Override
@@ -147,7 +147,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
     }
 
     @Override
-    public boolean playDefaultStepSound() {
+    public boolean playIronGolemStepSound() {
         return false;
     }
 
@@ -157,7 +157,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
     }
 
     @Override
-    public int getAttackAnimationTick() {
+    public int getAttackSwingTicks() {
         return 15;
     }
 
@@ -177,9 +177,6 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
                     getZ() + getRandom().nextGaussian() * 0.25,
                     0.0, 0.0, 0.0);
             }
-        }
-        if (id == 4) {
-            attackAnimationTick = getAttackAnimationTick();
         }
     }
 

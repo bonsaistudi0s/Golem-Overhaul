@@ -28,6 +28,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.object.PlayState;
@@ -36,16 +37,23 @@ import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
 
+import java.util.UUID;
+
 public class CoalGolem extends BaseGolem {
     private static final EntityDataAccessor<Boolean> LIT = SynchedEntityData.defineId(CoalGolem.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> SUMMONED = SynchedEntityData.defineId(CoalGolem.class, EntityDataSerializers.BOOLEAN);
+
+    private boolean summoned;
+
+    @Nullable
+    private UUID summonerId;
 
     public CoalGolem(EntityType<? extends IronGolem> type, Level level) {
         super(type, level);
         xpReward = 1;
         setMaxUpStep(0);
-        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 8.0F);
-        this.setPathfindingMalus(BlockPathTypes.LAVA, 8.0F);
+        this.setPathfindingMalus(BlockPathTypes.LAVA, 0.0F);
+        this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
+        this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0.0F);
     }
 
     @Override
@@ -64,12 +72,10 @@ public class CoalGolem extends BaseGolem {
             .add(Attributes.ATTACK_DAMAGE, 2.0);
     }
 
-
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         entityData.define(LIT, false);
-        entityData.define(SUMMONED, false);
     }
 
     @Override
@@ -77,6 +83,7 @@ public class CoalGolem extends BaseGolem {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Lit", isLit());
         compound.putBoolean("Summoned", isSummoned());
+        if (summonerId != null) compound.putUUID("SummonerId", summonerId);
     }
 
     @Override
@@ -84,6 +91,7 @@ public class CoalGolem extends BaseGolem {
         super.readAdditionalSaveData(compound);
         setLit(compound.getBoolean("Lit"));
         setSummoned(compound.getBoolean("Summoned"));
+        if (compound.hasUUID("SummonerId")) summonerId = compound.getUUID("SummonerId");
     }
 
     @Override
@@ -95,7 +103,7 @@ public class CoalGolem extends BaseGolem {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        goalSelector.addGoal(0, new LeapAtTargetGoal(this, 0.4f));
+        goalSelector.addGoal(0, new LeapAtTargetGoal(this, 0.5f));
     }
 
     @Override
@@ -143,11 +151,15 @@ public class CoalGolem extends BaseGolem {
     }
 
     public boolean isSummoned() {
-        return entityData.get(SUMMONED);
+        return summoned;
     }
 
     public void setSummoned(boolean summoned) {
-        entityData.set(SUMMONED, summoned);
+        this.summoned = summoned;
+    }
+
+    public void setSummoner(UUID summonerId) {
+        this.summonerId = summonerId;
     }
 
     @Override
@@ -157,21 +169,21 @@ public class CoalGolem extends BaseGolem {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return ModSoundEvents.COAL_GOLEM_AMBIENT.get();
+        return isLit() ? ModSoundEvents.COAL_GOLEM_AMBIENT.get() : null;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return ModSoundEvents.COAL_GOLEM_HURT.get();
+        return isLit() ? ModSoundEvents.COAL_GOLEM_HURT.get() : SoundEvents.GENERIC_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModSoundEvents.COAL_GOLEM_DEATH.get();
+        return isLit() ? ModSoundEvents.COAL_GOLEM_DEATH.get() : SoundEvents.GENERIC_DEATH;
     }
 
     @Override
-    public boolean playDefaultStepSound() {
+    public boolean playIronGolemStepSound() {
         return false;
     }
 
@@ -247,9 +259,17 @@ public class CoalGolem extends BaseGolem {
 
     @Override
     public void tick() {
-        if (!level().isClientSide() && tickCount > 2400 && isSummoned()) {
-            kill();
-            playSound(ModSoundEvents.COAL_GOLEM_EXPLODE.get());
+        if (!level().isClientSide()) {
+            if (tickCount > 2400 && isSummoned()) {
+                kill();
+                playSound(ModSoundEvents.COAL_GOLEM_EXPLODE.get());
+            }
+            if (summonerId != null) {
+                var summoner = ((ServerLevel) level()).getEntity(summonerId);
+                if (summoner instanceof Mob mob) {
+                    setTarget(mob.getTarget());
+                }
+            }
         }
         super.tick();
     }
@@ -264,5 +284,10 @@ public class CoalGolem extends BaseGolem {
             return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
+    }
+
+    @Override
+    public float getAttackRange() {
+        return 6.0f;
     }
 }

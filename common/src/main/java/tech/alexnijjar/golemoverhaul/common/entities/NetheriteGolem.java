@@ -68,7 +68,7 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
             .add(Attributes.MAX_HEALTH, 320.0)
             .add(Attributes.ARMOR, 10.0)
             .add(Attributes.ARMOR_TOUGHNESS, 5.0)
-            .add(Attributes.MOVEMENT_SPEED, 0.2)
+            .add(Attributes.MOVEMENT_SPEED, 0.26)
             .add(Attributes.KNOCKBACK_RESISTANCE, 1.0)
             .add(Attributes.ATTACK_DAMAGE, 18.0);
     }
@@ -295,15 +295,15 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
     @Override
     protected float getRiddenSpeed(Player player) {
         if (getSummoningTicks() > 0) return 0;
-        return (float) getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.5f;
+        return (float) getAttributeValue(Attributes.MOVEMENT_SPEED) * 0.65f;
     }
 
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
         if (!this.isNoAi()) {
-            if (this.getFirstPassenger() instanceof LivingEntity livingEntity) {
-                return livingEntity;
+            if (this.getFirstPassenger() instanceof LivingEntity entity) {
+                return entity;
             }
         }
 
@@ -389,6 +389,7 @@ public class NetheriteGolem extends BaseGolem implements PlayerRideableJumping {
             golem.setSummoned(true);
             level().addFreshEntity(golem);
             golem.setTarget(getTarget());
+            golem.setSummoner(getUUID());
         }
 
         for (int i = 0; i < 10; i++) {

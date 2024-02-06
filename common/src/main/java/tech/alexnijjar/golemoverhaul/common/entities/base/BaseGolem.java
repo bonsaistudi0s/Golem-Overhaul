@@ -5,7 +5,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.DefendVillageTargetGoal;
@@ -52,7 +51,6 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
                 ConstantAnimations.WALK :
                 ConstantAnimations.IDLE);
         }));
-
 
         controllerRegistrar.add(new AnimationController<>(this, "attack_controller", 0, state -> {
             if (!hasAttackAnimation()) return PlayState.STOP;
@@ -108,6 +106,10 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
         return false;
     }
 
+    public float getAttackRange() {
+        return 2.0f;
+    }
+
     public Item getRepairItem() {
         return Items.IRON_INGOT;
     }
@@ -145,7 +147,7 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
         return true;
     }
 
-    public boolean playDefaultStepSound() {
+    public boolean playIronGolemStepSound() {
         return true;
     }
 
@@ -155,17 +157,12 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        if (!playDefaultStepSound()) {
+        if (!playIronGolemStepSound()) {
             SoundType soundType = state.getSoundType();
             playSound(soundType.getStepSound(), soundType.getVolume() * 0.15f, soundType.getPitch());
         } else {
             super.playStepSound(pos, state);
         }
-    }
-
-    @Override
-    public boolean causeFallDamage(float fallDistance, float multiplier, @NotNull DamageSource source) {
-        return false;
     }
 
     public boolean shouldAttack(LivingEntity entity) {
@@ -176,6 +173,7 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
     public boolean doHurtTarget(@NotNull Entity target) {
         boolean result = super.doHurtTarget(target);
         attackAnimationTick = getAttackSwingTicks();
+        level().broadcastEntityEvent(this, (byte) 4);
         return result;
     }
 
@@ -251,6 +249,11 @@ public abstract class BaseGolem extends IronGolem implements GeoEntity {
         @Override
         public boolean canUse() {
             return canDoMeleeAttack() && super.canUse();
+        }
+
+        @Override
+        protected double getAttackReachSqr(LivingEntity attackTarget) {
+            return mob.getBbWidth() * getAttackRange() * mob.getBbWidth() * getAttackRange() + attackTarget.getBbWidth();
         }
     }
 

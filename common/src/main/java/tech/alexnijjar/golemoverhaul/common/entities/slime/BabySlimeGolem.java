@@ -1,4 +1,4 @@
-package tech.alexnijjar.golemoverhaul.common.entities.candle;
+package tech.alexnijjar.golemoverhaul.common.entities.slime;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -8,23 +8,17 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-public class MeltedCandleGolem extends CandleGolem {
-    public MeltedCandleGolem(EntityType<? extends IronGolem> type, Level level) {
+public class BabySlimeGolem extends SlimeGolem {
+
+    public BabySlimeGolem(EntityType<? extends IronGolem> type, Level level) {
         super(type, level);
     }
 
     public static @NotNull AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 25.0)
-            .add(Attributes.MOVEMENT_SPEED, 0.4)
-            .add(Attributes.ATTACK_DAMAGE, 7.0);
-    }
-
-    @Override
-    public void setLit(boolean lit) {}
-
-    @Override
-    public boolean isLit() {
-        return false;
+            .add(Attributes.MAX_HEALTH, 20.0)
+            .add(Attributes.MOVEMENT_SPEED, 0.25)
+            .add(Attributes.ATTACK_DAMAGE, 3.0)
+            .add(Attributes.ATTACK_KNOCKBACK, 2.0);
     }
 }

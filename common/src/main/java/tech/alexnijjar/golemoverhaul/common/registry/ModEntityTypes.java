@@ -11,6 +11,8 @@ import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.common.entities.CoalGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.HoneyGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.NetheriteGolem;
+import tech.alexnijjar.golemoverhaul.common.entities.slime.BabySlimeGolem;
+import tech.alexnijjar.golemoverhaul.common.entities.slime.SlimeGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.candle.CandleGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.candle.MeltedCandleGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.CandleFlameProjectile;
@@ -82,6 +84,18 @@ public class ModEntityTypes {
             .clientTrackingRange(10)
             .build("honey_golem"));
 
+    public static final RegistryEntry<EntityType<SlimeGolem>> SLIME_GOLEM = ENTITY_TYPES.register("slime_golem", () ->
+        EntityType.Builder.of(SlimeGolem::new, MobCategory.MISC)
+            .sized(1.4f, 0.8f)
+            .clientTrackingRange(10)
+            .build("slime_golem"));
+
+    public static final RegistryEntry<EntityType<BabySlimeGolem>> BABY_SLIME_GOLEM = ENTITY_TYPES.register("baby_slime_golem", () ->
+        EntityType.Builder.of(BabySlimeGolem::new, MobCategory.MISC)
+            .sized(0.7f, 0.6f)
+            .clientTrackingRange(10)
+            .build("baby_slime_golem"));
+
     // Projectiles
     public static final RegistryEntry<EntityType<CandleFlameProjectile>> CANDLE_FLAME = ENTITY_TYPES.register("candle_flame", () ->
         EntityType.Builder.<CandleFlameProjectile>of(CandleFlameProjectile::new, MobCategory.MISC)
@@ -114,6 +128,8 @@ public class ModEntityTypes {
         attributes.accept(CACTUS_TERRACOTTA_GOLEM, CactusTerracottaGolem::createAttributes);
         attributes.accept(DEAD_BUSH_TERRACOTTA_GOLEM, DeadBushTerracottaGolem::createAttributes);
         attributes.accept(HONEY_GOLEM, HoneyGolem::createAttributes);
+        attributes.accept(SLIME_GOLEM, SlimeGolem::createAttributes);
+        attributes.accept(BABY_SLIME_GOLEM, BabySlimeGolem::createAttributes);
     }
 
     public static void registerSpawnPlacements() {
@@ -126,5 +142,7 @@ public class ModEntityTypes {
         SpawnPlacements.register(CACTUS_TERRACOTTA_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
         SpawnPlacements.register(DEAD_BUSH_TERRACOTTA_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
         SpawnPlacements.register(HONEY_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
+        SpawnPlacements.register(SLIME_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
+        SpawnPlacements.register(BABY_SLIME_GOLEM.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules);
     }
 }

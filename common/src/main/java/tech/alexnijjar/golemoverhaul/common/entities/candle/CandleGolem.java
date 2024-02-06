@@ -160,7 +160,7 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
     }
 
     @Override
-    public boolean playDefaultStepSound() {
+    public boolean playIronGolemStepSound() {
         return false;
     }
 

@@ -11,6 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import tech.alexnijjar.golemoverhaul.client.renderer.*;
+import tech.alexnijjar.golemoverhaul.client.renderer.base.BaseGolemEntityRenderer;
 import tech.alexnijjar.golemoverhaul.client.renderer.projectile.HoneyBlobProjectileRenderer;
 import tech.alexnijjar.golemoverhaul.client.utils.ClientPlatformUtils;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantComponents;
@@ -41,6 +42,8 @@ public class GolemOverhaulClient {
         ClientPlatformUtils.registerRenderer(ModEntityTypes.CACTUS_TERRACOTTA_GOLEM, c -> new TerracottaGolemRenderer<>(c, ModEntityTypes.CACTUS_TERRACOTTA_GOLEM.get()));
         ClientPlatformUtils.registerRenderer(ModEntityTypes.DEAD_BUSH_TERRACOTTA_GOLEM, c -> new TerracottaGolemRenderer<>(c, ModEntityTypes.DEAD_BUSH_TERRACOTTA_GOLEM.get()));
         ClientPlatformUtils.registerRenderer(ModEntityTypes.HONEY_GOLEM, c -> new HoneyGolemRenderer(c, ModEntityTypes.HONEY_GOLEM.get()));
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.SLIME_GOLEM, c -> new SlimeGolemRenderer<>(c, ModEntityTypes.SLIME_GOLEM.get(), BaseGolemEntityRenderer.SLIME_GOLEM_ANIMATION));
+        ClientPlatformUtils.registerRenderer(ModEntityTypes.BABY_SLIME_GOLEM, c -> new SlimeGolemRenderer<>(c, ModEntityTypes.BABY_SLIME_GOLEM.get(), BaseGolemEntityRenderer.SLIME_GOLEM_ANIMATION));
 
         // Projectiles
         ClientPlatformUtils.registerRenderer(ModEntityTypes.CANDLE_FLAME, NoopRenderer::new);

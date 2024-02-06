@@ -58,14 +58,6 @@ public class DeadBushTerracottaGolem extends TerracottaGolem implements RangedAt
     }
 
     @Override
-    public void handleEntityEvent(byte id) {
-        super.handleEntityEvent(id);
-        if (id == 4) {
-            attackAnimationTick = getAttackAnimationTick();
-        }
-    }
-
-    @Override
     public boolean canDoMeleeAttack() {
         return false;
     }

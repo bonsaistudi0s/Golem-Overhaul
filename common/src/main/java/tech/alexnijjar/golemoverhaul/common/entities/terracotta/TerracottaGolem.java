@@ -69,7 +69,7 @@ public class TerracottaGolem extends BaseGolem {
     }
 
     @Override
-    public boolean playDefaultStepSound() {
+    public boolean playIronGolemStepSound() {
         return false;
     }
 
@@ -79,7 +79,7 @@ public class TerracottaGolem extends BaseGolem {
     }
 
     @Override
-    public int getAttackAnimationTick() {
+    public int getAttackSwingTicks() {
         return 12;
     }
 
