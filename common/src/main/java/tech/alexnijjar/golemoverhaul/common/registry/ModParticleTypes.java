@@ -7,5 +7,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 
 public class ModParticleTypes {
+
     public static final ResourcefulRegistry<ParticleType<?>> PARTICLE_TYPES = ResourcefulRegistries.create(BuiltInRegistries.PARTICLE_TYPE, GolemOverhaul.MOD_ID);
 }

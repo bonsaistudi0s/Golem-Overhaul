@@ -10,7 +10,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
@@ -19,13 +18,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import tech.alexnijjar.golemoverhaul.common.entities.HoneyGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
+import tech.alexnijjar.golemoverhaul.common.registry.ModItems;
+import tech.alexnijjar.golemoverhaul.common.tags.ModEntityTypeTags;
 
 public class HoneyBlobProjectile extends AbstractArrow implements GeoEntity {
+
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public HoneyBlobProjectile(EntityType<? extends AbstractArrow> type, Level level) {
@@ -43,7 +44,7 @@ public class HoneyBlobProjectile extends AbstractArrow implements GeoEntity {
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {}
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 
     private ParticleOptions getParticle() {
         return new ItemParticleOption(ParticleTypes.ITEM, Items.HONEY_BLOCK.getDefaultInstance());
@@ -53,15 +54,14 @@ public class HoneyBlobProjectile extends AbstractArrow implements GeoEntity {
     public void handleEntityEvent(byte id) {
         if (id == 3) {
             for (int i = 0; i < 8; ++i) {
-                level().addParticle(getParticle(), getX(), getY(), getZ(), 0.0, 0.0, 0.0);
+                level().addParticle(getParticle(), getX(), getY(), getZ(), 0, 0, 0);
             }
         }
     }
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        if (result.getEntity() instanceof HoneyGolem) return;
-        if (result.getEntity() instanceof Bee) return;
+        if (result.getEntity().getType().is(ModEntityTypeTags.HONEY_IMMUNE)) return;
         if (getOwner() != null && result.getEntity().equals(getOwner())) return;
         int arrowCount = -1;
         if (result.getEntity() instanceof LivingEntity livingEntity) {
@@ -94,13 +94,13 @@ public class HoneyBlobProjectile extends AbstractArrow implements GeoEntity {
     }
 
     @Override
-    protected ItemStack getPickupItem() {
-        return ItemStack.EMPTY;
+    protected SoundEvent getDefaultHitGroundSoundEvent() {
+        return SoundEvents.HONEY_BLOCK_BREAK;
     }
 
     @Override
-    protected SoundEvent getDefaultHitGroundSoundEvent() {
-        return SoundEvents.HONEY_BLOCK_BREAK;
+    protected ItemStack getDefaultPickupItem() {
+        return ModItems.HONEY_BLOB.get().getDefaultInstance();
     }
 
     @Override

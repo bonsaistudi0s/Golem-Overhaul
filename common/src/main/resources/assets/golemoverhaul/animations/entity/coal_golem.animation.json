@@ -303,7 +303,7 @@
 			"loop": true,
 			"animation_length": 0.64,
 			"bones": {
-				"main": {
+				"body": {
 					"position": {
 						"0.0": {
 							"vector": [0, 0, 0]

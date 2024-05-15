@@ -2,19 +2,22 @@ package tech.alexnijjar.golemoverhaul.common.entities.projectiles;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
-import tech.alexnijjar.golemoverhaul.common.entities.candle.CandleGolem;
+import net.minecraft.world.phys.HitResult;
+import tech.alexnijjar.golemoverhaul.common.entities.golems.CandleGolem;
+import tech.alexnijjar.golemoverhaul.common.entities.golems.TerracottaGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 
-public class CandleFlameProjectile extends Fireball {
+public class CandleFlameProjectile extends ThrowableItemProjectile {
 
-    public CandleFlameProjectile(EntityType<? extends Fireball> type, Level level) {
+    public CandleFlameProjectile(EntityType<? extends ThrowableItemProjectile> type, Level level) {
         super(type, level);
     }
 
@@ -24,38 +27,46 @@ public class CandleFlameProjectile extends Fireball {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void onHitEntity(EntityHitResult result) {
+        super.onHitEntity(result);
+        Entity entity = result.getEntity();
+        if (entity instanceof CandleGolem) return;
+        if (result.getEntity() instanceof TerracottaGolem) return;
+        entity.hurt(damageSources().thrown(this, getOwner()), 3);
+        entity.igniteForSeconds(5);
     }
 
     @Override
-    public void tick() {
-        Vec3 currentVelocity = this.getDeltaMovement();
-        super.tick();
-        this.setDeltaMovement(currentVelocity);
-        if (level().isClientSide() && tickCount % 5 == 0) spawnParticles();
-        if (level().isClientSide()) return;
-
-        if (tickCount > 100) {
-            remove(RemovalReason.DISCARDED);
+    protected void onHit(HitResult result) {
+        super.onHit(result);
+        if (!level().isClientSide()) {
+            playSound(SoundEvents.SHULKER_BULLET_HIT, 1, 1);
+            discard();
         }
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult result) {
-        super.onHitBlock(result);
-        remove(RemovalReason.DISCARDED);
+    protected Item getDefaultItem() {
+        return Items.FIRE_CHARGE;
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult result) {
-        var target = result.getEntity();
-        if (target instanceof CandleGolem) return;
-        super.onHitEntity(result);
-        target.setSecondsOnFire(5);
-        target.hurt(damageSources().fireball(this, target), 1.0f);
-        playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0f, 1.0f);
-        remove(RemovalReason.DISCARDED);
+    public boolean isNoGravity() {
+        return true;
+    }
+
+    @Override
+    protected double getDefaultGravity() {
+        return super.getDefaultGravity();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (level().isClientSide() && tickCount % 5 == 0) spawnParticles();
+        if (!level().isClientSide() && tickCount > 100) {
+            discard();
+        }
     }
 
     private void spawnParticles() {
@@ -63,7 +74,7 @@ public class CandleFlameProjectile extends Fireball {
             double x = this.getX() + this.random.nextDouble() * 0.5;
             double y = this.getY() + this.random.nextDouble() * 0.5;
             double z = this.getZ() + this.random.nextDouble() * 0.5;
-            level().addParticle(ParticleTypes.FLAME, x, y, z, 0.0, 0.0, 0.0);
+            level().addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
         }
     }
 }

@@ -27,6 +27,7 @@ public class GolemOverhaulFabric {
     private static void addCustomSpawns() {
     }
 
+
     private static Predicate<BiomeSelectionContext> tag(TagKey<Biome> tag) {
         return BiomeSelectors.tag(tag);
     }

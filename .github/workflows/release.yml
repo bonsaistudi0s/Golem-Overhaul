@@ -11,8 +11,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: 17
+          distribution: 'zulu'
+          java-version: 21
 
       - name: Setup Gradle Caches
         uses: actions/cache@v3
@@ -37,9 +37,10 @@ jobs:
           MAVEN_USER: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASS: ${{ secrets.MAVEN_PASSWORD }}
 
-      - name: Upload Forge Releases (Curse/Modrinth/Github)
-        if: contains(steps.properties.outputs.enabledPlatforms, 'forge')
-        uses: Kir-Antipov/mc-publish@v3.3
+      - name: Upload NeoForge Releases (Curse/Modrinth/Github)
+        id: neoforge_release
+        if: contains(steps.properties.outputs.enabledPlatforms, 'neoforge')
+        uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           curseforge-id: ${{ vars.CURSE_ID }}
           curseforge-token: ${{ secrets.CURSE_TOKEN }}
@@ -47,16 +48,22 @@ jobs:
           modrinth-id: ${{ vars.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-          files: ./forge/build/libs/!(*-@(dev|sources|dev-shadow)).jar
-          name: "[Forge] Golem Overhaul ${{ steps.properties.outputs.version }}"
+          files: ./neoforge/build/libs/!(*-@(dev|sources|dev-shadow)).jar
+          name: "[NeoForge] Golem Overhaul ${{ steps.properties.outputs.version }}"
           version: ${{ steps.properties.outputs.version }}
           version-type: release
           changelog-file: changelog.md
-          loaders: forge
+          loaders: neoforge
           game-versions: ${{ steps.properties.outputs.minecraftVersion }}
           version-resolver: exact
 
+          dependencies: |
+            resourceful-lib | depends | *
+            resourceful-config | depends | *
+            geckolib | depends | *
+
       - name: Upload Fabric Releases (Curse/Modrinth/Github)
+        id: fabric_release
         if: contains(steps.properties.outputs.enabledPlatforms, 'fabric')
         uses: Kir-Antipov/mc-publish@v3.3
         with:
@@ -75,11 +82,8 @@ jobs:
           game-versions: ${{ steps.properties.outputs.minecraftVersion }}
           version-resolver: exact
 
-      - name: Generate Discord Embed
-        run: ./gradlew injectEmbed
-
-      - name: Upload Discord Embed
-        uses: tsickert/discord-webhook@v5.3.0
-        with:
-          webhook-url: ${{ secrets.WEBHOOK_URL }}
-          raw-data: ./build/embed.json
+          dependencies: |
+            fabric-api | depends | *
+            resourceful-lib | depends | *
+            resourceful-config | depends | *
+            geckolib | depends | *

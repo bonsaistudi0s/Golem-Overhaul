@@ -8,6 +8,8 @@ import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 
 public class ModEntityTypeTags {
 
+    public static final TagKey<EntityType<?>> HONEY_IMMUNE = tag("honey_immune");
+
     private static TagKey<EntityType<?>> tag(String name) {
         return TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(GolemOverhaul.MOD_ID, name));
     }

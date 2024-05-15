@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    "modImplementation"(group = "tech.alexnijjar.golemoverhaul", name = "golemoverhaul-$modLoader-$minecraftVersion", version = golemOverhaulVersion)
+    modImplementation(group = "tech.alexnijjar.golemoverhaul", name = "golemoverhaul-$modLoader-$minecraftVersion", version = golemOverhaulVersion)
 }
 ```
 
@@ -22,6 +22,6 @@ repositories {
 }
 
 dependencies {
-    "modImplementation" group: "tech.alexnijjar.golemoverhaul", name: "golemoverhaul-$modLoader-$minecraftVersion", version: golemOverhaulVersion
+    modImplementation group: "tech.alexnijjar.golemoverhaul", name: "golemoverhaul-$modLoader-$minecraftVersion", version: golemOverhaulVersion
 }
 ```

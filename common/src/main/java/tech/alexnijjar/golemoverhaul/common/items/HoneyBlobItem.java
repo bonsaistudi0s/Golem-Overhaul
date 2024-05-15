@@ -13,6 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.HoneyBlobProjectile;
 
 public class HoneyBlobItem extends Item {
+
     public HoneyBlobItem(Properties properties) {
         super(properties);
     }
@@ -20,9 +21,9 @@ public class HoneyBlobItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         var stack = player.getItemInHand(usedHand);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL,
-            0.5F,
-            0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SLIME_ATTACK, SoundSource.NEUTRAL,
+            0.5f,
+            0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f)
         );
         if (!level.isClientSide) {
             var projectile = new HoneyBlobProjectile(level, player);
@@ -33,7 +34,7 @@ public class HoneyBlobItem extends Item {
                 player.getZ() + lookAngle.z);
 
             projectile.setBaseDamage(10);
-            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 1.25F, 2.0F);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0, 1.25f, 2);
             level.addFreshEntity(projectile);
         }
 

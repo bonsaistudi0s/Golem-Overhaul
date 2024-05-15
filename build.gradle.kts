@@ -8,7 +8,7 @@ plugins {
     java
     id("maven-publish")
     id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("dev.architectury.loom") version "1.4-SNAPSHOT" apply false
+    id("dev.architectury.loom") version "1.6-SNAPSHOT" apply false
     id("architectury-plugin") version "3.4-SNAPSHOT"
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
@@ -22,6 +22,7 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "dev.architectury.loom")
     apply(plugin = "architectury-plugin")
+    apply(plugin = "com.github.johnrengelman.shadow")
 
     val minecraftVersion: String by project
     val modLoader = project.name
@@ -37,15 +38,27 @@ subprojects {
     }
 
     repositories {
-        maven(url = "https://maven.architectury.dev/")
-        maven(url = "https://maven.minecraftforge.net/")
         maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
+        maven(url = "https://maven.neoforged.net/releases/")
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = uri("https://api.modrinth.com/maven")
+                }
+            }
+            filter {
+                includeGroup("maven.modrinth")
+            }
+        }
     }
 
     dependencies {
         val resourcefulLibVersion: String by project
         val resourcefulConfigVersion: String by project
         val geckolibVersion: String by project
+        val jeiVersion: String by project
+        val reiVersion: String by project
 
         "minecraft"("::$minecraftVersion")
 
@@ -55,16 +68,20 @@ subprojects {
 
             officialMojangMappings()
 
-            parchment(create(group = "org.parchmentmc.data", name = "parchment-$minecraftVersion", version = parchmentVersion))
+            parchment(create(group = "org.parchmentmc.data", name = "parchment-1.20.4", version = parchmentVersion))
         })
 
-        compileOnly(group = "com.teamresourceful", name = "yabn", version = "1.0.3")
-        "modApi"(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-$modLoader-$minecraftVersion", version = resourcefulLibVersion)
-        "modApi"(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-$modLoader-$minecraftVersion", version = resourcefulConfigVersion)
+        "modApi"(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-$modLoader-1.20.5", version = resourcefulLibVersion)
+        "modApi"(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-$modLoader-1.20.5", version = resourcefulConfigVersion)
+        "modImplementation"(group = "software.bernie.geckolib", name = "geckolib-$modLoader-$minecraftVersion", version = geckolibVersion)
+
         if (isCommon) {
-            "modImplementation"(group = "software.bernie.geckolib", name = "geckolib-fabric-$minecraftVersion", version = geckolibVersion)
+            "modApi"(group = "mezz.jei", name = "jei-1.20.4-common-api", version = jeiVersion)
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api", version = reiVersion)
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin", version = reiVersion)
         } else {
-            "modImplementation"(group = "software.bernie.geckolib", name = "geckolib-$modLoader-$minecraftVersion", version = geckolibVersion)
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-$modLoader", version = reiVersion)
+            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin-$modLoader", version = reiVersion)
         }
     }
 
@@ -82,13 +99,12 @@ subprojects {
 
     tasks.processResources {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        filesMatching(listOf("META-INF/mods.toml", "fabric.mod.json")) {
+        filesMatching(listOf("META-INF/neoforge.mods.toml", "fabric.mod.json")) {
             expand("version" to project.version)
         }
     }
 
     if (!isCommon) {
-        apply(plugin = "com.github.johnrengelman.shadow")
         configure<ArchitectPluginExtension> {
             platformSetupLoomIde()
         }
@@ -142,7 +158,7 @@ subprojects {
         }
         repositories {
             maven {
-                setUrl("https://maven.teamresourceful.com/repository/bonsaistudi0s/")
+                setUrl("https://maven.teamresourceful.com/repository/alexnijjar/")
                 credentials {
                     username = System.getenv("MAVEN_USER")
                     password = System.getenv("MAVEN_PASS")

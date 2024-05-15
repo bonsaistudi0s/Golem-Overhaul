@@ -1,0 +1,16 @@
+{
+  "type": "golemoverhaul:golem_construction",
+  "entity": "golemoverhaul:netherite_golem",
+  "item": "golemoverhaul:netherite_golem_spawn_egg",
+  "key": {
+    "#": "minecraft:netherite_block",
+    "/": "minecraft:ancient_debris",
+    "^": "minecraft:carved_pumpkin",
+    "~": "minecraft:air"
+  },
+  "pattern": [
+    "~^~",
+    "/#/",
+    "~/~"
+  ]
+}

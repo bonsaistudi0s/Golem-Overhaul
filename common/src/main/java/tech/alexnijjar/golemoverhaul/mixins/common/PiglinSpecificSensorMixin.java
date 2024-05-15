@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import tech.alexnijjar.golemoverhaul.common.entities.NetheriteGolem;
+import tech.alexnijjar.golemoverhaul.common.entities.golems.NetheriteGolem;
 
 @Mixin(PiglinSpecificSensor.class)
 public abstract class PiglinSpecificSensorMixin {

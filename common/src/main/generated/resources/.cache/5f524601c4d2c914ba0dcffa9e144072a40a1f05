@@ -1,1 +1,3 @@
-// 1.20.1	2023-10-26T22:51:52.252986	Tags for minecraft:entity_type mod id golemoverhaul
+// 1.20.6	2024-05-10T11:04:35.817519	Tags for minecraft:entity_type mod id golemoverhaul
+88c6d99bbc0a654a304d9a2913857960ba309f41 data/golemoverhaul/tags/entity_types/honey_immune.json
+7eb2c9c60124cdd0cfba2b8a01ace6d3603275ba data/minecraft/tags/entity_types/fall_damage_immune.json

@@ -1,10 +1,10 @@
 package tech.alexnijjar.golemoverhaul.common.blocks;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -25,13 +25,15 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import tech.alexnijjar.golemoverhaul.common.entities.terracotta.TerracottaGolem;
+import tech.alexnijjar.golemoverhaul.common.entities.golems.TerracottaGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 
 import java.util.stream.Stream;
 
-@SuppressWarnings("deprecation")
 public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
+
+    public static final MapCodec<ClayGolemStatueBlock> CODEC = simpleCodec(ClayGolemStatueBlock::new);
+
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public static final VoxelShape SHAPE_NORTH = Stream.of(
@@ -78,6 +80,11 @@ public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
     }
 
     @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, WATERLOGGED);
     }
@@ -96,7 +103,7 @@ public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (level.isClientSide()) return;
         if (level.hasNeighborSignal(pos)) {
-            spawnGolem(level, pos);
+            spawnGolem(level, pos, state);
             level.destroyBlock(pos, false);
         }
     }
@@ -124,22 +131,23 @@ public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.getBrightness(LightLayer.BLOCK, pos) > 11 - state.getLightBlock(level, pos)) {
-            spawnGolem(level, pos);
+            spawnGolem(level, pos, state);
         }
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide()) {
-            spawnGolem(level, pos);
+            spawnGolem(level, pos, state);
             level.destroyBlock(pos, false);
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
-    private void spawnGolem(Level level, BlockPos pos) {
-        var golem = createGolem(level);
-        golem.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+    private void spawnGolem(Level level, BlockPos pos, BlockState state) {
+        TerracottaGolem golem = ModEntityTypes.TERRACOTTA_GOLEM.get().create(level);
+        if (golem == null) return;
+        golem.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, state.getValue(FACING).toYRot(), 0);
         level.addFreshEntity(golem);
     }
 

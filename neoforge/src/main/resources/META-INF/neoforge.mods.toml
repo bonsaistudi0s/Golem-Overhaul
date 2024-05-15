@@ -1,0 +1,54 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "ARR"
+issueTrackerURL = "https://github.com/bonsaistudi0s/golem-overhaul/issues"
+
+[[mods]]
+modId = "golemoverhaul"
+version = "${version}"
+displayName = "Golem Overhaul"
+displayURL = "https://modrinth.com/mod/golem-overhaul"
+logoFile = "icon.png"
+authors = "Alex Nijjar, Joosh"
+credits = ""
+description = "Golem overhaul adds awesome Golems!"
+
+[[mixins]]
+config = "golemoverhaul.mixins.json"
+[[mixins]]
+config = "golemoverhaul-common.mixins.json"
+
+[[dependencies.golemoverhaul]]
+modId = "neoforge"
+type="required"
+versionRange = "[20.6,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+modId = "minecraft"
+type="required"
+versionRange = "[1.20.6,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+modId = "resourcefullib"
+type="required"
+versionRange = "[2.5.5,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+modId = "resourcefulconfig"
+type="required"
+versionRange = "[2.5.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+modId = "geckolib"
+type="required"
+versionRange = "[4.5.1,)"
+ordering = "NONE"
+side = "BOTH"

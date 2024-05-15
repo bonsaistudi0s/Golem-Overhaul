@@ -1,63 +1,78 @@
 package tech.alexnijjar.golemoverhaul.common.entities.goals;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Bee;
 import org.jetbrains.annotations.Nullable;
-import tech.alexnijjar.golemoverhaul.common.entities.HoneyGolem;
-import tech.alexnijjar.golemoverhaul.mixins.common.BeeInvoker;
+import tech.alexnijjar.golemoverhaul.common.entities.AdditionalBeeData;
+import tech.alexnijjar.golemoverhaul.common.entities.golems.HoneyGolem;
+import tech.alexnijjar.golemoverhaul.mixins.common.BeeAccessor;
+
+import java.util.UUID;
 
 public class GoToHoneyGolemHiveGoal extends Goal {
+
     private final Bee bee;
+    private final BeeAccessor beeAccessor;
+
+    private int travellingTicks;
+
     @Nullable
-    private HoneyGolem target;
+    private HoneyGolem hive;
 
     public GoToHoneyGolemHiveGoal(Bee bee) {
         this.bee = bee;
+        this.beeAccessor = (BeeAccessor) bee;
+        bee.level().random.nextInt(10);
     }
 
     @Override
     public boolean canUse() {
-        return !bee.isAngry()
-            && !bee.hasRestriction()
-            && ((BeeInvoker) bee).invokeWantsToEnterHive();
-    }
-
-    @Override
-    public boolean canContinueToUse() {
-        return super.canContinueToUse()
-            && target != null
-            && target.isAlive()
-            && target.canPutBee()
-            && !bee.isRemoved();
+        if (bee.isAngry() && !bee.hasRestriction() && beeAccessor.invokeWantsToEnterHive()) {
+            HoneyGolem golem = hive == null ? this.findHive() : hive;
+            return golem != null && !golem.isDeadOrDying() && golem.canPutBee();
+        }
+        return false;
     }
 
     @Override
     public void start() {
-        target = bee.level().getNearestEntity(HoneyGolem.class,
-            TargetingConditions.DEFAULT,
-            bee,
-            bee.getX(),
-            bee.getY(),
-            bee.getZ(),
-            bee.getBoundingBox().inflate(16.0));
+        this.travellingTicks = 0;
+        this.hive = findHive();
     }
 
     @Override
     public void stop() {
-        super.stop();
-        target = null;
-        bee.getNavigation().stop();
-        bee.setStayOutOfHiveCountdown(400);
+        this.travellingTicks = 0;
+        this.bee.getNavigation().stop();
+        this.bee.getNavigation().resetMaxVisitedNodesMultiplier();
+        this.hive = null;
     }
 
     @Override
     public void tick() {
-        if (target == null || !target.canPutBee()) return;
-        if (bee.distanceTo(target) < 2.0) {
-            target.putBee(bee);
+        if (this.hive == null) return;
+        if (bee.distanceTo(this.hive) < 2) {
+            this.hive.putBee(bee);
+            stop();
         } else {
-            bee.getNavigation().moveTo(target, 1.0);
+            this.travellingTicks++;
+            if (this.travellingTicks > this.adjustedTickDelay(600)) {
+                stop();
+            } else {
+                bee.getNavigation().moveTo(this.hive, 1);
+            }
         }
+    }
+
+    @Nullable
+    private HoneyGolem findHive() {
+        UUID owner = ((AdditionalBeeData) bee).golemoverhaul$getOwner();
+        if (owner != null && bee.level() instanceof ServerLevel level) {
+            if (level.getEntity(owner) instanceof HoneyGolem golem) {
+                return golem;
+            }
+        }
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "category": "building",
   "key": {
     "#": {
       "item": "minecraft:honeycomb"
@@ -15,7 +15,7 @@
     "###"
   ],
   "result": {
-    "item": "golemoverhaul:candle_golem_block"
+    "id": "golemoverhaul:candle_golem_block"
   },
   "show_notification": true
 }
