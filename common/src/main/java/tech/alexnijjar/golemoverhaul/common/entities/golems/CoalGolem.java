@@ -80,14 +80,14 @@ public class CoalGolem extends BaseGolem {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Lit", this.isLit());
         if (summonerId != null) compound.putUUID("SummonerId", summonerId);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setLit(compound.getBoolean("Lit"));
         if (compound.hasUUID("SummonerId")) this.setSummoner(compound.getUUID("SummonerId"));

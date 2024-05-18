@@ -30,12 +30,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tech.alexnijjar.golemoverhaul.common.entities.AdditionalBeeData;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.HoneyBlobProjectile;
 import tech.alexnijjar.golemoverhaul.common.registry.ModItems;
+import tech.alexnijjar.golemoverhaul.mixins.common.BeeAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putByte("HoneyLevel", this.getHoneyLevel());
         ListTag beeTag = new ListTag();
@@ -87,7 +87,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setHoneyLevel(compound.getByte("HoneyLevel"));
         ListTag beeTag = compound.getList("Bees", Tag.TAG_COMPOUND);
@@ -177,8 +177,8 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
         final int count = 2 + level.getRandom().nextInt(4);
         for (int i = 0; i < count; i++) {
             Bee bee = Objects.requireNonNull(EntityType.BEE.create(level()));
-            this.bees.add(new BeeData(bee.saveWithoutId(new CompoundTag()), 0, 2400));
             ((AdditionalBeeData) bee).golemoverhaul$setOwner(this.getUUID());
+            this.bees.add(new BeeData(bee.saveWithoutId(new CompoundTag()), 0, 2400));
         }
         this.setHoneyLevel((byte) count);
         return super.finalizeSpawn(level, difficultyInstance, mobSpawnType, spawnGroupData);
@@ -245,7 +245,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
         if (!level().isClientSide()) {
             BehaviorUtils.throwItem(this,
                 new ItemStack(ModItems.HONEY_BLOB.get(),
-                    1 + level().random.nextInt(2)),
+                    3 + level().random.nextInt(5)),
                 Vec3.ZERO);
             setHoneyLevel((byte) 0);
         }
@@ -322,7 +322,9 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, Shearable 
         List<Bee> removedBees = new ArrayList<>();
         int size = this.bees.size();
         for (int i = 0; i < size; i++) {
-            removedBees.add(releaseBee(0));
+            Bee bee = releaseBee(0);
+            ((BeeAccessor) bee).setRemainingCooldownBeforeLocatingNewFlower(400);
+            removedBees.add(bee);
         }
         return removedBees;
     }

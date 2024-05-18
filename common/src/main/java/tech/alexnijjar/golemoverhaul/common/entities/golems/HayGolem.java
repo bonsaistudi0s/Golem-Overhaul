@@ -27,7 +27,6 @@ import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
 import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
@@ -86,14 +85,14 @@ public class HayGolem extends BaseGolem implements Shearable {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putString("Color", this.getColor().name().toLowerCase(Locale.ROOT));
         compound.putBoolean("Sheared", this.isSheared());
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setColor(Color.valueOf(compound.getString("Color").toUpperCase(Locale.ROOT)));
         this.setSheared(compound.getBoolean("Sheared"));

@@ -31,5 +31,7 @@
   "subtitles.golemoverhaul.entity.coal_golem.death": "Coal Golem dies",
   "subtitles.golemoverhaul.entity.coal_golem.explode": "Coal Golem explodes",
   "subtitles.golemoverhaul.entity.coal_golem.hurt": "Coal Golem hurts",
-  "text.golemoverhaul.golem_construction": "Golem Construction"
+  "text.golemoverhaul.golem_construction": "Golem Construction",
+  "tooltip.golemoverhaul.candle_golem": "Right-click to transform into a Candle Golem",
+  "tooltip.golemoverhaul.clay_golem_statue": "Can be melted like ice into a Terracotta Golem"
 }

@@ -88,9 +88,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
         if (canFloatInWater()) {
             goalSelector.addGoal(0, new FloatGoal(this));
         }
-        this.goalSelector.addGoal(2, new MoveTowardsTargetGoal(this, 0.9, 32));
-        this.goalSelector.addGoal(2, new MoveBackToVillageGoal(this, 0.6, false));
-        this.goalSelector.addGoal(4, new GolemRandomStrollInVillageGoal(this, 0.6));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }

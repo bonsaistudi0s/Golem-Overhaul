@@ -122,7 +122,7 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Charged", this.isCharged());
         compound.putBoolean("Gilded", this.isGilded());
@@ -131,7 +131,7 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setCharged(compound.getBoolean("Charged"));
         this.setGilded(compound.getBoolean("Gilded"));

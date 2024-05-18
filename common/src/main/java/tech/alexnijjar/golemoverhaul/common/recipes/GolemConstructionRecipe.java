@@ -28,7 +28,8 @@ public record GolemConstructionRecipe(
     List<String> pattern,
     Map<String, ResourceKey<Block>> key,
     ResourceKey<EntityType<?>> entity,
-    ResourceKey<Item> item
+    ResourceKey<Item> item,
+    boolean visualOnly
 ) implements CodecRecipe<Container> {
 
     public static final MapCodec<GolemConstructionRecipe> CODEC = RecordCodecBuilder.mapCodec(
@@ -36,7 +37,8 @@ public record GolemConstructionRecipe(
             Codec.STRING.listOf().fieldOf("pattern").forGetter(GolemConstructionRecipe::pattern),
             Codec.unboundedMap(Codec.STRING, ResourceKey.codec(Registries.BLOCK)).fieldOf("key").forGetter(GolemConstructionRecipe::key),
             ResourceKey.codec(Registries.ENTITY_TYPE).fieldOf("entity").forGetter(GolemConstructionRecipe::entity),
-            ResourceKey.codec(Registries.ITEM).fieldOf("item").forGetter(GolemConstructionRecipe::item)
+            ResourceKey.codec(Registries.ITEM).fieldOf("item").forGetter(GolemConstructionRecipe::item),
+            Codec.BOOL.optionalFieldOf("visualOnly", false).forGetter(GolemConstructionRecipe::visualOnly)
         ).apply(instance, GolemConstructionRecipe::new));
 
     public static final ByteCodec<GolemConstructionRecipe> NETWORK_CODEC = ObjectByteCodec.create(
@@ -44,6 +46,7 @@ public record GolemConstructionRecipe(
         new com.teamresourceful.bytecodecs.defaults.MapCodec<>(ByteCodec.STRING, ExtraByteCodecs.resourceKey(Registries.BLOCK)).fieldOf(GolemConstructionRecipe::key),
         ExtraByteCodecs.resourceKey(Registries.ENTITY_TYPE).fieldOf(GolemConstructionRecipe::entity),
         ExtraByteCodecs.resourceKey(Registries.ITEM).fieldOf(GolemConstructionRecipe::item),
+        ByteCodec.BOOLEAN.fieldOf(GolemConstructionRecipe::visualOnly),
         GolemConstructionRecipe::new
     );
 

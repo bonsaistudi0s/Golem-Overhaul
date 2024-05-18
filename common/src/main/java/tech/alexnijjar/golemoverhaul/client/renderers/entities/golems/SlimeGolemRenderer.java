@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.util.RenderUtil;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.client.renderers.entities.golems.base.BaseGolemModel;
 import tech.alexnijjar.golemoverhaul.client.renderers.entities.golems.base.BaseGolemRenderer;
@@ -45,9 +46,11 @@ public class SlimeGolemRenderer extends BaseGolemRenderer<SlimeGolem> {
     public void renderRecursively(PoseStack poseStack, SlimeGolem golem, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         boolean isInnerBodyBone = "body_2".equals(bone.getName());
         if (isInnerBodyBone) {
-            float healthPercent = Math.clamp(golem.getHealth() / golem.getMaxHealth() * 1.2f, 0.1f, 1);
+            float healthPercent = 0.5f + Math.clamp((golem.getHealth() / 2) / golem.getMaxHealth(), 0, 0.5f);
             poseStack.pushPose();
+            RenderUtil.translateToPivotPoint(poseStack, bone);
             poseStack.scale(healthPercent, healthPercent, healthPercent);
+            RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
         }
         super.renderRecursively(poseStack, golem, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
         if (isInnerBodyBone) {

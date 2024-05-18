@@ -15,10 +15,15 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RandomSwimmingGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.animal.AbstractGolem;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -119,13 +124,13 @@ public class KelpGolem extends BaseGolem {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Charged", this.isCharged());
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setCharged(compound.getBoolean("Charged"));
     }
@@ -133,8 +138,11 @@ public class KelpGolem extends BaseGolem {
 
     @Override
     protected void registerGoals() {
-        super.registerGoals();
+        this.goalSelector.addGoal(0,  new NearestAttackableTargetGoal<>(this, Mob.class, 3, true, false, this::shouldAttack));
         this.goalSelector.addGoal(0, new RandomSwimmingGoal(this, 1, 40));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
     public boolean isCharged() {
@@ -221,7 +229,7 @@ public class KelpGolem extends BaseGolem {
     @Override
     public void updateSwimming() {
         if (!this.level().isClientSide()) {
-            if (this.isEffectiveAi() && level().getBlockState(blockPosition().above().above()).is(Blocks.WATER)) {
+            if (this.isEffectiveAi() && level().getBlockState(blockPosition().above(2)).is(Blocks.WATER)) {
                 this.navigation = this.waterNavigation;
                 this.setSwimming(true);
             } else {
@@ -246,7 +254,7 @@ public class KelpGolem extends BaseGolem {
 
     @Override
     protected AABB getAttackBoundingBox() {
-        return super.getAttackBoundingBox().inflate(0.8, 0, 0.8);
+        return super.getAttackBoundingBox().inflate(1.5, 0, 1.5);
     }
 
     private class KelpGolemMoveControl extends MoveControl {

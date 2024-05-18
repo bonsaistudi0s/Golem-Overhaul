@@ -28,7 +28,7 @@ public class GoToHoneyGolemHiveGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (bee.isAngry() && !bee.hasRestriction() && beeAccessor.invokeWantsToEnterHive()) {
+        if (!bee.isAngry() && !bee.hasRestriction() && beeAccessor.invokeWantsToEnterHive()) {
             HoneyGolem golem = hive == null ? this.findHive() : hive;
             return golem != null && !golem.isDeadOrDying() && golem.canPutBee();
         }

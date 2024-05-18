@@ -26,9 +26,10 @@ public class GolemConstructionRecipeBuilder extends CodecRecipeBuilder {
         List<String> pattern,
         Map<String, ResourceKey<Block>> key,
         ResourceKey<EntityType<?>> entity,
-        ResourceKey<Item> result
+        ResourceKey<Item> result,
+        boolean visualOnly
     ) {
-        recipe = new GolemConstructionRecipe(pattern, key, entity, result);
+        recipe = new GolemConstructionRecipe(pattern, key, entity, result, visualOnly);
     }
 
     @Override

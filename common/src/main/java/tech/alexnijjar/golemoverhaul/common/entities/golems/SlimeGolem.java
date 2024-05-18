@@ -61,13 +61,13 @@ public class SlimeGolem extends BaseGolem {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putString("Size", this.getSize().name().toLowerCase(Locale.ROOT));
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setSize(Size.valueOf(compound.getString("Size").toUpperCase(Locale.ROOT)), false);
     }

@@ -16,12 +16,11 @@ public class ConstantAnimations {
     public static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.golem.swim");
 
     public static final RawAnimation IDLE_WATER = RawAnimation.begin().thenLoop("animation.golem.idle_water");
-    public static final RawAnimation CHARGE = RawAnimation.begin().thenPlay("animation.golem.charge");
     public static final RawAnimation SPIN = RawAnimation.begin().thenLoop("animation.golem.spin");
 
     public static final RawAnimation WAKE_UP = RawAnimation.begin().thenPlay("animation.golem.wake_up");
     public static final RawAnimation IDLE_HIDDEN = RawAnimation.begin().thenLoop("animation.golem.idle_hidden");
-    public static final RawAnimation HIDE = RawAnimation.begin().thenPlay("animation.golem.hide").thenPlay("animation.golem.idle_hidden");
+    public static final RawAnimation HIDE = RawAnimation.begin().thenPlay("animation.golem.hide");
     public static final RawAnimation BARTER = RawAnimation.begin().thenPlay("animation.golem.barter");
     public static final RawAnimation OPEN = RawAnimation.begin().thenPlay("animation.golem.open");
 }

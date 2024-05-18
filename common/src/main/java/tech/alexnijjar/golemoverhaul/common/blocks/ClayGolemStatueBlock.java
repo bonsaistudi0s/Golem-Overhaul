@@ -3,10 +3,12 @@ package tech.alexnijjar.golemoverhaul.common.blocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -20,14 +22,15 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import tech.alexnijjar.golemoverhaul.common.constants.ConstantComponents;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.TerracottaGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
@@ -132,16 +135,12 @@ public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.getBrightness(LightLayer.BLOCK, pos) > 11 - state.getLightBlock(level, pos)) {
             spawnGolem(level, pos, state);
+            return;
         }
-    }
 
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide()) {
+        if (level.getBiome(pos).value().getBaseTemperature() > 1) {
             spawnGolem(level, pos, state);
-            level.destroyBlock(pos, false);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
     private void spawnGolem(Level level, BlockPos pos, BlockState state) {
@@ -149,9 +148,11 @@ public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
         if (golem == null) return;
         golem.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, state.getValue(FACING).toYRot(), 0);
         level.addFreshEntity(golem);
+        level.destroyBlock(pos, false);
     }
 
-    public static TerracottaGolem createGolem(Level level) {
-        return ModEntityTypes.TERRACOTTA_GOLEM.get().create(level);
+    @Override
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
+        list.add(ConstantComponents.CLAY_GOLEM_STATUE_TOOLTIP);
     }
 }

@@ -1,0 +1,12 @@
+{
+  "type": "golemoverhaul:golem_construction",
+  "entity": "golemoverhaul:terracotta_golem",
+  "item": "golemoverhaul:clay_golem_statue",
+  "key": {
+    "#": "golemoverhaul:clay_golem_statue"
+  },
+  "pattern": [
+    "#"
+  ],
+  "visualOnly": true
+}

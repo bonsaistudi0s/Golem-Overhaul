@@ -44,7 +44,9 @@ public class ModLangProvider extends LanguageProvider {
 
         add(ConstantComponents.NETHERITE_GOLEM_SUMMON_KEY.getString(), "Summon Netherite Golem");
         add(ConstantComponents.GOLEM_OVERHAUL_CATEGORY.getString(), "Golem Overhaul");
-        add(ConstantComponents.GOLEM_CONSTUCTION_CATEGORY.getString(), "Golem Construction");
+        add(ConstantComponents.GOLEM_CONSTRUCTION_CATEGORY.getString(), "Golem Construction");
+        add(ConstantComponents.CANDLE_GOLEM_TOOLTIP.getString(), "Right-click to transform into a Candle Golem");
+        add(ConstantComponents.CLAY_GOLEM_STATUE_TOOLTIP.getString(), "Can be melted like ice into a Terracotta Golem");
 
         add("subtitles.golemoverhaul.entity.coal_golem.ambient", "Coal Golem burns");
         add("subtitles.golemoverhaul.entity.coal_golem.hurt", "Coal Golem hurts");

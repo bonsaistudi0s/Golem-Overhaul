@@ -27,7 +27,7 @@ public class GolemConstructionCategory implements DisplayCategory<GolemConstruct
 
     @Override
     public Component getTitle() {
-        return ConstantComponents.GOLEM_CONSTUCTION_CATEGORY;
+        return ConstantComponents.GOLEM_CONSTRUCTION_CATEGORY;
     }
 
     @Override

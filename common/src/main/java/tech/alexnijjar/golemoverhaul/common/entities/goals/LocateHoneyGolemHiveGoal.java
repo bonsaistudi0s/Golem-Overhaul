@@ -19,7 +19,9 @@ public class LocateHoneyGolemHiveGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        return beeAccessor.getRemainingCooldownBeforeLocatingNewHive() == 0 && !((AdditionalBeeData) bee).hasGolemHive() && ((BeeAccessor) bee).invokeWantsToEnterHive();
+        return beeAccessor.getRemainingCooldownBeforeLocatingNewHive() < 20 &&
+            !((AdditionalBeeData) bee).golemoverhaul$hasGolemHive() &&
+            beeAccessor.invokeWantsToEnterHive();
     }
 
     @Override

@@ -14,6 +14,9 @@ public interface BeeAccessor {
     @Accessor
     void setRemainingCooldownBeforeLocatingNewHive(int remainingCooldownBeforeLocatingNewHive);
 
+    @Accessor
+    void setRemainingCooldownBeforeLocatingNewFlower(int remainingCooldownBeforeLocatingNewFlower);
+
     @Invoker
     boolean invokeWantsToEnterHive();
 }

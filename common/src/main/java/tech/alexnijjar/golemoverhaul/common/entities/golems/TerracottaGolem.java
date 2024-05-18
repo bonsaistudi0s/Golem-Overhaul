@@ -68,13 +68,13 @@ public class TerracottaGolem extends BaseGolem implements Shearable, RangedAttac
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putString("Type", this.getTerracottaType().name().toLowerCase(Locale.ROOT));
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setTerracottaType(Type.valueOf(compound.getString("Type").toUpperCase(Locale.ROOT)));
     }

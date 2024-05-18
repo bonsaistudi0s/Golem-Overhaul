@@ -1,5 +1,6 @@
 package tech.alexnijjar.golemoverhaul.common.entities.golems;
 
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,9 +21,11 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.AbstractGolem;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
@@ -50,18 +53,22 @@ import java.util.List;
 
 public class BarrelGolem extends BaseGolem {
 
+    private static final Vec3i ITEM_PICKUP_REACH = new Vec3i(2, 0, 2);
+
     public static final ResourceKey<LootTable> BARTERING_LOOT = ResourceKey.create(Registries.LOOT_TABLE, new ResourceLocation(GolemOverhaul.MOD_ID, "gameplay/barrel_golem_bartering"));
 
     public static final byte CHANGE_STATE_EVENT_ID = 8;
     public static final byte BARTER_EVENT_ID = 9;
 
-    public static final int WAKE_UP_TICKS = 53;
+    public static final int WAKE_UP_TICKS = 62;
     public static final int BARTERING_TICKS = 78;
 
     private static final EntityDataAccessor<Boolean> ID_OPEN = SynchedEntityData.defineId(BarrelGolem.class, EntityDataSerializers.BOOLEAN);
 
-    private int changeStateTicks = this.getRandomChangeInterval();
+    private int changeStateTicks;
     private int barteringTicks;
+
+    private int openUpTicks;
 
     @Nullable
     private Player barteringTarget;
@@ -69,6 +76,7 @@ public class BarrelGolem extends BaseGolem {
     public BarrelGolem(EntityType<? extends AbstractGolem> type, Level level) {
         super(type, level);
         this.xpReward = 10;
+        setCanPickUpLoot(true);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -84,26 +92,30 @@ public class BarrelGolem extends BaseGolem {
         super.registerControllers(controllers);
 
         controllers.add(new AnimationController<>(this, "open_controller", 0, state -> {
-            if (isBartering()) return PlayState.STOP;
-            if (level().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-                if (!level().isDay()) {
-                    return state.setAndContinue(ConstantAnimations.HIDE);
-                } else if (isWakingUp()) {
-                    return state.setAndContinue(ConstantAnimations.WAKE_UP);
-                }
+            if (isBartering()) {
+                state.resetCurrentAnimation();
+                return PlayState.STOP;
             }
 
-            if (this.isOpen()) {
+            if (isWakingUp()) {
+                return state.setAndContinue(ConstantAnimations.WAKE_UP);
+            }
+
+            if (this.openUpTicks > 0) {
                 return state.setAndContinue(ConstantAnimations.OPEN);
-            } else {
+            }
+
+            if (level().isNight() || !this.isOpen()) {
                 return state.setAndContinue(ConstantAnimations.HIDE);
             }
+
+            state.resetCurrentAnimation();
+            return PlayState.STOP;
         }));
 
         controllers.add(new AnimationController<>(this, "barter_controller", state -> {
             if (this.isBartering()) {
-                state.setAndContinue(ConstantAnimations.BARTER);
-                return PlayState.CONTINUE;
+                return state.setAndContinue(ConstantAnimations.BARTER);
             }
             state.resetCurrentAnimation();
             return PlayState.STOP;
@@ -112,10 +124,17 @@ public class BarrelGolem extends BaseGolem {
 
     @Override
     public PlayState getMoveAnimation(AnimationState<BaseGolem> state, boolean moving) {
-        if (!this.isOpen() || this.isBartering()) {
+        if (!this.isOpen()) return PlayState.STOP;
+        if (isBartering()) {
+            state.resetCurrentAnimation();
             return PlayState.STOP;
         }
-        return super.getMoveAnimation(state, moving);
+
+        return state.setAndContinue(moving ?
+            ConstantAnimations.WALK :
+            isOpen() ?
+                ConstantAnimations.IDLE :
+                ConstantAnimations.IDLE_HIDDEN);
     }
 
     @Override
@@ -135,14 +154,14 @@ public class BarrelGolem extends BaseGolem {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Open", this.isOpen());
         compound.putInt("ChangeStateTicks", this.changeStateTicks);
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.setOpen(compound.getBoolean("Open"), false);
         this.changeStateTicks = compound.getInt("ChangeStateTicks");
@@ -152,6 +171,7 @@ public class BarrelGolem extends BaseGolem {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(1, new BarrelGolemPanicGoal(1.5f));
+        this.goalSelector.addGoal(2, new BarrelGolemFindNearestEmeraldGoal());
     }
 
     @Override
@@ -182,6 +202,7 @@ public class BarrelGolem extends BaseGolem {
         }
 
         this.entityData.set(ID_OPEN, open);
+        openUpTicks = open ? 10 : 0;
 
         this.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(open ? 0 : 1);
     }
@@ -219,6 +240,7 @@ public class BarrelGolem extends BaseGolem {
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
         setOpen(level().isDay(), false);
+        changeStateTicks = this.getRandomChangeInterval();
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData);
     }
 
@@ -245,6 +267,7 @@ public class BarrelGolem extends BaseGolem {
 
         this.changeStateTicks = Math.max(0, this.changeStateTicks - 1);
         this.barteringTicks = Math.max(0, this.barteringTicks - 1);
+        this.openUpTicks = Math.max(0, this.openUpTicks - 1);
 
         if (!level().isClientSide()) {
             if (this.changeStateTicks == 0 && level().isDay() && !isWakingUp()) {
@@ -257,12 +280,10 @@ public class BarrelGolem extends BaseGolem {
                 this.navigation.stop();
             }
 
-            if (level().getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
-                if (!level().isDay() && isOpen()) {
-                    this.setOpen(false, true);
-                } else if (finishedWakeUp() && !isOpen()) {
-                    this.setOpen(true, false);
-                }
+            if (!level().isDay() && isOpen()) {
+                this.setOpen(false, true);
+            } else if (finishedWakeUp() && !isOpen()) {
+                this.setOpen(true, false);
             }
 
             if (this.barteringTicks == 24) {
@@ -288,9 +309,44 @@ public class BarrelGolem extends BaseGolem {
             this.yHeadRot = 0;
             this.yBodyRot = 0;
         }
+
+        ItemStack stack = getMainHandItem();
+        if (!level().isClientSide() && stack.is(Items.EMERALD) && !isBartering() && isOpen()) {
+            this.barter();
+        }
     }
 
-    private boolean isWakingUp() {
+    @Override
+    protected void pickUpItem(ItemEntity itemEntity) {
+        ItemStack stack = itemEntity.getItem();
+        ItemStack equippedStack = this.equipItemIfPossible(stack.copy());
+        if (!equippedStack.isEmpty()) {
+            this.onItemPickup(itemEntity);
+            this.take(itemEntity, 1);
+            stack.shrink(1);
+            if (stack.isEmpty()) {
+                itemEntity.discard();
+            } else {
+                itemEntity.setExtendedLifetime();
+            }
+        }
+
+        if (itemEntity.getOwner() instanceof Player player) {
+            this.barteringTarget = player;
+        }
+    }
+
+    @Override
+    public boolean wantsToPickUp(ItemStack stack) {
+        return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && stack.is(Items.EMERALD) && getMainHandItem().isEmpty() && isOpen() && !isBartering();
+    }
+
+    @Override
+    protected @NotNull Vec3i getPickupReach() {
+        return ITEM_PICKUP_REACH;
+    }
+
+    public boolean isWakingUp() {
         long time = level().getDayTime();
         return time >= 1000 && time < 1000 + WAKE_UP_TICKS;
     }
@@ -317,8 +373,7 @@ public class BarrelGolem extends BaseGolem {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level().isClientSide() && isOpen() && !isBartering() && stack.is(Items.EMERALD)) {
-            this.barter();
+        if (!level().isClientSide() && wantsToPickUp(stack)) {
             this.barteringTarget = player;
             this.setItemInHand(InteractionHand.MAIN_HAND, stack.copy());
             stack.shrink(1);
@@ -377,6 +432,37 @@ public class BarrelGolem extends BaseGolem {
         public void stop() {
             super.stop();
             setOpen(false, true);
+        }
+    }
+
+    private class BarrelGolemFindNearestEmeraldGoal extends Goal {
+
+        private ItemEntity nearest;
+
+        @Override
+        public boolean canUse() {
+            if (isOpen() && !isBartering()) {
+                ItemEntity nearest = level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(16), stack -> stack.getItem().is(Items.EMERALD))
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
+                if (nearest != null) {
+                    this.nearest = nearest;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return isOpen() && !isBartering() && this.nearest != null && !nearest.isRemoved();
+        }
+
+        @Override
+        public void tick() {
+            navigation.moveTo(nearest, 0.7);
+            lookControl.setLookAt(nearest, 30, 30);
         }
     }
 }

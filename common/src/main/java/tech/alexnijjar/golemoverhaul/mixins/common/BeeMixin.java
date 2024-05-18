@@ -14,7 +14,6 @@ import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,7 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import tech.alexnijjar.golemoverhaul.common.entities.AdditionalBeeData;
 import tech.alexnijjar.golemoverhaul.common.entities.goals.GoToHoneyGolemHiveGoal;
-import tech.alexnijjar.golemoverhaul.common.entities.goals.HealHoneyGolemGoal;
 import tech.alexnijjar.golemoverhaul.common.entities.goals.LocateHoneyGolemHiveGoal;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.HoneyGolem;
 
@@ -30,9 +28,6 @@ import java.util.UUID;
 
 @Mixin(Bee.class)
 public abstract class BeeMixin extends PathfinderMob implements AdditionalBeeData {
-
-    @Shadow
-    public abstract boolean hasNectar();
 
     @Unique
     @Nullable
@@ -48,20 +43,23 @@ public abstract class BeeMixin extends PathfinderMob implements AdditionalBeeDat
         Bee bee = (Bee) (Object) this;
         this.goalSelector.addGoal(5, new LocateHoneyGolemHiveGoal(bee));
         this.goalSelector.addGoal(6, new GoToHoneyGolemHiveGoal(bee));
-        this.goalSelector.addGoal(7, new HealHoneyGolemGoal(bee));
     }
 
+    /**
+     * Set the target to the honey golem's target.
+     */
     @Inject(method = "tick", at = @At("TAIL"))
     private void golemoverhaul$tick(CallbackInfo ci) {
-        if (tickCount % 40 == 0 && golemoverhaul$owner != null && level() instanceof ServerLevel level) {
-            if (level.getEntity(golemoverhaul$owner) instanceof HoneyGolem golem && golem.getTarget() != null) {
-                if (getTarget() == null) {
-                    setTarget(golem.getTarget());
-                }
+        if (tickCount + getId() % 40 == 0 && getTarget() == null && level() instanceof ServerLevel level) {
+            if (golemoverhaul$owner != null && level.getEntity(golemoverhaul$owner) instanceof HoneyGolem golem && golem.getTarget() != null) {
+                setTarget(golem.getTarget());
             }
         }
     }
 
+    /**
+     * Allow bees from honey golems to sting without dying.
+     */
     @Inject(method = "setHasStung", at = @At("HEAD"), cancellable = true)
     private void golemoverhaul$setHasStung(boolean hasStung, CallbackInfo ci) {
         if (hasStung && this.golemoverhaul$owner != null) {
@@ -69,6 +67,9 @@ public abstract class BeeMixin extends PathfinderMob implements AdditionalBeeDat
         }
     }
 
+    /**
+     * Prevent bees that have stung their target from losing aggro when the honey golem is their owner.
+     */
     @WrapWithCondition(
         method = "doHurtTarget",
         at = @At(
@@ -76,10 +77,13 @@ public abstract class BeeMixin extends PathfinderMob implements AdditionalBeeDat
             target = "Lnet/minecraft/world/entity/animal/Bee;stopBeingAngry()V"
         )
     )
-    private boolean golemoverhaul$doHurtTarget2(Bee instance) {
+    private boolean golemoverhaul$doHurtTarget(Bee instance) {
         return this.golemoverhaul$owner == null;
     }
 
+    /**
+     * Increase the damage of bees that belong to a honey golem.
+     */
     @WrapOperation(
         method = "doHurtTarget",
         at = @At(
@@ -87,12 +91,12 @@ public abstract class BeeMixin extends PathfinderMob implements AdditionalBeeDat
             target = "Lnet/minecraft/world/entity/animal/Bee;getAttributeValue(Lnet/minecraft/core/Holder;)D"
         )
     )
-    private double golemoverhaul$doHurtTarget3(Bee instance, Holder<Attribute> holder, Operation<Double> original) {
-        return original.call(instance, holder) * (this.golemoverhaul$owner != null ? 3 : 1);
+    private double golemoverhaul$doHurtTarget2(Bee instance, Holder<Attribute> holder, Operation<Double> original) {
+        return original.call(instance, holder) * (this.golemoverhaul$owner != null ? 6 : 1);
     }
 
     @Override
-    public UUID golemoverhaul$getOwner() {
+    public @Nullable UUID golemoverhaul$getOwner() {
         return this.golemoverhaul$owner;
     }
 
@@ -102,7 +106,7 @@ public abstract class BeeMixin extends PathfinderMob implements AdditionalBeeDat
     }
 
     @Override
-    public boolean hasGolemHive() {
+    public boolean golemoverhaul$hasGolemHive() {
         return this.golemoverhaul$owner != null;
     }
 
@@ -124,24 +128,14 @@ public abstract class BeeMixin extends PathfinderMob implements AdditionalBeeDat
     private void golemoverhaul$wantsToEnterHive(CallbackInfoReturnable<Boolean> cir) {
         if (this.golemoverhaul$owner != null && this.level() instanceof ServerLevel level) {
             if (level.getEntity(this.golemoverhaul$owner) instanceof HoneyGolem golem) {
-                if (golem.getHealth() < golem.getMaxHealth()) {
-                    cir.setReturnValue(false);
-                    return;
-                }
-
                 if (golem.getTarget() != null) {
                     cir.setReturnValue(false);
                     return;
                 }
-            }
 
-            if (level.isNight()) {
-                cir.setReturnValue(true);
-                return;
-            }
-
-            if (this.hasNectar()) {
-                cir.setReturnValue(true);
+                if (level.isNight()) {
+                    cir.setReturnValue(true);
+                }
             }
         }
     }

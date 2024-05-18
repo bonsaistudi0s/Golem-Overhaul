@@ -1,0 +1,12 @@
+{
+  "type": "golemoverhaul:golem_construction",
+  "entity": "golemoverhaul:candle_golem",
+  "item": "golemoverhaul:candle_golem_block",
+  "key": {
+    "#": "golemoverhaul:candle_golem_block"
+  },
+  "pattern": [
+    "#"
+  ],
+  "visualOnly": true
+}
