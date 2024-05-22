@@ -10,9 +10,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -80,13 +82,13 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
             .add(Attributes.MAX_HEALTH, 320)
-            .add(Attributes.ARMOR, 10)
-            .add(Attributes.ARMOR_TOUGHNESS, 5)
-            .add(Attributes.MOVEMENT_SPEED, 0.13)
+            .add(Attributes.ARMOR, 20)
+            .add(Attributes.ARMOR_TOUGHNESS, 8)
+            .add(Attributes.MOVEMENT_SPEED, 0.15)
             .add(Attributes.ATTACK_KNOCKBACK, 2)
             .add(Attributes.KNOCKBACK_RESISTANCE, 1)
             .add(Attributes.ATTACK_DAMAGE, 20)
-            .add(Attributes.STEP_HEIGHT, 1);
+            .add(Attributes.STEP_HEIGHT, 1.5);
     }
 
     public static void trySpawnGolem(Level level, BlockPos pos) {
@@ -187,14 +189,6 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
     }
 
     @Override
-    protected float nextStep() {
-        if (this.isVehicle()) {
-            return super.nextStep() + 1;
-        }
-        return super.nextStep();
-    }
-
-    @Override
     public void handleEntityEvent(byte id) {
         super.handleEntityEvent(id);
         if (id == SUMMON_EVENT_ID) {
@@ -220,6 +214,14 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
     @Override
     public boolean isPushedByFluid() {
         return false;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.is(DamageTypeTags.IS_PROJECTILE)) return false;
+        if (source.is(DamageTypes.CACTUS)) return false;
+        if (source.is(DamageTypes.INDIRECT_MAGIC)) return false;
+        return super.hurt(source, amount);
     }
 
     @Override

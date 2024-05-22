@@ -51,7 +51,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, 0, this::handleMovementController));
+        controllers.add(new AnimationController<>(this, 5, this::handleMovementController));
 
         controllers.add(new AnimationController<>(this, "attack_controller", 0, state -> {
             if (!hasAttackAnimation()) return PlayState.STOP;
@@ -88,7 +88,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
         if (canFloatInWater()) {
             goalSelector.addGoal(0, new FloatGoal(this));
         }
-        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.6));
+        this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }

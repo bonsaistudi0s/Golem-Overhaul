@@ -56,7 +56,7 @@ public class ModEntityTypes {
 
     public static final RegistryEntry<EntityType<KelpGolem>> KELP_GOLEM = GOLEMS.register("kelp_golem", () ->
         EntityType.Builder.of(KelpGolem::new, MobCategory.MISC)
-            .sized(1, 1.25f)
+            .sized(0.8125f,  1.25f)
             .clientTrackingRange(10)
             .build("kelp_golem"));
 

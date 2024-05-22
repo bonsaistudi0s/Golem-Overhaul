@@ -82,7 +82,7 @@ public class BarrelGolem extends BaseGolem {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
             .add(Attributes.MAX_HEALTH, 40)
-            .add(Attributes.MOVEMENT_SPEED, 0.36)
+            .add(Attributes.MOVEMENT_SPEED, 0.31)
             .add(Attributes.ARMOR, 6)
             .add(Attributes.ATTACK_DAMAGE, 1);
     }
@@ -170,7 +170,7 @@ public class BarrelGolem extends BaseGolem {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(1, new BarrelGolemPanicGoal(1.5f));
+        this.goalSelector.addGoal(1, new BarrelGolemPanicGoal(1));
         this.goalSelector.addGoal(2, new BarrelGolemFindNearestEmeraldGoal());
     }
 

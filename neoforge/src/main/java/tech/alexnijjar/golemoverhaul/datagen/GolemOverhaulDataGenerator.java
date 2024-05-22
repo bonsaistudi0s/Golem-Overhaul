@@ -10,10 +10,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.datagen.provider.client.ModItemModelProvider;
 import tech.alexnijjar.golemoverhaul.datagen.provider.client.ModLangProvider;
-import tech.alexnijjar.golemoverhaul.datagen.provider.server.ModBlockTagProvider;
-import tech.alexnijjar.golemoverhaul.datagen.provider.server.ModEntityTypeTagProvider;
-import tech.alexnijjar.golemoverhaul.datagen.provider.server.ModLootTableProvider;
-import tech.alexnijjar.golemoverhaul.datagen.provider.server.ModRecipeProvider;
+import tech.alexnijjar.golemoverhaul.datagen.provider.server.*;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -33,6 +30,7 @@ public final class GolemOverhaulDataGenerator {
         generator.addProvider(event.includeServer(), new ModLootTableProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput, lookupProvider));
 
+        generator.addProvider(event.includeServer(), new ModItemTagProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new ModBlockTagProvider(packOutput, lookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new ModEntityTypeTagProvider(packOutput, lookupProvider, existingFileHelper));
     }

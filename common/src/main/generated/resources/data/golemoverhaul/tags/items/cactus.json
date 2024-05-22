@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:cactus",
+    {
+      "id": "#c:cactus",
+      "required": false
+    },
+    {
+      "id": "creeperoverhaul:tiny_cactus",
+      "required": false
+    }
+  ]
+}

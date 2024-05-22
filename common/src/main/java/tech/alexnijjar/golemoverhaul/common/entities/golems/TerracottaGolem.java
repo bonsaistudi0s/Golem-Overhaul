@@ -31,8 +31,10 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.MudBallProjectile;
+import tech.alexnijjar.golemoverhaul.common.tags.ModItemTags;
 
 import java.util.Locale;
+import java.util.function.Predicate;
 
 public class TerracottaGolem extends BaseGolem implements Shearable, RangedAttackMob {
 
@@ -43,6 +45,8 @@ public class TerracottaGolem extends BaseGolem implements Shearable, RangedAttac
     private final RangedAttackGoal rangedAttackGoal = new RangedAttackGoal(this, 1, 20, 15);
 
     private int attackAnimationDelay = -1;
+
+    private ItemStack equippedStack = ItemStack.EMPTY;
 
     public TerracottaGolem(EntityType<? extends AbstractGolem> type, Level level) {
         super(type, level);
@@ -70,13 +74,19 @@ public class TerracottaGolem extends BaseGolem implements Shearable, RangedAttac
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putString("Type", this.getTerracottaType().name().toLowerCase(Locale.ROOT));
+        compound.putString("type", this.getTerracottaType().name().toLowerCase(Locale.ROOT));
+        if (!this.equippedStack.isEmpty()) {
+            compound.put("item", this.equippedStack.save(this.registryAccess()));
+        }
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setTerracottaType(Type.valueOf(compound.getString("Type").toUpperCase(Locale.ROOT)));
+        this.setTerracottaType(Type.valueOf(compound.getString("type").toUpperCase(Locale.ROOT)));
+        if (compound.contains("item")) {
+            this.equippedStack = ItemStack.parse(this.registryAccess(), compound.getCompound("item")).orElse(ItemStack.EMPTY);
+        }
     }
 
     @Override
@@ -133,14 +143,19 @@ public class TerracottaGolem extends BaseGolem implements Shearable, RangedAttac
             if (stack.is(Items.SHEARS)) {
                 if (!player.getAbilities().instabuild) {
                     stack.hurtAndBreak(1, player, getSlotForHand(hand));
-                    BehaviorUtils.throwItem(this, getTerracottaType().equipItem.getDefaultInstance(), player.position());
+                    if (!this.equippedStack.isEmpty()) {
+                        BehaviorUtils.throwItem(this, this.equippedStack, player.position());
+                    } else {
+                        BehaviorUtils.throwItem(this, getTerracottaType().equipItem.getDefaultInstance(), player.position());
+                    }
                 }
                 shear(SoundSource.PLAYERS);
                 return InteractionResult.SUCCESS;
             }
         } else {
-            Type type = getTerracottaType().typeForItem(stack.getItem());
+            Type type = Type.ofStack(stack);
             if (type != null) {
+                this.equippedStack = stack.copyWithCount(1);
                 stack.shrink(1);
                 playSound(SoundEvents.ARMOR_EQUIP_GENERIC.value());
                 setTerracottaType(type);
@@ -211,27 +226,29 @@ public class TerracottaGolem extends BaseGolem implements Shearable, RangedAttac
     }
 
     public enum Type {
-        NORMAL(2, 0, Items.AIR, false),
-        CACTUS(6, 1, Items.CACTUS, false),
-        DEAD_BUSH(4, 0, Items.DEAD_BUSH, true),
+        NORMAL(2, 0, Items.AIR, false, stack -> false),
+        CACTUS(6, 1, Items.CACTUS, false, stack -> stack.is(ModItemTags.CACTUS)),
+        DEAD_BUSH(4, 0, Items.DEAD_BUSH, true, stack -> stack.is(Items.DEAD_BUSH)),
         ;
 
         private final float attackDamage;
         private final float knockbackResistance;
         private final Item equipItem;
         private final boolean ranged;
+        private final Predicate<ItemStack> isValidStack;
 
-        Type(float attackDamage, float knockbackResistance, Item equipItem, boolean ranged) {
+        Type(float attackDamage, float knockbackResistance, Item equipItem, boolean ranged, Predicate<ItemStack> isValidStack) {
             this.attackDamage = attackDamage;
             this.knockbackResistance = knockbackResistance;
             this.equipItem = equipItem;
             this.ranged = ranged;
+            this.isValidStack = isValidStack;
         }
 
         @Nullable
-        private Type typeForItem(Item item) {
+        private static Type ofStack(ItemStack stack) {
             for (Type type : values()) {
-                if (type.equipItem == item) {
+                if (type.isValidStack.test(stack)) {
                     return type;
                 }
             }

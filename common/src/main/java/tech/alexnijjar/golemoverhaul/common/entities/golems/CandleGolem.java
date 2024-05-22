@@ -16,13 +16,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -35,6 +34,7 @@ import software.bernie.geckolib.animation.PlayState;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.CandleFlameProjectile;
+import tech.alexnijjar.golemoverhaul.common.tags.ModItemTags;
 
 public class CandleGolem extends BaseGolem implements RangedAttackMob {
 
@@ -158,9 +158,8 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
         return 10;
     }
 
-    @Override
-    public Item getRepairItem() {
-        return Items.HONEYCOMB;
+    public boolean canRepair(ItemStack stack) {
+        return stack.is(ModItemTags.WAX);
     }
 
     @Override
