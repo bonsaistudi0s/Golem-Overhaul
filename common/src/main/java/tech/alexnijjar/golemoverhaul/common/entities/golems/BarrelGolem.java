@@ -1,5 +1,6 @@
 package tech.alexnijjar.golemoverhaul.common.entities.golems;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -13,6 +14,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,6 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -45,6 +48,7 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
+import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
@@ -52,6 +56,9 @@ import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
 import java.util.List;
 
 public class BarrelGolem extends BaseGolem {
+
+    private static final EntityDataAccessor<Boolean> ID_OPEN = SynchedEntityData.defineId(BarrelGolem.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ID_DAY_START_TICKS = SynchedEntityData.defineId(BarrelGolem.class, EntityDataSerializers.INT);
 
     private static final Vec3i ITEM_PICKUP_REACH = new Vec3i(2, 0, 2);
 
@@ -62,8 +69,6 @@ public class BarrelGolem extends BaseGolem {
 
     public static final int WAKE_UP_TICKS = 62;
     public static final int BARTERING_TICKS = 78;
-
-    private static final EntityDataAccessor<Boolean> ID_OPEN = SynchedEntityData.defineId(BarrelGolem.class, EntityDataSerializers.BOOLEAN);
 
     private int changeStateTicks;
     private int barteringTicks;
@@ -85,6 +90,11 @@ public class BarrelGolem extends BaseGolem {
             .add(Attributes.MOVEMENT_SPEED, 0.31)
             .add(Attributes.ARMOR, 6)
             .add(Attributes.ATTACK_DAMAGE, 1);
+    }
+
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnBarrelGolems || !GolemOverhaulConfig.allowSpawning) return false;
+        return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
     @Override
@@ -146,6 +156,7 @@ public class BarrelGolem extends BaseGolem {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ID_OPEN, true);
+        builder.define(ID_DAY_START_TICKS, WAKE_UP_TICKS);
     }
 
     @Override
@@ -189,6 +200,14 @@ public class BarrelGolem extends BaseGolem {
 
     public int getBarteringTicks() {
         return this.barteringTicks;
+    }
+
+    public int getDayStartTicks() {
+        return this.entityData.get(ID_DAY_START_TICKS);
+    }
+
+    public void setDayStartTicks(int ticks) {
+        this.entityData.set(ID_DAY_START_TICKS, ticks);
     }
 
     public void setOpen(boolean open, boolean playSound) {
@@ -239,7 +258,7 @@ public class BarrelGolem extends BaseGolem {
 
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
-        setOpen(level().isDay(), false);
+        setOpen(level().getSkyDarken() < 4, false);
         changeStateTicks = this.getRandomChangeInterval();
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData);
     }
@@ -264,6 +283,14 @@ public class BarrelGolem extends BaseGolem {
     @Override
     public void aiStep() {
         super.aiStep();
+
+        if (!level().isClientSide()) {
+            if (level().getSkyDarken() < 4) {
+                setDayStartTicks(getDayStartTicks() + 1);
+            } else {
+                setDayStartTicks(0);
+            }
+        }
 
         this.changeStateTicks = Math.max(0, this.changeStateTicks - 1);
         this.barteringTicks = Math.max(0, this.barteringTicks - 1);
@@ -347,12 +374,12 @@ public class BarrelGolem extends BaseGolem {
     }
 
     public boolean isWakingUp() {
-        long time = level().getDayTime();
-        return time >= 1000 && time < 1000 + WAKE_UP_TICKS;
+        int ticks = getDayStartTicks();
+        return ticks > 0 && ticks < WAKE_UP_TICKS;
     }
 
     private boolean finishedWakeUp() {
-        return level().getDayTime() == 1000 + WAKE_UP_TICKS;
+        return getDayStartTicks() == WAKE_UP_TICKS;
     }
 
     /**

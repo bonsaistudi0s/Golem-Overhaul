@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#golemoverhaul:coal_golem_spawns",
+  "spawners": {
+    "type": "golemoverhaul:coal_golem",
+    "weight": 20,
+    "minCount": 3,
+    "maxCount": 5
+  },
+  "entity_types": [
+    "golemoverhaul:coal_golem"
+  ]
+}

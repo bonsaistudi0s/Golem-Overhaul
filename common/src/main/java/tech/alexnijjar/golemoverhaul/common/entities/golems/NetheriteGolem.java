@@ -138,19 +138,19 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putBoolean("Charged", this.isCharged());
-        compound.putBoolean("Gilded", this.isGilded());
-        compound.putInt("SummoningTicks", this.getSummoningTicks());
-        compound.putInt("SummonCooldown", this.getSummonCooldown());
+        compound.putBoolean("charged", this.isCharged());
+        compound.putBoolean("gilded", this.isGilded());
+        compound.putInt("summoning_ticks", this.getSummoningTicks());
+        compound.putInt("summon_cooldown", this.getSummonCooldown());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setCharged(compound.getBoolean("Charged"));
-        this.setGilded(compound.getBoolean("Gilded"));
-        this.setSummoningTicks(compound.getInt("SummoningTicks"));
-        this.setSummonCooldown(compound.getInt("SummonCooldown"));
+        this.setCharged(compound.getBoolean("charged"));
+        this.setGilded(compound.getBoolean("gilded"));
+        this.setSummoningTicks(compound.getInt("summoning_ticks"));
+        this.setSummonCooldown(compound.getInt("summon_cooldown"));
     }
 
     public boolean isCharged() {

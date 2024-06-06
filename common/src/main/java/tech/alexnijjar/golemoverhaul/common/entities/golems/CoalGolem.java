@@ -1,5 +1,6 @@
 package tech.alexnijjar.golemoverhaul.common.entities.golems;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -9,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,6 +25,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
+import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
@@ -62,6 +68,14 @@ public class CoalGolem extends BaseGolem {
             .add(Attributes.MAX_HEALTH, 10)
             .add(Attributes.MOVEMENT_SPEED, 0.35)
             .add(Attributes.ATTACK_DAMAGE, 2);
+    }
+
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnCoalGolems || !GolemOverhaulConfig.allowSpawning) return false;
+        if (level.getBiome(pos).is(Biomes.DEEP_DARK)) return false;
+        return pos.getY() < level.getSeaLevel() &&
+            !level.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK) &&
+            checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
     @Override

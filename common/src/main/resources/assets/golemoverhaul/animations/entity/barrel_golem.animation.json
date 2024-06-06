@@ -437,11 +437,6 @@
 						"3.4": [0, 0, 0]
 					}
 				}
-			},
-			"sound_effects": {
-				"0.0": {
-					"effect": "barrel_golem_barter"
-				}
 			}
 		},
 		"animation.golem.open": {

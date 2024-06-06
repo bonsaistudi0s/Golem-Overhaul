@@ -61,5 +61,13 @@ public class ModLangProvider extends LanguageProvider {
         add("subtitles.golemoverhaul.entity.hay_golem.death", "Hay Golem dies");
         add("subtitles.golemoverhaul.entity.kelp_golem.death", "Kelp Golem dies");
         add("subtitles.golemoverhaul.entity.kelp_golem.step", "Kelp Golem steps");
+
+        add("config.golemoverhaul.allowSpawning", "Allow Spawning");
+        add("config.golemoverhaul.spawnBarrelGolems", "Spawn Barrel Golems");
+        add("config.golemoverhaul.spawnCoalGolems", "Spawn Coal Golems");
+        add("config.golemoverhaul.spawnHayGolems", "Spawn Hay Golems");
+        add("config.golemoverhaul.spawnHoneyGolems", "Spawn Honey Golems");
+        add("config.golemoverhaul.spawnSlimeGolems", "Spawn Slime Golems");
+        add("config.golemoverhaul.spawnTerracottaGolems", "Spawn Terracotta Golems");
     }
 }

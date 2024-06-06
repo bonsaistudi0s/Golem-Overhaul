@@ -37,13 +37,13 @@
 					]
 				},
 				{
-					"name": "head_animation",
+					"name": "head_rotation",
 					"parent": "body",
 					"pivot": [0, 23, 0]
 				},
 				{
 					"name": "head",
-					"parent": "head_animation",
+					"parent": "head_rotation",
 					"pivot": [0, 23, 0],
 					"cubes": [
 						{"origin": [-5, 22.5, -5], "size": [10, 10, 10], "uv": [0, 0]},

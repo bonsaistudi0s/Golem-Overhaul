@@ -1,6 +1,13 @@
 {
   "block.golemoverhaul.candle_golem_block": "Candle Golem Block",
   "block.golemoverhaul.clay_golem_statue": "Clay Golem Statue",
+  "config.golemoverhaul.allowSpawning": "Allow Spawning",
+  "config.golemoverhaul.spawnBarrelGolems": "Spawn Barrel Golems",
+  "config.golemoverhaul.spawnCoalGolems": "Spawn Coal Golems",
+  "config.golemoverhaul.spawnHayGolems": "Spawn Hay Golems",
+  "config.golemoverhaul.spawnHoneyGolems": "Spawn Honey Golems",
+  "config.golemoverhaul.spawnSlimeGolems": "Spawn Slime Golems",
+  "config.golemoverhaul.spawnTerracottaGolems": "Spawn Terracotta Golems",
   "entity.golemoverhaul.barrel_golem": "Barrel Golem",
   "entity.golemoverhaul.candle_flame": "Candle Flame",
   "entity.golemoverhaul.candle_golem": "Candle Golem",

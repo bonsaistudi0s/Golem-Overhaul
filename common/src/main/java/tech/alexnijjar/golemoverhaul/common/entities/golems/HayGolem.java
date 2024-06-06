@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -22,6 +23,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
+import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
@@ -63,8 +66,13 @@ public class HayGolem extends BaseGolem implements Shearable {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
             .add(Attributes.MAX_HEALTH, 40)
-            .add(Attributes.MOVEMENT_SPEED, 0.38)
+            .add(Attributes.MOVEMENT_SPEED, 0.34)
             .add(Attributes.ATTACK_DAMAGE, 3);
+    }
+
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnHayGolems || !GolemOverhaulConfig.allowSpawning) return false;
+        return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
     public static void trySpawnGolem(Level level, BlockPos pos) {
@@ -177,6 +185,9 @@ public class HayGolem extends BaseGolem implements Shearable {
     public void shear(SoundSource source) {
         playSound(SoundEvents.SNOW_GOLEM_SHEAR);
         setSheared(true);
+        if (!this.level().isClientSide()) {
+            this.spawnAtLocation(new ItemStack(Items.CARVED_PUMPKIN), this.getEyeHeight());
+        }
     }
 
     @Override

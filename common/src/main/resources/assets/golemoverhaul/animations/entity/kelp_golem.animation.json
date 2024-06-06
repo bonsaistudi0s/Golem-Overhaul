@@ -240,6 +240,14 @@
 						}
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "kelp_golem_step_1"
+				},
+				"0.48": {
+					"effect": "kelp_golem_step_2"
+				}
 			}
 		},
 		"animation.golem.idle": {

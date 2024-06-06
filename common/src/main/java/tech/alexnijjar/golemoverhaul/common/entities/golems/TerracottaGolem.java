@@ -1,11 +1,13 @@
 package tech.alexnijjar.golemoverhaul.common.entities.golems;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -24,11 +26,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
+import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.MudBallProjectile;
 import tech.alexnijjar.golemoverhaul.common.tags.ModItemTags;
@@ -58,6 +62,11 @@ public class TerracottaGolem extends BaseGolem implements Shearable, RangedAttac
             .add(Attributes.MAX_HEALTH, 30)
             .add(Attributes.MOVEMENT_SPEED, 0.3)
             .add(Attributes.ATTACK_DAMAGE, Type.CACTUS.attackDamage);
+    }
+
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnTerracottaGolems || !GolemOverhaulConfig.allowSpawning) return false;
+        return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
     @Override

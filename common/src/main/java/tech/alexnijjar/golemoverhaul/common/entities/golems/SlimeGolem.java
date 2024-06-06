@@ -1,5 +1,6 @@
 package tech.alexnijjar.golemoverhaul.common.entities.golems;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -7,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -16,6 +18,7 @@ import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
+import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
@@ -47,6 +51,11 @@ public class SlimeGolem extends BaseGolem {
             .add(Attributes.MOVEMENT_SPEED, Size.LARGE.speed)
             .add(Attributes.ATTACK_KNOCKBACK, Size.LARGE.knockback)
             .add(Attributes.ATTACK_DAMAGE, Size.LARGE.attackDamage);
+    }
+
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnSlimeGolems || !GolemOverhaulConfig.allowSpawning) return false;
+        return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
     @Override

@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#golemoverhaul:terracotta_golem_spawns",
+  "spawners": {
+    "type": "golemoverhaul:terracotta_golem",
+    "weight": 20,
+    "minCount": 1,
+    "maxCount": 2
+  },
+  "entity_types": [
+    "golemoverhaul:terracotta_golem"
+  ]
+}

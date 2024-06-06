@@ -103,6 +103,10 @@ public class GolemConstructionWidget extends Widget {
             Quaternionf ARMOR_STAND_ANGLE = new Quaternionf().rotationXYZ((float) Math.toRadians(30), (float) Math.toRadians(135), (float) Math.PI);
             InventoryScreen.renderEntityInInventory(graphics, this.x, this.y, 32 * entityScale, ARMOR_STAND_TRANSLATION, ARMOR_STAND_ANGLE, null, (LivingEntity) this.entity);
         }
+
+        if (mouseX >= this.x + 68 && mouseX < this.x + 120 && mouseY >= this.y - 48 && mouseY < this.y + 8) {
+            Minecraft.getInstance().screen.setTooltipForNextRenderPass(this.entity.getName());
+        }
     }
 
     @Override

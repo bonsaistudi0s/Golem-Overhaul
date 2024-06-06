@@ -93,7 +93,18 @@ public class KelpGolem extends BaseGolem {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        super.registerControllers(controllers);
+        controllers.add(new AnimationController<>(this, 5, this::handleMovementController)
+             .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.KELP_GOLEM_STEP.get(), getSoundSource(), 1, 1, false)));
+
+        controllers.add(new AnimationController<>(this, "attack_controller", 0, state -> {
+            if (!hasAttackAnimation()) return PlayState.STOP;
+            if (attackAnimationTicks == 0) {
+                state.resetCurrentAnimation();
+                return PlayState.STOP;
+            }
+            return getAttackAnimation(state);
+        }));
+
         controllers.add(new AnimationController<>(this, "spin_controller", 0, state -> {
             if (!isCharged()) {
                 state.resetCurrentAnimation();
@@ -162,9 +173,7 @@ public class KelpGolem extends BaseGolem {
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(ModSoundEvents.KELP_GOLEM_STEP.get(), 1, 1);
-    }
+    protected void playStepSound(BlockPos pos, BlockState state) {}
 
     @Override
     public boolean canFloatInWater() {
