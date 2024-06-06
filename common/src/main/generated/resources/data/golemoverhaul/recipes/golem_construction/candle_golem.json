@@ -1,5 +1,6 @@
 {
   "type": "golemoverhaul:golem_construction",
+  "blockScale": 1.5,
   "entity": "golemoverhaul:candle_golem",
   "item": "golemoverhaul:candle_golem_block",
   "key": {

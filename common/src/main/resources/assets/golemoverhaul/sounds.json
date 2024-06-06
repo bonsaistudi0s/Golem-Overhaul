@@ -32,5 +32,70 @@
       "golemoverhaul:barrel/barter"
     ],
     "subtitle": "subtitles.golemoverhaul.entity.barrel_golem.barter"
+  },
+  "netherite_golem_hit": {
+    "sounds": [
+      "golemoverhaul:netherite/hit1"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.netherite_golem.hit"
+  },
+  "netherite_golem_hurt": {
+    "sounds": [
+      "golemoverhaul:netherite/hurt1",
+      "golemoverhaul:netherite/hurt2",
+      "golemoverhaul:netherite/hurt3",
+      "golemoverhaul:netherite/hurt4",
+      "golemoverhaul:netherite/hurt5"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.netherite_golem.hurt"
+  },
+  "netherite_golem_death": {
+    "sounds": [
+      "golemoverhaul:netherite/death1"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.netherite_golem.death"
+  },
+  "netherite_golem_step": {
+    "sounds": [
+      "golemoverhaul:netherite/step1",
+      "golemoverhaul:netherite/step2",
+      "golemoverhaul:netherite/step3",
+      "golemoverhaul:netherite/step4"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.netherite_golem.step"
+  },
+  "netherite_golem_summon": {
+    "sounds": [
+      "golemoverhaul:netherite/summon"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.netherite_golem.summon"
+  },
+  "hay_golem_death": {
+    "sounds": [
+      "golemoverhaul:hay/death1",
+      "golemoverhaul:hay/death2"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.hay_golem.death"
+  },
+  "hay_golem_hurt": {
+    "sounds": [
+      "golemoverhaul:hay/hurt1",
+      "golemoverhaul:hay/hurt2"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.hay_golem.hurt"
+  },
+  "kelp_golem_death": {
+    "sounds": [
+      "golemoverhaul:kelp/death1"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.kelp_golem.death"
+  },
+  "kelp_golem_step": {
+    "sounds": [
+      "golemoverhaul:kelp/step1",
+      "golemoverhaul:kelp/step2",
+      "golemoverhaul:kelp/step3"
+    ],
+    "subtitle": "subtitles.golemoverhaul.entity.kelp_golem.step"
   }
 }

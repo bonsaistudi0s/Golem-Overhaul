@@ -5,12 +5,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -31,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
+import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
 import tech.alexnijjar.golemoverhaul.common.utils.ModUtils;
 
 import java.util.Locale;
@@ -87,15 +90,17 @@ public class HayGolem extends BaseGolem implements Shearable {
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        compound.putString("Color", this.getColor().name().toLowerCase(Locale.ROOT));
-        compound.putBoolean("Sheared", this.isSheared());
+        compound.putString("color", this.getColor().name().toLowerCase(Locale.ROOT));
+        compound.putBoolean("sheared", this.isSheared());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.setColor(Color.valueOf(compound.getString("Color").toUpperCase(Locale.ROOT)));
-        this.setSheared(compound.getBoolean("Sheared"));
+        if (compound.contains("color")) {
+            this.setColor(Color.valueOf(compound.getString("color").toUpperCase(Locale.ROOT)));
+        }
+        this.setSheared(compound.getBoolean("sheared"));
     }
 
     @Override
@@ -117,6 +122,16 @@ public class HayGolem extends BaseGolem implements Shearable {
 
     public void setSheared(boolean sheared) {
         this.entityData.set(ID_SHEARED, sheared);
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return ModSoundEvents.HAY_GOLEM_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return ModSoundEvents.HAY_GOLEM_DEATH.get();
     }
 
     @Override

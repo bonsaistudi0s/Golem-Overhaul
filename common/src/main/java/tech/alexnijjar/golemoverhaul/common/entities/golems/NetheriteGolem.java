@@ -44,6 +44,7 @@ import software.bernie.geckolib.animation.PlayState;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
+import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
 import tech.alexnijjar.golemoverhaul.common.utils.ModUtils;
 
 public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideableJumping {
@@ -101,11 +102,22 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        super.registerControllers(controllers);
-        controllers.add(new AnimationController<>(this, "death_controller", 5, state -> {
+        controllers.add(new AnimationController<>(this, 5, this::handleMovementController)
+                .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_STEP.get(), getSoundSource(), 1, 1, false)));
+
+        controllers.add(new AnimationController<>(this, "attack_controller", 0, state -> {
+            if (!hasAttackAnimation()) return PlayState.STOP;
+            if (attackAnimationTicks == 0) {
+                state.resetCurrentAnimation();
+                return PlayState.STOP;
+            }
+            return getAttackAnimation(state);
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_HIT.get(), getSoundSource(), 1, 1, false)));
+
+        controllers.add(new AnimationController<>(this, "death_controller", 0, state -> {
             if (deathTime == 0) return PlayState.STOP;
             return state.setAndContinue(ConstantAnimations.DIE);
-        }));
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_DEATH.get(), getSoundSource(), 1, 1, false)));
 
         controllers.add(new AnimationController<>(this, "summon_controller", 0, state -> {
             if (getSummoningTicks() == 0) {
@@ -113,7 +125,7 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
                 return PlayState.STOP;
             }
             return state.setAndContinue(ConstantAnimations.SUMMON);
-        }));
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_SUMMON.get(), getSoundSource(), 1, 1, false)));
     }
 
     @Override
@@ -175,18 +187,16 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundEvents.IRON_GOLEM_HURT;
+        return ModSoundEvents.NETHERITE_GOLEM_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.IRON_GOLEM_DEATH;
+        return ModSoundEvents.NETHERITE_GOLEM_DEATH.get();
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.IRON_GOLEM_STEP, 1, 1);
-    }
+    protected void playStepSound(BlockPos pos, BlockState state) {}
 
     @Override
     public void handleEntityEvent(byte id) {
@@ -420,7 +430,6 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
             target.addDeltaMovement(new Vec3(lookAngle.x * 0.4, 0.5, lookAngle.z * 0.4));
             super.actuallyAttackAfterDelay(target);
         }
-        this.playSound(SoundEvents.IRON_GOLEM_ATTACK, 1, 1);
     }
 
     @Override
@@ -443,7 +452,6 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
         } else {
             doAoeAttack(target, (float) getAttributeValue(Attributes.ATTACK_DAMAGE), 0.5f, 0.5f);
         }
-        playSound(SoundEvents.MACE_SMASH_GROUND);
     }
 
     public void doAoeAttack(@Nullable LivingEntity target, float damage, float radius, float y) {

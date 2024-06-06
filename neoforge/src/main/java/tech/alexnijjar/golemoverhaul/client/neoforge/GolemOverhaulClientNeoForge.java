@@ -11,7 +11,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import tech.alexnijjar.golemoverhaul.client.GolemOverhaulClient;
 
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
-public class GolemOverhaulClientForge {
+public class GolemOverhaulClientNeoForge {
 
     public static void init() {
     }
@@ -19,7 +19,7 @@ public class GolemOverhaulClientForge {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(GolemOverhaulClient::init);
-        NeoForge.EVENT_BUS.addListener(GolemOverhaulClientForge::onClientTick);
+        NeoForge.EVENT_BUS.addListener(GolemOverhaulClientNeoForge::onClientTick);
     }
 
     @SubscribeEvent

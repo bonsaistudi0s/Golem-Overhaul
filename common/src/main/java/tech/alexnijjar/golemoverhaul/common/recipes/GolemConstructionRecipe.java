@@ -29,7 +29,9 @@ public record GolemConstructionRecipe(
     Map<String, ResourceKey<Block>> key,
     ResourceKey<EntityType<?>> entity,
     ResourceKey<Item> item,
-    boolean visualOnly
+    boolean visualOnly,
+    float blockScale,
+    float entityScale
 ) implements CodecRecipe<Container> {
 
     public static final MapCodec<GolemConstructionRecipe> CODEC = RecordCodecBuilder.mapCodec(
@@ -38,7 +40,9 @@ public record GolemConstructionRecipe(
             Codec.unboundedMap(Codec.STRING, ResourceKey.codec(Registries.BLOCK)).fieldOf("key").forGetter(GolemConstructionRecipe::key),
             ResourceKey.codec(Registries.ENTITY_TYPE).fieldOf("entity").forGetter(GolemConstructionRecipe::entity),
             ResourceKey.codec(Registries.ITEM).fieldOf("item").forGetter(GolemConstructionRecipe::item),
-            Codec.BOOL.optionalFieldOf("visualOnly", false).forGetter(GolemConstructionRecipe::visualOnly)
+            Codec.BOOL.optionalFieldOf("visualOnly", false).forGetter(GolemConstructionRecipe::visualOnly),
+            Codec.FLOAT.optionalFieldOf("blockScale", 1f).forGetter(GolemConstructionRecipe::blockScale),
+            Codec.FLOAT.optionalFieldOf("entityScale", 1f).forGetter(GolemConstructionRecipe::entityScale)
         ).apply(instance, GolemConstructionRecipe::new));
 
     public static final ByteCodec<GolemConstructionRecipe> NETWORK_CODEC = ObjectByteCodec.create(
@@ -47,6 +51,8 @@ public record GolemConstructionRecipe(
         ExtraByteCodecs.resourceKey(Registries.ENTITY_TYPE).fieldOf(GolemConstructionRecipe::entity),
         ExtraByteCodecs.resourceKey(Registries.ITEM).fieldOf(GolemConstructionRecipe::item),
         ByteCodec.BOOLEAN.fieldOf(GolemConstructionRecipe::visualOnly),
+        ByteCodec.FLOAT.fieldOf(GolemConstructionRecipe::blockScale),
+        ByteCodec.FLOAT.fieldOf(GolemConstructionRecipe::entityScale),
         GolemConstructionRecipe::new
     );
 

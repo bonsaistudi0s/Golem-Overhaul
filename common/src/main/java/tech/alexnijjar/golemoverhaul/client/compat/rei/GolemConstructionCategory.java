@@ -37,21 +37,19 @@ public class GolemConstructionCategory implements DisplayCategory<GolemConstruct
 
     @Override
     public int getDisplayWidth(GolemConstructionDisplay display) {
-        return 184;
+        return 180;
     }
 
     @Override
     public int getDisplayHeight() {
-        return 117;
+        return 76;
     }
 
     @Override
     public List<Widget> setupDisplay(GolemConstructionDisplay display, Rectangle bounds) {
         List<Widget> widgets = new ArrayList<>();
-        widgets.add(Widgets.createRecipeBase(bounds));
         widgets.add(new GolemConstructionWidget(display.recipe(), bounds.x + 47, bounds.y + 58));
-        widgets.add(Widgets.createArrow(new Point(bounds.x + 70, bounds.y + 50)));
-
+        widgets.add(Widgets.createArrow(new Point(bounds.x + 78, bounds.y + 30)));
         return widgets;
     }
 }

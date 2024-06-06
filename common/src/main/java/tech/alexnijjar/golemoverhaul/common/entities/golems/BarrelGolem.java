@@ -138,7 +138,7 @@ public class BarrelGolem extends BaseGolem {
     }
 
     @Override
-    public PlayState getAttackAnimation(AnimationState<BaseGolem> state) {
+    public PlayState getAttackAnimation(AnimationState<? extends BaseGolem> state) {
         return PlayState.STOP;
     }
 

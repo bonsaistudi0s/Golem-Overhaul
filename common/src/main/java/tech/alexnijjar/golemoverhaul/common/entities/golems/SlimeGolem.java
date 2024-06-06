@@ -50,7 +50,7 @@ public class SlimeGolem extends BaseGolem {
     }
 
     @Override
-    public PlayState getAttackAnimation(AnimationState<BaseGolem> state) {
+    public PlayState getAttackAnimation(AnimationState<? extends BaseGolem> state) {
         return state.setAndContinue(this.attackArm);
     }
 

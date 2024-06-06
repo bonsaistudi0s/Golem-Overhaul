@@ -1,6 +1,8 @@
 {
   "type": "golemoverhaul:golem_construction",
+  "blockScale": 0.75,
   "entity": "golemoverhaul:kelp_golem",
+  "entityScale": 0.5,
   "item": "golemoverhaul:kelp_golem_spawn_egg",
   "key": {
     "#": "minecraft:dried_kelp_block",

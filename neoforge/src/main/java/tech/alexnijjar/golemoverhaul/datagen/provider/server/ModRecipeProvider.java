@@ -41,7 +41,9 @@ public class ModRecipeProvider extends RecipeProvider {
             ),
             ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.NETHERITE_GOLEM.getId()),
             ResourceKey.create(Registries.ITEM, ModItems.NETHERITE_GOLEM_SPAWN_EGG.getId()),
-            false
+            false,
+            0.75f,
+            0.45f
         ).save(output, new ResourceLocation(GolemOverhaul.MOD_ID, "golem_construction/netherite_golem"));
 
         new GolemConstructionRecipeBuilder(
@@ -58,7 +60,9 @@ public class ModRecipeProvider extends RecipeProvider {
             ),
             ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.HAY_GOLEM.getId()),
             ResourceKey.create(Registries.ITEM, ModItems.HAY_GOLEM_SPAWN_EGG.getId()),
-            false
+            false,
+            0.75f,
+            0.6f
         ).save(output, new ResourceLocation(GolemOverhaul.MOD_ID, "golem_construction/hay_golem"));
 
         new GolemConstructionRecipeBuilder(
@@ -69,12 +73,10 @@ public class ModRecipeProvider extends RecipeProvider {
             ),
             Map.of(
                 "^", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.SEA_LANTERN)),
-                "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.DRIED_KELP_BLOCK)),
-                "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))
-            ),
-            ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.KELP_GOLEM.getId()),
-            ResourceKey.create(Registries.ITEM, ModItems.KELP_GOLEM_SPAWN_EGG.getId()),
-            false
+                "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.DRIED_KELP_BLOCK)), "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR)) ), ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.KELP_GOLEM.getId()), ResourceKey.create(Registries.ITEM, ModItems.KELP_GOLEM_SPAWN_EGG.getId()),
+            false,
+            0.75f,
+            0.5f
         ).save(output, new ResourceLocation(GolemOverhaul.MOD_ID, "golem_construction/kelp_golem"));
 
         new GolemConstructionRecipeBuilder(
@@ -82,7 +84,9 @@ public class ModRecipeProvider extends RecipeProvider {
             Map.of("#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(ModBlocks.CANDLE_GOLEM_BLOCK.get()))),
             ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.CANDLE_GOLEM.getId()),
             ResourceKey.create(Registries.ITEM, ModItems.CANDLE_GOLEM_BLOCK.getId()),
-            true
+            true,
+            1.5f,
+            1
         ).save(output, new ResourceLocation(GolemOverhaul.MOD_ID, "golem_construction/candle_golem"));
 
         new GolemConstructionRecipeBuilder(
@@ -90,7 +94,9 @@ public class ModRecipeProvider extends RecipeProvider {
             Map.of("#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(ModBlocks.CLAY_GOLEM_STATUE.get()))),
             ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.TERRACOTTA_GOLEM.getId()),
             ResourceKey.create(Registries.ITEM, ModItems.CLAY_GOLEM_STATUE.getId()),
-            true
+            true,
+            1.5f,
+            1
         ).save(output, new ResourceLocation(GolemOverhaul.MOD_ID, "golem_construction/terracotta_golem"));
     }
 }

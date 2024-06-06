@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -29,6 +30,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
@@ -44,6 +46,7 @@ import software.bernie.geckolib.animation.PlayState;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
+import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
 import tech.alexnijjar.golemoverhaul.common.utils.ModUtils;
 
 public class KelpGolem extends BaseGolem {
@@ -138,7 +141,7 @@ public class KelpGolem extends BaseGolem {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0,  new NearestAttackableTargetGoal<>(this, Mob.class, 3, true, false, this::shouldAttack));
+        this.goalSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Mob.class, 3, true, false, this::shouldAttack));
         this.goalSelector.addGoal(0, new RandomSwimmingGoal(this, 1, 40));
         this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6));
@@ -151,6 +154,16 @@ public class KelpGolem extends BaseGolem {
 
     public void setCharged(boolean charged) {
         this.entityData.set(ID_CHARGED, charged);
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return ModSoundEvents.KELP_GOLEM_DEATH.get();
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        this.playSound(ModSoundEvents.KELP_GOLEM_STEP.get(), 1, 1);
     }
 
     @Override

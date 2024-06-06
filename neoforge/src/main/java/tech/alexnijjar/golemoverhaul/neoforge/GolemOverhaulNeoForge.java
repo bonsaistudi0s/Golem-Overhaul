@@ -13,7 +13,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
-import tech.alexnijjar.golemoverhaul.client.neoforge.GolemOverhaulClientForge;
+import tech.alexnijjar.golemoverhaul.client.neoforge.GolemOverhaulClientNeoForge;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.HayGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.KelpGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
@@ -26,7 +26,7 @@ public class GolemOverhaulNeoForge {
         bus.addListener(GolemOverhaulNeoForge::onAttributes);
         bus.addListener(GolemOverhaulNeoForge::commonSetup);
         if (FMLEnvironment.dist.isClient()) {
-            GolemOverhaulClientForge.init();
+            GolemOverhaulClientNeoForge.init();
         }
         NeoForge.EVENT_BUS.addListener(GolemOverhaulNeoForge::onFarmlandTrample);
         NeoForge.EVENT_BUS.addListener(GolemOverhaulNeoForge::onBlockPlace);

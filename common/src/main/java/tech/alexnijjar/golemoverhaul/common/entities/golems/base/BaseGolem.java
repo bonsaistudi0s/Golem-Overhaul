@@ -74,7 +74,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
             ConstantAnimations.IDLE);
     }
 
-    public PlayState getAttackAnimation(AnimationState<BaseGolem> state) {
+    public PlayState getAttackAnimation(AnimationState<? extends BaseGolem> state) {
         return state.setAndContinue(ConstantAnimations.ATTACK);
     }
 

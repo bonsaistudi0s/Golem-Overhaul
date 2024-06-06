@@ -40,17 +40,6 @@ subprojects {
     repositories {
         maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
         maven(url = "https://maven.neoforged.net/releases/")
-        exclusiveContent {
-            forRepository {
-                maven {
-                    name = "Modrinth"
-                    url = uri("https://api.modrinth.com/maven")
-                }
-            }
-            filter {
-                includeGroup("maven.modrinth")
-            }
-        }
     }
 
     dependencies {
@@ -71,9 +60,21 @@ subprojects {
             parchment(create(group = "org.parchmentmc.data", name = "parchment-1.20.4", version = parchmentVersion))
         })
 
-        "modApi"(group = "com.teamresourceful.resourcefullib", name = "resourcefullib-$modLoader-1.20.5", version = resourcefulLibVersion)
-        "modApi"(group = "com.teamresourceful.resourcefulconfig", name = "resourcefulconfig-$modLoader-1.20.5", version = resourcefulConfigVersion)
-        "modImplementation"(group = "software.bernie.geckolib", name = "geckolib-$modLoader-$minecraftVersion", version = geckolibVersion)
+        "modApi"(
+            group = "com.teamresourceful.resourcefullib",
+            name = "resourcefullib-$modLoader-1.20.5",
+            version = resourcefulLibVersion
+        )
+        "modApi"(
+            group = "com.teamresourceful.resourcefulconfig",
+            name = "resourcefulconfig-$modLoader-1.20.5",
+            version = resourcefulConfigVersion
+        )
+        "modImplementation"(
+            group = "software.bernie.geckolib",
+            name = "geckolib-$modLoader-$minecraftVersion",
+            version = geckolibVersion
+        )
 
         if (isCommon) {
             "modApi"(group = "mezz.jei", name = "jei-1.20.4-common-api", version = jeiVersion)
@@ -81,7 +82,11 @@ subprojects {
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin", version = reiVersion)
         } else {
             "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-$modLoader", version = reiVersion)
-            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin-$modLoader", version = reiVersion)
+            "modCompileOnly"(
+                group = "me.shedaniel",
+                name = "RoughlyEnoughItems-default-plugin-$modLoader",
+                version = reiVersion
+            )
         }
     }
 
@@ -168,6 +173,14 @@ subprojects {
     }
 }
 
+allprojects {
+    idea {
+        module {
+            excludeDirs.add(file("run"))
+        }
+    }
+}
+
 resourcefulGradle {
     templates {
         register("embed") {
@@ -176,11 +189,13 @@ resourcefulGradle {
             val changelog: String = file("changelog.md").readText(Charsets.UTF_8)
 
             source.set(file("templates/embed.json.template"))
-            injectedValues.set(mapOf(
+            injectedValues.set(
+                mapOf(
                     "minecraft" to minecraftVersion,
                     "version" to version,
                     "changelog" to StringEscapeUtils.escapeJava(changelog),
-            ))
+                )
+            )
         }
     }
 }
