@@ -190,8 +190,8 @@ public class SlimeGolem extends BaseGolem {
     }
 
     public enum Size {
-        LARGE(50, 6, 0.36, 2, 0),
-        SMALL(20, 3, 0.3, 1, 6),
+        LARGE(50, 6, 0.2, 2, 0),
+        SMALL(20, 3, 0.16, 1, 6),
         ;
 
         private final int health;

@@ -60,7 +60,7 @@ public class TerracottaGolem extends BaseGolem implements Shearable, RangedAttac
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
             .add(Attributes.MAX_HEALTH, 30)
-            .add(Attributes.MOVEMENT_SPEED, 0.3)
+            .add(Attributes.MOVEMENT_SPEED, 0.2)
             .add(Attributes.ATTACK_DAMAGE, Type.CACTUS.attackDamage);
     }
 

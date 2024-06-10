@@ -66,7 +66,7 @@ public class HayGolem extends BaseGolem implements Shearable {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
             .add(Attributes.MAX_HEALTH, 40)
-            .add(Attributes.MOVEMENT_SPEED, 0.34)
+            .add(Attributes.MOVEMENT_SPEED, 0.18)
             .add(Attributes.ATTACK_DAMAGE, 3);
     }
 

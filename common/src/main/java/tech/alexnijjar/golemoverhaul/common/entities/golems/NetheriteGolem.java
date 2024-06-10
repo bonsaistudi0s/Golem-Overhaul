@@ -85,7 +85,7 @@ public class NetheriteGolem extends BaseGolem implements Shearable, PlayerRideab
             .add(Attributes.MAX_HEALTH, 320)
             .add(Attributes.ARMOR, 20)
             .add(Attributes.ARMOR_TOUGHNESS, 8)
-            .add(Attributes.MOVEMENT_SPEED, 0.15)
+            .add(Attributes.MOVEMENT_SPEED, 0.14)
             .add(Attributes.ATTACK_KNOCKBACK, 2)
             .add(Attributes.KNOCKBACK_RESISTANCE, 1)
             .add(Attributes.ATTACK_DAMAGE, 20)
