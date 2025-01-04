@@ -9,19 +9,17 @@ repositories {
 }
 
 dependencies {
-    modImplementation(group = "tech.alexnijjar.golemoverhaul", name = "golemoverhaul-$modLoader-$minecraftVersion", version = golemOverhaulVersion)
+    implementation("tech.alexnijjar.golemoverhaul:golemoverhaul-neoforge-$minecraftVersion:$endermanOverhaulVersion")
 }
 ```
 
 Groovy DSL:
 ```groovy
 repositories {
-    maven {
-        url "https://maven.teamresourceful.com/repository/maven-public/"
-    }
+    maven { url "https://maven.teamresourceful.com/repository/maven-public/" }
 }
 
 dependencies {
-    modImplementation group: "tech.alexnijjar.golemoverhaul", name: "golemoverhaul-$modLoader-$minecraftVersion", version: golemOverhaulVersion
+    implementation "tech.alexnijjar.golemoverhaul:golemoverhaul-neoforge-$minecraftVersion:$endermanOverhaulVersion"
 }
 ```

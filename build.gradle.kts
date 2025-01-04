@@ -1,201 +1,140 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import dev.architectury.plugin.ArchitectPluginExtension
-import groovy.json.StringEscapeUtils
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
     java
+    idea
+    id("net.neoforged.moddev") version "2.0.72" // https://projects.neoforged.net/neoforged/ModDevGradle
     id("maven-publish")
-    id("com.teamresourceful.resourcefulgradle") version "0.0.+"
-    id("dev.architectury.loom") version "1.6-SNAPSHOT" apply false
-    id("architectury-plugin") version "3.4-SNAPSHOT"
-    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
-architectury {
-    val minecraftVersion: String by project
-    minecraft = minecraftVersion
+val minecraftVersion: String by project
+val neoforgeVersion: String by project
+val modId: String by project
+val version: String by project
+val resourcefulLibVersion: String by project
+val resourcefulConfigVersion: String by project
+val geckolibVersion: String by project
+val jeiVersion: String by project
+val reiVersion: String by project
+
+base {
+    archivesName.set("$modId-neoforge-$minecraftVersion")
 }
 
-subprojects {
-    apply(plugin = "maven-publish")
-    apply(plugin = "dev.architectury.loom")
-    apply(plugin = "architectury-plugin")
-    apply(plugin = "com.github.johnrengelman.shadow")
+repositories {
+    mavenLocal()
+    maven("https://maven.teamresourceful.com/repository/maven-public/")
+    maven("https://maven.shedaniel.me/")
+}
 
-    val minecraftVersion: String by project
-    val modLoader = project.name
-    val modId = rootProject.name
-    val isCommon = modLoader == rootProject.projects.common.name
+dependencies {
+    implementation("com.teamresourceful.resourcefullib:resourcefullib-neoforge-1.21:$resourcefulLibVersion")
+    implementation("com.teamresourceful.resourcefulconfig:resourcefulconfig-neoforge-1.21:$resourcefulConfigVersion")
+    implementation("software.bernie.geckolib:geckolib-neoforge-$minecraftVersion:$geckolibVersion")
+    compileOnly("mezz.jei:jei-$minecraftVersion-neoforge-api:$jeiVersion")
+    compileOnly("me.shedaniel:RoughlyEnoughItems-api-neoforge:$reiVersion")
+    implementation("com.teamresourceful:bytecodecs:1.1.2")
 
-    base {
-        archivesName.set("$modId-$modLoader-$minecraftVersion")
-    }
+    runtimeOnly("me.shedaniel:RoughlyEnoughItems-neoforge:$reiVersion")
+//    runtimeOnly("mezz.jei:jei-$minecraftVersion-neoforge:$jeiVersion")
+}
 
-    configure<LoomGradleExtensionAPI> {
-        silentMojangMappingsLicense()
-    }
+neoForge {
+    version = neoforgeVersion
+    validateAccessTransformers = true
 
-    repositories {
-        maven(url = "https://maven.teamresourceful.com/repository/maven-public/")
-        maven(url = "https://maven.neoforged.net/releases/")
-    }
+    runs {
+        register("client") {
+            client()
+        }
 
-    dependencies {
-        val resourcefulLibVersion: String by project
-        val resourcefulConfigVersion: String by project
-        val geckolibVersion: String by project
-        val jeiVersion: String by project
-        val reiVersion: String by project
+        register("server") {
+            server()
+        }
 
-        "minecraft"("::$minecraftVersion")
-
-        @Suppress("UnstableApiUsage")
-        "mappings"(project.the<LoomGradleExtensionAPI>().layered {
-            val parchmentVersion: String by project
-
-            officialMojangMappings()
-
-            parchment(create(group = "org.parchmentmc.data", name = "parchment-1.20.4", version = parchmentVersion))
-        })
-
-        "modApi"(
-            group = "com.teamresourceful.resourcefullib",
-            name = "resourcefullib-$modLoader-1.20.5",
-            version = resourcefulLibVersion
-        )
-        "modApi"(
-            group = "com.teamresourceful.resourcefulconfig",
-            name = "resourcefulconfig-$modLoader-1.20.5",
-            version = resourcefulConfigVersion
-        )
-        "modImplementation"(
-            group = "software.bernie.geckolib",
-            name = "geckolib-$modLoader-$minecraftVersion",
-            version = geckolibVersion
-        )
-
-        if (isCommon) {
-            "modApi"(group = "mezz.jei", name = "jei-1.20.4-common-api", version = jeiVersion)
-            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api", version = reiVersion)
-            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-default-plugin", version = reiVersion)
-        } else {
-            "modCompileOnly"(group = "me.shedaniel", name = "RoughlyEnoughItems-api-$modLoader", version = reiVersion)
-            "modCompileOnly"(
-                group = "me.shedaniel",
-                name = "RoughlyEnoughItems-default-plugin-$modLoader",
-                version = reiVersion
+        register("data") {
+            data()
+            programArguments.addAll(
+                "--mod", modId,
+                "--all",
+                "--output", file("src/generated/resources/").absolutePath,
+                "--existing", file("src/main/resources/").absolutePath
             )
         }
     }
 
-    java {
-        withSourcesJar()
+    mods.register(modId) {
+        sourceSet(sourceSets.main.get())
+    }
+}
+
+sourceSets.main.get().resources.srcDir("src/generated/resources")
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    withSourcesJar()
+}
+
+idea {
+    module {
+        excludeDirs.add(file("run"))
+    }
+}
+
+tasks {
+    withType<JavaCompile> {
+        options.encoding = "UTF-8"
     }
 
-    tasks.jar {
-        archiveClassifier.set("dev")
-    }
+    processResources {
+        exclude(".cache")
 
-    tasks.named<RemapJarTask>("remapJar") {
-        archiveClassifier.set(null as String?)
-    }
+        val properties = mapOf(
+            "minecraftVersion" to minecraftVersion,
+            "neoforgeVersion" to neoforgeVersion.split(".")[0],
+            "version" to version,
+            "modId" to modId,
+            "resourcefulLibVersion" to resourcefulLibVersion,
+            "resourcefulConfigVersion" to resourcefulConfigVersion,
+            "geckolibVersion" to geckolibVersion
+        )
 
-    tasks.processResources {
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        filesMatching(listOf("META-INF/neoforge.mods.toml", "fabric.mod.json")) {
-            expand("version" to project.version)
+        inputs.properties(properties)
+        filesMatching("META-INF/neoforge.mods.toml") {
+            expand(properties)
         }
     }
+}
 
-    if (!isCommon) {
-        configure<ArchitectPluginExtension> {
-            platformSetupLoomIde()
-        }
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifactId = "$modId-neoforge-$minecraftVersion"
+            from(components["java"])
 
-        val shadowCommon by configurations.creating {
-            isCanBeConsumed = false
-            isCanBeResolved = true
-        }
+            pom {
+                name.set("Golem Overhaul NeoForge")
+                url.set("https://github.com/bonsaistudi0s/$modId")
 
-        tasks {
-            "shadowJar"(ShadowJar::class) {
-                archiveClassifier.set("dev-shadow")
-                configurations = listOf(shadowCommon)
-
-                exclude(".cache/**") // Remove datagen cache from jar.
-                exclude("**/golemoverhaul/datagen/**") // Remove data gen code from jar.
-            }
-
-            "remapJar"(RemapJarTask::class) {
-                dependsOn("shadowJar")
-                inputFile.set(named<ShadowJar>("shadowJar").flatMap { it.archiveFile })
-            }
-        }
-    } else {
-        sourceSets.main.get().resources.srcDir("src/main/generated/resources")
-    }
-
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                artifactId = "$modId-$modLoader-$minecraftVersion"
-                from(components["java"])
-
-                pom {
-                    name.set("Golem Overhaul $modLoader")
+                scm {
+                    connection.set("git:https://github.com/bonsaistudi0s/$modId.git")
+                    developerConnection.set("git:https://github.com/bonsaistudi0s/$modId.git")
                     url.set("https://github.com/bonsaistudi0s/$modId")
+                }
 
-                    scm {
-                        connection.set("git:https://github.com/bonsaistudi0s/$modId.git")
-                        developerConnection.set("git:https://github.com/bonsaistudi0s/$modId.git")
-                        url.set("https://github.com/bonsaistudi0s/$modId")
-                    }
-
-                    licenses {
-                        license {
-                            name.set("ARR")
-                        }
+                licenses {
+                    license {
+                        name.set("ARR")
                     }
                 }
             }
         }
-        repositories {
-            maven {
-                setUrl("https://maven.teamresourceful.com/repository/alexnijjar/")
-                credentials {
-                    username = System.getenv("MAVEN_USER")
-                    password = System.getenv("MAVEN_PASS")
-                }
+    }
+    repositories {
+        maven {
+            setUrl("https://maven.teamresourceful.com/repository/alexnijjar/")
+            credentials {
+                username = System.getenv("MAVEN_USER")
+                password = System.getenv("MAVEN_PASS")
             }
-        }
-    }
-}
-
-allprojects {
-    idea {
-        module {
-            excludeDirs.add(file("run"))
-        }
-    }
-}
-
-resourcefulGradle {
-    templates {
-        register("embed") {
-            val minecraftVersion: String by project
-            val version: String by project
-            val changelog: String = file("changelog.md").readText(Charsets.UTF_8)
-
-            source.set(file("templates/embed.json.template"))
-            injectedValues.set(
-                mapOf(
-                    "minecraft" to minecraftVersion,
-                    "version" to version,
-                    "changelog" to StringEscapeUtils.escapeJava(changelog),
-                )
-            )
         }
     }
 }
