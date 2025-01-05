@@ -33,8 +33,8 @@ dependencies {
     compileOnly("me.shedaniel:RoughlyEnoughItems-api-neoforge:$reiVersion")
     implementation("com.teamresourceful:bytecodecs:1.1.2")
 
-    runtimeOnly("me.shedaniel:RoughlyEnoughItems-neoforge:$reiVersion")
-//    runtimeOnly("mezz.jei:jei-$minecraftVersion-neoforge:$jeiVersion")
+//    runtimeOnly("me.shedaniel:RoughlyEnoughItems-neoforge:$reiVersion")
+    runtimeOnly("mezz.jei:jei-$minecraftVersion-neoforge:$jeiVersion")
 }
 
 neoForge {

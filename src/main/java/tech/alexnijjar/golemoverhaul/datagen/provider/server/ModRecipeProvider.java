@@ -30,13 +30,12 @@ public class ModRecipeProvider extends RecipeProvider {
         new GolemConstructionRecipeBuilder(
             List.of(
                 "~^~",
-                "/#/",
-                "~/~"
+                "###",
+                "~#~"
             ),
             Map.of(
                 "^", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.CARVED_PUMPKIN)),
-                "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.NETHERITE_BLOCK)),
-                "/", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.ANCIENT_DEBRIS)),
+                "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.ANCIENT_DEBRIS)),
                 "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))
             ),
             ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.NETHERITE_GOLEM.getId()),

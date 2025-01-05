@@ -1,11 +1,10 @@
-package tech.alexnijjar.golemoverhaul.client.compat.rei;
+package tech.alexnijjar.golemoverhaul.client.compat.jei;
 
 import com.mojang.math.Axis;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
-import me.shedaniel.rei.api.client.gui.widgets.Widget;
+import mezz.jei.api.gui.drawable.IDrawable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,14 +25,15 @@ import tech.alexnijjar.golemoverhaul.client.compat.FakeLevel;
 import tech.alexnijjar.golemoverhaul.common.recipes.GolemConstructionRecipe;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class GolemConstructionWidget extends Widget {
+public class GolemConstructionDrawable implements IDrawable {
 
     public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "textures/gui/container/golem_construction.png");
 
+    private final double mouseX;
+    private final double mouseY;
     private final FakeLevel fakeLevel;
     private final Entity entity;
     private final int x;
@@ -43,7 +43,9 @@ public class GolemConstructionWidget extends Widget {
     private final boolean single;
     private final MutableComponent blockTooltip = Component.empty();
 
-    public GolemConstructionWidget(GolemConstructionRecipe recipe, int x, int y) {
+    public GolemConstructionDrawable(double mouseX, double mouseY, GolemConstructionRecipe recipe, int x, int y) {
+        this.mouseX = mouseX;
+        this.mouseY = mouseY;
         this.x = x;
         this.y = y;
         this.blockScale = recipe.blockScale();
@@ -85,7 +87,17 @@ public class GolemConstructionWidget extends Widget {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public int getWidth() {
+        return 180;
+    }
+
+    @Override
+    public int getHeight() {
+        return 76;
+    }
+
+    @Override
+    public void draw(GuiGraphics graphics, int xOffset, int yOffset) {
         this.entity.setYHeadRot(0);
         graphics.blit(TEXTURE, this.x - 47, this.y - 58, 0, 0, 180, 76, 180, 76);
 
@@ -118,10 +130,5 @@ public class GolemConstructionWidget extends Widget {
         } else if (mouseX >= this.x - 34 && mouseX < this.x + 18 && mouseY >= this.y - 48 && mouseY < this.y + 8) {
             Minecraft.getInstance().screen.setTooltipForNextRenderPass(blockTooltip);
         }
-    }
-
-    @Override
-    public List<? extends GuiEventListener> children() {
-        return List.of();
     }
 }

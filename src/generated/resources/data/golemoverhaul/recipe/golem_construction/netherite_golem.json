@@ -5,14 +5,13 @@
   "entityScale": 0.45,
   "item": "golemoverhaul:netherite_golem_spawn_egg",
   "key": {
-    "#": "minecraft:netherite_block",
-    "/": "minecraft:ancient_debris",
+    "#": "minecraft:ancient_debris",
     "^": "minecraft:carved_pumpkin",
     "~": "minecraft:air"
   },
   "pattern": [
     "~^~",
-    "/#/",
-    "~/~"
+    "###",
+    "~#~"
   ]
 }

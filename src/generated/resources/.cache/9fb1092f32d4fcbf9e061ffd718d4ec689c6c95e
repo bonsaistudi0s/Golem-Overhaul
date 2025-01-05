@@ -1,4 +1,4 @@
-// 1.21.1	2025-01-03T16:56:57.114462	Recipes
+// 1.21.1	2025-01-04T15:15:51.253328	Recipes
 7ce2f3b9380f340de8fea3ee71de5aa1a997e095 data/golemoverhaul/advancement/recipes/golem_construction/golem_construction/candle_golem.json
 34722dba58eb4b6f4b286c2b27b085c4ad7b33e5 data/golemoverhaul/advancement/recipes/golem_construction/golem_construction/hay_golem.json
 9001421100343d37c49f44599144e608100561d4 data/golemoverhaul/advancement/recipes/golem_construction/golem_construction/kelp_golem.json
@@ -7,5 +7,5 @@
 520e9299edf25de737291b982fc477ce661dbe55 data/golemoverhaul/recipe/golem_construction/candle_golem.json
 fe1137a8f15dd242aad9175510275b00c52008cc data/golemoverhaul/recipe/golem_construction/hay_golem.json
 844a6edbea577746c427b71723966a62e07c0428 data/golemoverhaul/recipe/golem_construction/kelp_golem.json
-f52df4c1b4ad09064c470216faf2144b58840830 data/golemoverhaul/recipe/golem_construction/netherite_golem.json
+72d98a9a58ddaed654b89238b128f37e09df4cf8 data/golemoverhaul/recipe/golem_construction/netherite_golem.json
 70f7d62496589cbec2712d414f8c3f991e7f6383 data/golemoverhaul/recipe/golem_construction/terracotta_golem.json

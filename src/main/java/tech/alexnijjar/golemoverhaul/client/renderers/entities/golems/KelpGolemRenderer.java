@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -34,7 +35,8 @@ public class KelpGolemRenderer extends BaseGolemRenderer<KelpGolem> {
             @Override
             public void render(PoseStack poseStack, KelpGolem golem, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
                 float percent = golem.getHealth() / golem.getMaxHealth();
-                int color = 0xFFFFFF | (Math.min(255, (int) (percent * 255)) << 24);
+                int strength = (int) (percent * 255);
+                int color = FastColor.ARGB32.color(strength, strength, strength, strength);
                 renderType = getRenderType(animatable, bufferSource);
                 getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
                     bufferSource.getBuffer(renderType), partialTick, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
