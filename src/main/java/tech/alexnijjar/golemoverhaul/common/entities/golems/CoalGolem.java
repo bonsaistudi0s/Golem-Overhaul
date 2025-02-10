@@ -73,9 +73,9 @@ public class CoalGolem extends BaseGolem {
     public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!GolemOverhaulConfig.spawnCoalGolems || !GolemOverhaulConfig.allowSpawning) return false;
         if (level.getBiome(pos).is(Biomes.DEEP_DARK)) return false;
-        return pos.getY() < level.getSeaLevel() &&
+        return !(pos.getY() >= level.getSeaLevel()) &&
             !level.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK) &&
-            checkMobSpawnRules(type, level, spawnType, pos, random);
+            Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
     @Override

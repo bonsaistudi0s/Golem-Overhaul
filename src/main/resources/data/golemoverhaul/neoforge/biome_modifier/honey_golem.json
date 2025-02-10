@@ -3,7 +3,7 @@
   "biomes": "#golemoverhaul:honey_golem_spawns",
   "spawners": {
     "type": "golemoverhaul:honey_golem",
-    "weight": 20,
+    "weight": 6,
     "minCount": 1,
     "maxCount": 2
   },

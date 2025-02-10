@@ -8,6 +8,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -17,9 +18,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,9 +53,32 @@ public class SlimeGolem extends BaseGolem {
             .add(Attributes.ATTACK_DAMAGE, Size.LARGE.attackDamage);
     }
 
-    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkSlimeSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!GolemOverhaulConfig.spawnSlimeGolems || !GolemOverhaulConfig.allowSpawning) return false;
-        return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
+
+        if (MobSpawnType.isSpawner(spawnType)) {
+            return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
+        }
+
+        if (level.getBiome(pos).is(BiomeTags.ALLOWS_SURFACE_SLIME_SPAWNS)
+            && pos.getY() > 50
+            && pos.getY() < 70
+            && random.nextFloat() < 0.5f
+            && random.nextFloat() < level.getMoonBrightness()
+            && level.getMaxLocalRawBrightness(pos) <= random.nextInt(8)) {
+            return checkMobSpawnRules(type, level, spawnType, pos, random);
+        }
+
+        if (!(level instanceof WorldGenLevel)) return false;
+
+        // Slime chunk spawning taken from Slime#checkSlimeSpawnRules
+        ChunkPos chunkpos = new ChunkPos(pos);
+        boolean isSlimeChunk = WorldgenRandom.seedSlimeChunk(chunkpos.x, chunkpos.z, ((WorldGenLevel)level).getSeed(), 987234911L).nextInt(10) == 0;
+        if (random.nextInt(10) == 0 && isSlimeChunk && pos.getY() < 40) {
+            return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
+        }
+
+        return false;
     }
 
     @Override

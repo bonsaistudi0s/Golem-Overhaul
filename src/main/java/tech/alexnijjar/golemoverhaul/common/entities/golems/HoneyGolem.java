@@ -230,12 +230,14 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
         if (!isFullOfHoney()) return List.of();
         playSound(SoundEvents.BEEHIVE_SHEAR);
-        ItemStack stack = new ItemStack(ModItems.HONEY_BLOB.get(), 3 + level.random.nextInt(5));
 
         if (!level().isClientSide()) {
             setHoneyLevel((byte) 0);
         }
-        return List.of(stack);
+        return List.of(
+            new ItemStack(ModItems.HONEY_BLOB.get(), 5 + level.random.nextInt(8)),
+            new ItemStack(Items.HONEYCOMB, 3)
+        );
     }
 
     @Override

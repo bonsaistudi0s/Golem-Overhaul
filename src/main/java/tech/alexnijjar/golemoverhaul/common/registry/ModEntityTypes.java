@@ -38,7 +38,7 @@ public class ModEntityTypes {
             .build("candle_golem"));
 
     public static final RegistryEntry<EntityType<CoalGolem>> COAL_GOLEM = GOLEMS.register("coal_golem", () ->
-        EntityType.Builder.of(CoalGolem::new, MobCategory.CREATURE)
+        EntityType.Builder.of(CoalGolem::new, MobCategory.AMBIENT)
             .sized(0.25f, 0.5f)
             .clientTrackingRange(10)
             .fireImmune()
@@ -70,7 +70,7 @@ public class ModEntityTypes {
             .build("netherite_golem"));
 
     public static final RegistryEntry<EntityType<SlimeGolem>> SLIME_GOLEM = GOLEMS.register("slime_golem", () ->
-        EntityType.Builder.of(SlimeGolem::new, MobCategory.CREATURE)
+        EntityType.Builder.of(SlimeGolem::new, MobCategory.MONSTER)
             .sized(1.125f, 0.8125f)
             .clientTrackingRange(10)
             .build("slime_golem"));
@@ -124,7 +124,7 @@ public class ModEntityTypes {
         event.register(ModEntityTypes.HONEY_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HoneyGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntityTypes.KELP_GOLEM.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, KelpGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntityTypes.NETHERITE_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NetheriteGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.SLIME_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SlimeGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntityTypes.SLIME_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SlimeGolem::checkSlimeSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntityTypes.TERRACOTTA_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, TerracottaGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
     }
 }

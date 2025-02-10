@@ -53,6 +53,7 @@ public class ModLangProvider extends LanguageProvider {
         add("subtitles.golemoverhaul.entity.coal_golem.death", "Coal Golem dies");
         add("subtitles.golemoverhaul.entity.coal_golem.explode", "Coal Golem explodes");
         add("subtitles.golemoverhaul.entity.barrel_golem.barter", "Barrel Golem barters");
+        add("subtitles.golemoverhaul.entity.netherite_golem.hurt", "Netherite Golem hurts");
         add("subtitles.golemoverhaul.entity.netherite_golem.hit", "Netherite Golem is hit");
         add("subtitles.golemoverhaul.entity.netherite_golem.death", "Netherite Golem dies");
         add("subtitles.golemoverhaul.entity.netherite_golem.step", "Netherite Golem steps");
