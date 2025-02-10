@@ -20,7 +20,7 @@ public class ModItems {
     public static final ResourcefulRegistry<Item> SPAWN_EGGS = ResourcefulRegistries.create(ITEMS);
     public static final ResourcefulRegistry<CreativeModeTab> TABS = ResourcefulRegistries.create(BuiltInRegistries.CREATIVE_MODE_TAB, GolemOverhaul.MOD_ID);
     public static final RegistryEntry<CreativeModeTab> TAB = TABS.register("main", () -> new ResourcefulCreativeModeTab(ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "main"))
-        .setItemIcon(() -> ModItems.NETHERITE_GOLEM_SPAWN_EGG.get())
+        .setItemIcon(() -> ModItems.CLAY_GOLEM_STATUE.get())
         .addRegistry(ITEMS)
         .build());
 
