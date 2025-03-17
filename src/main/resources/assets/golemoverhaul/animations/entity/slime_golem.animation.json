@@ -261,6 +261,14 @@
 						}
 					}
 				}
+			},
+			"sound_effects": {
+				"0.4": {
+					"effect": "slime_golem_step_1"
+				},
+				"0.8": {
+					"effect": "slime_golem_step_2"
+				}
 			}
 		},
 		"animation.golem.idle": {

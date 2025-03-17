@@ -31,10 +31,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
-import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
-import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -45,7 +42,10 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
+import tech.alexnijjar.golemoverhaul.common.recipes.GolemConstructionRecipe;
+import tech.alexnijjar.golemoverhaul.common.recipes.SingleEntityInput;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
+import tech.alexnijjar.golemoverhaul.common.registry.ModRecipeTypes;
 import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
 import tech.alexnijjar.golemoverhaul.common.utils.ModUtils;
 
@@ -55,17 +55,6 @@ public class KelpGolem extends BaseGolem {
     protected final GroundPathNavigation groundNavigation;
 
     private static final EntityDataAccessor<Boolean> ID_CHARGED = SynchedEntityData.defineId(KelpGolem.class, EntityDataSerializers.BOOLEAN);
-
-    private static final BlockPattern KELP_GOLEM_PATTERN = BlockPatternBuilder.start()
-        .aisle(
-            "~~~",
-            "#^#",
-            "~#~"
-        )
-        .where('^', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.SEA_LANTERN)))
-        .where('#', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.DRIED_KELP_BLOCK)))
-        .where('~', blockInWorld -> blockInWorld.getState().isAir())
-        .build();
 
     public KelpGolem(EntityType<? extends AbstractGolem> type, Level level) {
         super(type, level);
@@ -84,7 +73,8 @@ public class KelpGolem extends BaseGolem {
     }
 
     public static void trySpawnGolem(Level level, BlockPos pos) {
-        BlockPattern.BlockPatternMatch pattern = KELP_GOLEM_PATTERN.find(level, pos);
+        GolemConstructionRecipe recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(), new SingleEntityInput(ModEntityTypes.KELP_GOLEM.get()), level).orElseThrow().value();
+        BlockPattern.BlockPatternMatch pattern = recipe.createPattern().find(level, pos);
         if (pattern == null) return;
         KelpGolem golem = ModEntityTypes.KELP_GOLEM.get().create(level);
         if (golem == null) return;
@@ -93,8 +83,7 @@ public class KelpGolem extends BaseGolem {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, 5, this::handleMovementController)
-            .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.KELP_GOLEM_STEP.get(), getSoundSource(), 1, 1, false)));
+        controllers.add(this.getMovementController());
 
         controllers.add(new AnimationController<>(this, "attack_controller", 0, state -> {
             if (!hasAttackAnimation()) return PlayState.STOP;
@@ -112,6 +101,12 @@ public class KelpGolem extends BaseGolem {
             }
             return state.setAndContinue(ConstantAnimations.SPIN);
         }));
+    }
+
+    @Override
+    public AnimationController<?> getMovementController() {
+        return super.getMovementController()
+            .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.KELP_GOLEM_STEP.get(), getSoundSource(), 1, 1, false));
     }
 
     @Override

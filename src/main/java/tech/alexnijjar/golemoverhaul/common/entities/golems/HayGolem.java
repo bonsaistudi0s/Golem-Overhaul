@@ -7,7 +7,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,18 +24,17 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
-import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
-import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.IShearable;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
+import tech.alexnijjar.golemoverhaul.common.recipes.GolemConstructionRecipe;
+import tech.alexnijjar.golemoverhaul.common.recipes.SingleEntityInput;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
+import tech.alexnijjar.golemoverhaul.common.registry.ModRecipeTypes;
 import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
 import tech.alexnijjar.golemoverhaul.common.utils.ModUtils;
 
@@ -47,18 +45,6 @@ public class HayGolem extends BaseGolem implements IShearable {
 
     private static final EntityDataAccessor<Byte> ID_COLOR = SynchedEntityData.defineId(HayGolem.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> ID_SHEARED = SynchedEntityData.defineId(HayGolem.class, EntityDataSerializers.BOOLEAN);
-
-    private static final BlockPattern HAY_GOLEM_PATTERN = BlockPatternBuilder.start()
-        .aisle(
-            "~^~",
-            "/#/",
-            "~/~"
-        )
-        .where('^', BlockInWorld.hasState(ModUtils.PUMPKINS_PREDICATE))
-        .where('#', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.HAY_BLOCK)))
-        .where('/', BlockInWorld.hasState(state -> state.is(BlockTags.FENCES)))
-        .where('~', blockInWorld -> blockInWorld.getState().isAir())
-        .build();
 
     public HayGolem(EntityType<? extends AbstractGolem> type, Level level) {
         super(type, level);
@@ -78,10 +64,12 @@ public class HayGolem extends BaseGolem implements IShearable {
     }
 
     public static void trySpawnGolem(Level level, BlockPos pos) {
-        BlockPattern.BlockPatternMatch pattern = HAY_GOLEM_PATTERN.find(level, pos);
+        GolemConstructionRecipe recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(), new SingleEntityInput(ModEntityTypes.HAY_GOLEM.get()), level).orElseThrow().value();
+        BlockPattern.BlockPatternMatch pattern = recipe.createPattern().find(level, pos);
         if (pattern == null) return;
         HayGolem golem = ModEntityTypes.HAY_GOLEM.get().create(level);
         if (golem == null) return;
+        golem.setColor(level.getRandom().nextBoolean() ? Color.GREEN : Color.RED);
         ModUtils.spawnGolemInWorld(level, pattern, golem, pattern.getBlock(1, 2, 0).getPos());
     }
 

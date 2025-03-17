@@ -155,19 +155,7 @@
         },
         {
           "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 3.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "minecraft:diamond",
-          "weight": 3
+          "name": "minecraft:diamond"
         },
         {
           "type": "minecraft:item",
@@ -182,8 +170,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:totem_of_undying",
-          "weight": 3
+          "name": "minecraft:totem_of_undying"
         },
         {
           "type": "minecraft:item",

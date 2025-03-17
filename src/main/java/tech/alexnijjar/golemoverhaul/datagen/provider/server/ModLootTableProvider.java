@@ -94,11 +94,8 @@ public class ModLootTableProvider extends LootTableProvider {
 
             add(ModEntityTypes.NETHERITE_GOLEM.get(), LootTable.lootTable()
                 .withPool(LootPool.lootPool()
-                    .add(LootItem.lootTableItem(Items.NETHERITE_INGOT).apply(SetItemCountFunction
-                        .setCount(UniformGenerator.between(4, 7)))))
-                .withPool(LootPool.lootPool()
                     .add(LootItem.lootTableItem(Items.NETHERITE_SCRAP).apply(SetItemCountFunction
-                        .setCount(UniformGenerator.between(4, 7))))));
+                        .setCount(UniformGenerator.between(1, 3))))));
 
             add(ModEntityTypes.SLIME_GOLEM.get(), LootTable.lootTable()
                 .withPool(LootPool.lootPool()
@@ -148,9 +145,9 @@ public class ModLootTableProvider extends LootTableProvider {
                             .add(LootItem.lootTableItem(Items.SADDLE).setWeight(10))
                             .add(LootItem.lootTableItem(Items.ENDER_PEARL).setWeight(10).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 2))))
 
-                            .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(3).apply(SetItemCountFunction.setCount(UniformGenerator.between(1, 3))))
+                            .add(LootItem.lootTableItem(Items.DIAMOND).setWeight(1))
                             .add(LootItem.lootTableItem(Items.BOOK).setWeight(3).apply(EnchantRandomlyFunction.randomApplicableEnchantment(this.registries)))
-                            .add(LootItem.lootTableItem(Items.TOTEM_OF_UNDYING).setWeight(3))
+                            .add(LootItem.lootTableItem(Items.TOTEM_OF_UNDYING).setWeight(1))
                             .add(LootItem.lootTableItem(Items.NAUTILUS_SHELL).setWeight(3))
                             .add(TagEntry.expandTag(ItemTags.CREEPER_DROP_MUSIC_DISCS).setWeight(3))
                     )

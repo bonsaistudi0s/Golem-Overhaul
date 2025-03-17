@@ -24,12 +24,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
-import net.minecraft.world.level.block.state.pattern.BlockPatternBuilder;
-import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
@@ -42,7 +38,10 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
+import tech.alexnijjar.golemoverhaul.common.recipes.GolemConstructionRecipe;
+import tech.alexnijjar.golemoverhaul.common.recipes.SingleEntityInput;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
+import tech.alexnijjar.golemoverhaul.common.registry.ModRecipeTypes;
 import tech.alexnijjar.golemoverhaul.common.registry.ModSoundEvents;
 import tech.alexnijjar.golemoverhaul.common.utils.ModUtils;
 
@@ -57,18 +56,6 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
 
     private static final EntityDataAccessor<Boolean> ID_CHARGED = SynchedEntityData.defineId(NetheriteGolem.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> ID_GILDED = SynchedEntityData.defineId(NetheriteGolem.class, EntityDataSerializers.BOOLEAN);
-
-    private static final BlockPattern NETHERITE_GOLEM_PATTERN = BlockPatternBuilder.start()
-        .aisle(
-            "~^~",
-            "/#/",
-            "~/~"
-        )
-        .where('^', BlockInWorld.hasState(ModUtils.PUMPKINS_PREDICATE))
-        .where('#', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.NETHERITE_BLOCK)))
-        .where('/', BlockInWorld.hasState(BlockStatePredicate.forBlock(Blocks.ANCIENT_DEBRIS)))
-        .where('~', blockInWorld -> blockInWorld.getState().isAir())
-        .build();
 
     private int summoningTicks;
     private int summonCooldown;
@@ -94,7 +81,8 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     }
 
     public static void trySpawnGolem(Level level, BlockPos pos) {
-        BlockPattern.BlockPatternMatch pattern = NETHERITE_GOLEM_PATTERN.find(level, pos);
+        GolemConstructionRecipe recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(), new SingleEntityInput(ModEntityTypes.NETHERITE_GOLEM.get()), level).orElseThrow().value();
+        BlockPattern.BlockPatternMatch pattern = recipe.createPattern().find(level, pos);
         if (pattern == null) return;
         NetheriteGolem golem = ModEntityTypes.NETHERITE_GOLEM.get().create(level);
         if (golem == null) return;
@@ -103,8 +91,7 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, 5, this::handleMovementController)
-            .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_STEP.get(), getSoundSource(), 1, 1, false)));
+        controllers.add(this.getMovementController());
 
         controllers.add(new AnimationController<>(this, "attack_controller", 0, state -> {
             if (!hasAttackAnimation()) return PlayState.STOP;
@@ -127,6 +114,12 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
             }
             return state.setAndContinue(ConstantAnimations.SUMMON);
         }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_SUMMON.get(), getSoundSource(), 1, 1, false)));
+    }
+
+    @Override
+    public AnimationController<?> getMovementController() {
+        return super.getMovementController()
+            .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_STEP.get(), getSoundSource(), 1, 1, false));
     }
 
     @Override
@@ -197,7 +190,8 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {}
+    protected void playStepSound(BlockPos pos, BlockState state) {
+    }
 
     @Override
     public void handleEntityEvent(byte id) {
@@ -396,7 +390,8 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     }
 
     @Override
-    public void onPlayerJump(int jumpPower) {}
+    public void onPlayerJump(int jumpPower) {
+    }
 
     @Override
     public boolean canJump() {
@@ -411,7 +406,8 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     }
 
     @Override
-    public void handleStopJump() {}
+    public void handleStopJump() {
+    }
 
     @Override
     public void actuallyAttackAfterDelay(LivingEntity target) {
@@ -456,6 +452,11 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
                 entity.addDeltaMovement(new Vec3(lookAngle.x * 0.4, y, lookAngle.z * 0.4));
             }
         }
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return !this.isVehicle();
     }
 
     @Override

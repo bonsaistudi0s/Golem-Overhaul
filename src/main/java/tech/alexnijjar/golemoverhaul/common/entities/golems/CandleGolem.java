@@ -172,7 +172,7 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
         Projectile projectile = new CandleFlameProjectile(level(), CandleGolem.this);
-        projectile.setPos(getX(), getY(), getZ());
+        projectile.setPos(getX(), getY() + 0.5f, getZ());
 
         double x = target.getX() - getX();
         double y = target.getY() - projectile.getY();

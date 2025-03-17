@@ -23,6 +23,7 @@ import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
@@ -53,6 +54,12 @@ public class SlimeGolem extends BaseGolem {
             .add(Attributes.ATTACK_DAMAGE, Size.LARGE.attackDamage);
     }
 
+    @Override
+    public AnimationController<?> getMovementController() {
+        return super.getMovementController()
+            .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), this.getStepSound(), getSoundSource(), 0.3f, 1, false));
+    }
+
     public static boolean checkSlimeSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!GolemOverhaulConfig.spawnSlimeGolems || !GolemOverhaulConfig.allowSpawning) return false;
 
@@ -73,7 +80,7 @@ public class SlimeGolem extends BaseGolem {
 
         // Slime chunk spawning taken from Slime#checkSlimeSpawnRules
         ChunkPos chunkpos = new ChunkPos(pos);
-        boolean isSlimeChunk = WorldgenRandom.seedSlimeChunk(chunkpos.x, chunkpos.z, ((WorldGenLevel)level).getSeed(), 987234911L).nextInt(10) == 0;
+        boolean isSlimeChunk = WorldgenRandom.seedSlimeChunk(chunkpos.x, chunkpos.z, ((WorldGenLevel) level).getSeed(), 987234911L).nextInt(10) == 0;
         if (random.nextInt(10) == 0 && isSlimeChunk && pos.getY() < 40) {
             return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
         }
@@ -132,6 +139,19 @@ public class SlimeGolem extends BaseGolem {
     @Override
     protected SoundEvent getDeathSound() {
         return getSize().isLarge() ? SoundEvents.SLIME_DEATH : SoundEvents.SLIME_DEATH_SMALL;
+    }
+
+    private SoundEvent getStepSound() {
+        return getSize().isLarge() ? SoundEvents.SLIME_HURT : SoundEvents.SLIME_HURT_SMALL;
+    }
+
+    @Override
+    public boolean doHurtTarget(@NotNull Entity target) {
+        if (super.doHurtTarget(target)) {
+            this.playSound(getSize().isLarge() ? SoundEvents.SLIME_SQUISH : SoundEvents.SLIME_SQUISH_SMALL, 1, 1);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -213,8 +233,8 @@ public class SlimeGolem extends BaseGolem {
     }
 
     public enum Size {
-        LARGE(50, 6, 0.2, 2, 0),
-        SMALL(20, 3, 0.16, 1, 6),
+        LARGE(50, 6, 0.24, 2, 0),
+        SMALL(20, 3, 0.19, 1, 6),
         ;
 
         private final int health;

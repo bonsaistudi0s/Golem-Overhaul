@@ -1,11 +1,11 @@
-// 1.21.1	2025-01-03T16:56:57.114262	Loot Tables
+// 1.21.1	2025-03-16T21:19:23.961541785	Loot Tables
 0f5ea1a8e702fd8a3ebacd9a7cf6f566167c373c data/golemoverhaul/loot_table/entities/barrel_golem.json
 ee2bc1493071323141818e2707cd1b5cff7ec841 data/golemoverhaul/loot_table/entities/candle_golem.json
 0733576cc4332cf983a4564ae81582f2235a9fec data/golemoverhaul/loot_table/entities/coal_golem.json
 384680f91005fc4bb675916cbb5a2530ee4963aa data/golemoverhaul/loot_table/entities/hay_golem.json
 74ca0d37d1d6bd46dfb616b938a9516409644102 data/golemoverhaul/loot_table/entities/honey_golem.json
 dd9a10582b57d4b2498cc3e50f21642ee06b6d85 data/golemoverhaul/loot_table/entities/kelp_golem.json
-6305357afcd760200feb74f68e81e7544b6f9291 data/golemoverhaul/loot_table/entities/netherite_golem.json
+6fdb8e3a55478771beb436ccab0802cb0ef39323 data/golemoverhaul/loot_table/entities/netherite_golem.json
 c2c515916104321e222d120b60dae72bb9e390be data/golemoverhaul/loot_table/entities/slime_golem.json
 dab3bb2364d92fd1bc0319981bcf6e5023898248 data/golemoverhaul/loot_table/entities/terracotta_golem.json
-a819ee85a4f133499fc5957a6a8ed1f3467d9e2b data/golemoverhaul/loot_table/gameplay/barrel_golem_bartering.json
+d143c8e228fdc67521d96d4ba8261dfca4d79a08 data/golemoverhaul/loot_table/gameplay/barrel_golem_bartering.json

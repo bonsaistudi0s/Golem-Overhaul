@@ -51,7 +51,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, 5, this::handleMovementController));
+        controllers.add(this.getMovementController());
 
         controllers.add(new AnimationController<>(this, "attack_controller", 0, state -> {
             if (!hasAttackAnimation()) return PlayState.STOP;
@@ -61,6 +61,10 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
             }
             return getAttackAnimation(state);
         }));
+    }
+
+    public AnimationController<?> getMovementController() {
+        return new AnimationController<>(this, 5, this::handleMovementController);
     }
 
     public PlayState handleMovementController(AnimationState<BaseGolem> state) {
@@ -230,7 +234,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
     }
 
     /**
-     * A modified version of IronGolem#mobInteract that takes a custom repair item and heal amount.
+     * A modified version of IronGolem#mobInteract that takes a custom repair entity and heal amount.
      */
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {

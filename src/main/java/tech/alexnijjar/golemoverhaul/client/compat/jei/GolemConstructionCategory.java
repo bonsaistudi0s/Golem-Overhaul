@@ -2,6 +2,7 @@ package tech.alexnijjar.golemoverhaul.client.compat.jei;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -68,5 +69,7 @@ public record GolemConstructionCategory(IGuiHelper guiHelper) implements IRecipe
     @Override
     public void draw(GolemConstructionRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         new GolemConstructionDrawable(mouseX, mouseY, recipe, 47, 58).draw(guiGraphics);
+        IDrawableStatic recipeArrow = this.guiHelper.getRecipeArrow();
+        recipeArrow.draw(guiGraphics, 78, 30);
     }
 }

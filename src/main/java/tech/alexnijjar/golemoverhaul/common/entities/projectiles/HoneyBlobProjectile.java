@@ -61,17 +61,12 @@ public class HoneyBlobProjectile extends AbstractArrow implements GeoEntity {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        if (result.getEntity().getType().is(ModEntityTypeTags.HONEY_IMMUNE)) return;
-        if (getOwner() != null && result.getEntity().equals(getOwner())) return;
-        int arrowCount = -1;
-        if (result.getEntity() instanceof LivingEntity livingEntity) {
-            arrowCount = livingEntity.getArrowCount();
-        }
-        super.onHitEntity(result);
-        if (result.getEntity() instanceof LivingEntity livingEntity) {
-            livingEntity.setArrowCount(arrowCount);
-        }
         Entity entity = result.getEntity();
+        if (entity instanceof LivingEntity livingEntity && entity.getType().is(ModEntityTypeTags.HONEY_IMMUNE)) {
+            livingEntity.heal(20);
+            return;
+        }
+        if (getOwner() != null && entity.equals(getOwner())) return;
         entity.hurt(damageSources().thrown(this, getOwner()), 6);
         if (entity instanceof LivingEntity livingEntity) {
             livingEntity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN,

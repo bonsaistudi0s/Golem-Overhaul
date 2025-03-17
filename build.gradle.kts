@@ -44,6 +44,7 @@ neoForge {
     runs {
         register("client") {
             client()
+            jvmArgument("-XX:+AllowEnhancedClassRedefinition")
         }
 
         register("server") {

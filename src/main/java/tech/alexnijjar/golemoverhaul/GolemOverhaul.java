@@ -1,11 +1,15 @@
 package tech.alexnijjar.golemoverhaul;
 
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import tech.alexnijjar.golemoverhaul.client.GolemOverhaulClient;
 import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
+import tech.alexnijjar.golemoverhaul.common.entities.golems.KelpGolem;
 import tech.alexnijjar.golemoverhaul.common.network.NetworkHandler;
 import tech.alexnijjar.golemoverhaul.common.registry.*;
 
@@ -28,5 +32,12 @@ public class GolemOverhaul {
         ModRecipeTypes.RECIPE_TYPES.init();
         ModRecipeSerializers.RECIPE_SERIALIZERS.init();
         NeoForge.EVENT_BUS.addListener(GolemOverhaulClient::onClientTick);
+        NeoForge.EVENT_BUS.addListener(GolemOverhaul::onBlockPlace);
+    }
+
+    private static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
+        if (event.getLevel() instanceof Level level && (event.getPlacedBlock().is(Blocks.DRIED_KELP_BLOCK) || event.getPlacedBlock().is(Blocks.SEA_LANTERN))) {
+            KelpGolem.trySpawnGolem(level, event.getPos());
+        }
     }
 }
