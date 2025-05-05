@@ -3,8 +3,10 @@ package tech.alexnijjar.golemoverhaul;
 import com.teamresourceful.resourcefulconfig.api.loader.Configurator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import tech.alexnijjar.golemoverhaul.client.GolemOverhaulClient;
@@ -31,7 +33,9 @@ public class GolemOverhaul {
         ModSoundEvents.SOUND_EVENTS.init();
         ModRecipeTypes.RECIPE_TYPES.init();
         ModRecipeSerializers.RECIPE_SERIALIZERS.init();
-        NeoForge.EVENT_BUS.addListener(GolemOverhaulClient::onClientTick);
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            NeoForge.EVENT_BUS.addListener(GolemOverhaulClient::onClientTick);
+        }
         NeoForge.EVENT_BUS.addListener(GolemOverhaul::onBlockPlace);
     }
 
