@@ -11,7 +11,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -27,7 +26,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.neoforged.neoforge.common.IShearable;
 import org.jetbrains.annotations.Nullable;
 import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
@@ -52,6 +50,8 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     private final List<BeeData> bees = new ArrayList<>();
 
     private int attackAnimationDelay = -1;
+
+    private boolean hasPopulatedInitialBees;
 
     public HoneyGolem(EntityType<? extends AbstractGolem> type, Level level) {
         super(type, level);
@@ -89,6 +89,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
             beeTag.add(tag);
         }
         compound.put("Bees", beeTag);
+        compound.putBoolean("HasPopulatedInitialBees", hasPopulatedInitialBees);
     }
 
     @Override
@@ -103,6 +104,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
                 tag.getInt("TicksInHive"),
                 tag.getInt("MinOccupationTicks")));
         }
+        this.hasPopulatedInitialBees = compound.getBoolean("HasPopulatedInitialBees");
     }
 
     @Override
@@ -176,17 +178,23 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
         playSound(SoundEvents.SLIME_ATTACK, 1, 0.4f / (getRandom().nextFloat() * 0.4f + 0.8f));
     }
 
-    @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
-        final int count = 2 + level.getRandom().nextInt(4);
+    public void tick() {
+        super.tick();
+        if (!level().isClientSide() && !hasPopulatedInitialBees) {
+            hasPopulatedInitialBees = true;
+            populateInitialBees();
+        }
+    }
+
+    private void populateInitialBees() {
+        final int count = 2 + level().getRandom().nextInt(4);
         for (int i = 0; i < count; i++) {
             Bee bee = Objects.requireNonNull(EntityType.BEE.create(level()));
             ((AdditionalBeeData) bee).golemoverhaul$setOwner(this.getUUID());
             this.bees.add(new BeeData(bee.saveWithoutId(new CompoundTag()), 0, 2400));
         }
         this.setHoneyLevel((byte) count);
-        return super.finalizeSpawn(level, difficultyInstance, mobSpawnType, spawnGroupData);
     }
 
     @Override
