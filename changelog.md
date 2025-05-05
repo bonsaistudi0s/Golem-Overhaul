@@ -1,0 +1,3 @@
+- Fix dedicated server crash
+- Update barrel golem wake animation
+- Update hay golem texture
