@@ -23,7 +23,6 @@ public class GoToHoneyGolemHiveGoal extends Goal {
     public GoToHoneyGolemHiveGoal(Bee bee) {
         this.bee = bee;
         this.beeAccessor = (BeeAccessor) bee;
-        bee.level().random.nextInt(10);
     }
 
     @Override
@@ -51,7 +50,9 @@ public class GoToHoneyGolemHiveGoal extends Goal {
 
     @Override
     public void tick() {
-        if (this.hive == null) return;
+        if (this.hive == null) {
+            return;
+        }
         if (bee.distanceTo(this.hive) < 2) {
             this.hive.putBee(bee);
             stop();
