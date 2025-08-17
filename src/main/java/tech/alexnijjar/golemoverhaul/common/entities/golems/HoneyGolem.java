@@ -45,7 +45,8 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
 
     public static final int RANGED_ATTACK_DELAY_TICKS = 6;
 
-    public static final EntityDataAccessor<Byte> ID_HONEY_LEVEL = SynchedEntityData.defineId(HoneyGolem.class, EntityDataSerializers.BYTE);
+    public static final EntityDataAccessor<Byte> ID_HONEY_LEVEL = SynchedEntityData.defineId(HoneyGolem.class,
+            EntityDataSerializers.BYTE);
 
     private final List<BeeData> bees = new ArrayList<>();
 
@@ -60,13 +61,15 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 30)
-            .add(Attributes.MOVEMENT_SPEED, 0.2)
-            .add(Attributes.ATTACK_DAMAGE, 6);
+                .add(Attributes.MAX_HEALTH, 30)
+                .add(Attributes.MOVEMENT_SPEED, 0.2)
+                .add(Attributes.ATTACK_DAMAGE, 6);
     }
 
-    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        if (!GolemOverhaulConfig.spawnHoneyGolems || !GolemOverhaulConfig.allowSpawning) return false;
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level,
+            MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnHoneyGolems || !GolemOverhaulConfig.allowSpawning)
+            return false;
         return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
@@ -100,9 +103,9 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
         for (int i = 0; i < beeTag.size(); i++) {
             CompoundTag tag = beeTag.getCompound(i);
             bees.add(new BeeData(
-                tag.getCompound("EntityData"),
-                tag.getInt("TicksInHive"),
-                tag.getInt("MinOccupationTicks")));
+                    tag.getCompound("EntityData"),
+                    tag.getInt("TicksInHive"),
+                    tag.getInt("MinOccupationTicks")));
         }
         this.hasPopulatedInitialBees = compound.getBoolean("HasPopulatedInitialBees");
     }
@@ -156,6 +159,11 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     }
 
     @Override
+    public SoundEvent getRepairSound() {
+        return SoundEvents.HONEY_BLOCK_BREAK;
+    }
+
+    @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
         if (attackAnimationDelay == -1) {
             sendAttackEvent();
@@ -164,7 +172,8 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     }
 
     public void actuallyShoot(LivingEntity target) {
-        if (target == null) return;
+        if (target == null)
+            return;
         Projectile projectile = new HoneyBlobProjectile(level(), this);
         projectile.setPos(getX(), getY(), getZ());
 
@@ -228,7 +237,8 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     @Override
     public void die(DamageSource damageSource) {
         super.die(damageSource);
-        if (level().isClientSide()) return;
+        if (level().isClientSide())
+            return;
         if (!bees.isEmpty()) {
             this.releaseAllBees();
         }
@@ -236,16 +246,16 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
 
     @Override
     public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
-        if (!isFullOfHoney()) return List.of();
+        if (!isFullOfHoney())
+            return List.of();
         playSound(SoundEvents.BEEHIVE_SHEAR);
 
         if (!level().isClientSide()) {
             setHoneyLevel((byte) 0);
         }
         return List.of(
-            new ItemStack(ModItems.HONEY_BLOB.get(), 5 + level.random.nextInt(8)),
-            new ItemStack(Items.HONEYCOMB, 3)
-        );
+                new ItemStack(ModItems.HONEY_BLOB.get(), 5 + level.random.nextInt(8)),
+                new ItemStack(Items.HONEYCOMB, 3));
     }
 
     @Override
@@ -259,10 +269,10 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
         if (id == NECTAR_PARTICLES_EVENT_ID) {
             for (int i = 0; i < 8; ++i) {
                 level().addParticle(ParticleTypes.FALLING_NECTAR,
-                    getX() + getRandom().nextGaussian() * 0.25,
-                    getY() + 0.5,
-                    getZ() + getRandom().nextGaussian() * 0.25,
-                    0, 0, 0);
+                        getX() + getRandom().nextGaussian() * 0.25,
+                        getY() + 0.5,
+                        getZ() + getRandom().nextGaussian() * 0.25,
+                        0, 0, 0);
             }
         }
     }
@@ -275,7 +285,8 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     @Override
     public boolean hurt(DamageSource source, float amount) {
         if (!bees.isEmpty() && source.getEntity() instanceof LivingEntity entity) {
-            if (entity instanceof Player player && player.isCreative()) return super.hurt(source, amount);
+            if (entity instanceof Player player && player.isCreative())
+                return super.hurt(source, amount);
             this.releaseAllBees().forEach(bee -> bee.setTarget(entity));
         }
         return super.hurt(source, amount);
@@ -286,7 +297,8 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     }
 
     public void putBee(Bee bee) {
-        if (!canPutBee()) return;
+        if (!canPutBee())
+            return;
         ((AdditionalBeeData) bee).golemoverhaul$setOwner(this.getUUID());
         bees.add(new BeeData(bee.saveWithoutId(new CompoundTag()), 0, 2400));
         if (bee.hasNectar() && !isFullOfHoney()) {

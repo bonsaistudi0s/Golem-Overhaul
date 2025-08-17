@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -44,7 +45,8 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
 
     public static final int RANGED_ATTACK_DELAY_TICKS = 2;
 
-    private static final EntityDataAccessor<Byte> ID_TYPE = SynchedEntityData.defineId(TerracottaGolem.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> ID_TYPE = SynchedEntityData.defineId(TerracottaGolem.class,
+            EntityDataSerializers.BYTE);
 
     private final RangedAttackGoal rangedAttackGoal = new RangedAttackGoal(this, 1, 20, 15);
 
@@ -59,13 +61,15 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 30)
-            .add(Attributes.MOVEMENT_SPEED, 0.2)
-            .add(Attributes.ATTACK_DAMAGE, Type.CACTUS.attackDamage);
+                .add(Attributes.MAX_HEALTH, 30)
+                .add(Attributes.MOVEMENT_SPEED, 0.2)
+                .add(Attributes.ATTACK_DAMAGE, Type.CACTUS.attackDamage);
     }
 
-    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        if (!GolemOverhaulConfig.spawnTerracottaGolems || !GolemOverhaulConfig.allowSpawning) return false;
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level,
+            MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnTerracottaGolems || !GolemOverhaulConfig.allowSpawning)
+            return false;
         return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
@@ -94,7 +98,8 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
         super.readAdditionalSaveData(compound);
         this.setTerracottaType(Type.valueOf(compound.getString("type").toUpperCase(Locale.ROOT)));
         if (compound.contains("item")) {
-            this.equippedStack = ItemStack.parse(this.registryAccess(), compound.getCompound("item")).orElse(ItemStack.EMPTY);
+            this.equippedStack = ItemStack.parse(this.registryAccess(), compound.getCompound("item"))
+                    .orElse(ItemStack.EMPTY);
         }
     }
 
@@ -127,7 +132,7 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
 
     @Override
     public Item getRepairItem() {
-        return Items.CLAY;
+        return Items.CLAY_BALL;
     }
 
     @Override
@@ -135,20 +140,23 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
         return 4;
     }
 
+    @Override
+    public SoundEvent getRepairSound() {
+        return SoundEvents.STONE_PLACE;
+    }
+
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyInstance,
+            MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.setTerracottaType(Type.values()[level.getRandom().nextInt(Type.values().length)]);
         return super.finalizeSpawn(level, difficultyInstance, mobSpawnType, spawnGroupData);
     }
 
     @Override
     protected @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
-        if (super.mobInteract(player, hand).consumesAction()) return InteractionResult.SUCCESS;
-        if (level().isClientSide()) return InteractionResult.SUCCESS;
-        ItemStack stack = player.getItemInHand(hand);
-
-        if (getTerracottaType() == Type.NORMAL) {
+        if (getTerracottaType() == Type.NORMAL && !level().isClientSide()) {
+            ItemStack stack = player.getItemInHand(hand);
             Type type = Type.ofStack(stack);
             if (type != null) {
                 this.equippedStack = stack.copyWithCount(1);
@@ -159,7 +167,7 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
             }
         }
 
-        return InteractionResult.PASS;
+        return super.mobInteract(player, hand);
     }
 
     @Override
@@ -197,7 +205,8 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
     }
 
     public void actuallyShoot(LivingEntity target) {
-        if (target == null) return;
+        if (target == null)
+            return;
         Projectile projectile = new MudBallProjectile(level(), this);
         projectile.setPos(getX(), getY(), getZ());
 
@@ -237,7 +246,8 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
         private final boolean ranged;
         private final Predicate<ItemStack> isValidStack;
 
-        Type(float attackDamage, float knockbackResistance, Item equipItem, boolean ranged, Predicate<ItemStack> isValidStack) {
+        Type(float attackDamage, float knockbackResistance, Item equipItem, boolean ranged,
+                Predicate<ItemStack> isValidStack) {
             this.attackDamage = attackDamage;
             this.knockbackResistance = knockbackResistance;
             this.equipItem = equipItem;

@@ -43,8 +43,10 @@ import java.util.Locale;
 
 public class HayGolem extends BaseGolem implements IShearable {
 
-    private static final EntityDataAccessor<Byte> ID_COLOR = SynchedEntityData.defineId(HayGolem.class, EntityDataSerializers.BYTE);
-    private static final EntityDataAccessor<Boolean> ID_SHEARED = SynchedEntityData.defineId(HayGolem.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Byte> ID_COLOR = SynchedEntityData.defineId(HayGolem.class,
+            EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Boolean> ID_SHEARED = SynchedEntityData.defineId(HayGolem.class,
+            EntityDataSerializers.BOOLEAN);
 
     public HayGolem(EntityType<? extends AbstractGolem> type, Level level) {
         super(type, level);
@@ -53,22 +55,27 @@ public class HayGolem extends BaseGolem implements IShearable {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 40)
-            .add(Attributes.MOVEMENT_SPEED, 0.18)
-            .add(Attributes.ATTACK_DAMAGE, 3);
+                .add(Attributes.MAX_HEALTH, 40)
+                .add(Attributes.MOVEMENT_SPEED, 0.18)
+                .add(Attributes.ATTACK_DAMAGE, 3);
     }
 
-    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        if (!GolemOverhaulConfig.spawnHayGolems || !GolemOverhaulConfig.allowSpawning) return false;
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level,
+            MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnHayGolems || !GolemOverhaulConfig.allowSpawning)
+            return false;
         return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
     public static void trySpawnGolem(Level level, BlockPos pos) {
-        GolemConstructionRecipe recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(), new SingleEntityInput(ModEntityTypes.HAY_GOLEM.get()), level).orElseThrow().value();
+        GolemConstructionRecipe recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(),
+                new SingleEntityInput(ModEntityTypes.HAY_GOLEM.get()), level).orElseThrow().value();
         BlockPattern.BlockPatternMatch pattern = recipe.createPattern().find(level, pos);
-        if (pattern == null) return;
+        if (pattern == null)
+            return;
         HayGolem golem = ModEntityTypes.HAY_GOLEM.get().create(level);
-        if (golem == null) return;
+        if (golem == null)
+            return;
         golem.setColor(level.getRandom().nextBoolean() ? Color.GREEN : Color.RED);
         ModUtils.spawnGolemInWorld(level, pattern, golem, pattern.getBlock(1, 2, 0).getPos());
     }
@@ -142,9 +149,15 @@ public class HayGolem extends BaseGolem implements IShearable {
         return 10;
     }
 
+    @Override
+    public SoundEvent getRepairSound() {
+        return SoundEvents.VINE_BREAK;
+    }
+
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyInstance,
+            MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.setColor(level.getRandom().nextBoolean() ? Color.GREEN : Color.RED);
         return super.finalizeSpawn(level, difficultyInstance, mobSpawnType, spawnGroupData);
     }

@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
@@ -40,8 +41,10 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
 
     private static final float HEALTH_LOSS_PER_SHOT = 0.02f;
 
-    private static final EntityDataAccessor<Boolean> ID_LIT = SynchedEntityData.defineId(CandleGolem.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> ID_SITTING = SynchedEntityData.defineId(CandleGolem.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ID_LIT = SynchedEntityData.defineId(CandleGolem.class,
+            EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ID_SITTING = SynchedEntityData.defineId(CandleGolem.class,
+            EntityDataSerializers.BOOLEAN);
 
     private final RangedAttackGoal rangedAttackGoal = new CandleGolemRangedAttackGoal(this, 1, 20, 15);
 
@@ -53,18 +56,15 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 15)
-            .add(Attributes.MOVEMENT_SPEED, 0.3)
-            .add(Attributes.ATTACK_DAMAGE, 3);
+                .add(Attributes.MAX_HEALTH, 15)
+                .add(Attributes.MOVEMENT_SPEED, 0.3)
+                .add(Attributes.ATTACK_DAMAGE, 3);
     }
 
     @Override
     public PlayState getMoveAnimation(AnimationState<BaseGolem> state, boolean moving) {
-        return state.setAndContinue(moving ?
-            ConstantAnimations.WALK :
-            isSitting() ?
-                ConstantAnimations.SITTING_IDLE :
-                ConstantAnimations.IDLE);
+        return state.setAndContinue(moving ? ConstantAnimations.WALK
+                : isSitting() ? ConstantAnimations.SITTING_IDLE : ConstantAnimations.IDLE);
     }
 
     @Override
@@ -138,7 +138,8 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
 
     @Override
     protected void actuallyHurt(DamageSource damageSource, float damageAmount) {
-        if (damageSource.is(DamageTypeTags.IS_FIRE)) setLit(true);
+        if (damageSource.is(DamageTypeTags.IS_FIRE))
+            setLit(true);
         if (isSitting()) {
             damageAmount *= 0.1f;
         }
@@ -170,6 +171,11 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
     }
 
     @Override
+    public SoundEvent getRepairSound() {
+        return SoundEvents.HONEYCOMB_WAX_ON;
+    }
+
+    @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
         Projectile projectile = new CandleFlameProjectile(level(), CandleGolem.this);
         projectile.setPos(getX(), getY() + 0.5f, getZ());
@@ -181,7 +187,8 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
         projectile.shoot(x, y + distance, z, 0.4f, 5);
 
         level().addFreshEntity(projectile);
-        level().playSound(null, getX(), getY(), getZ(), SoundEvents.BLAZE_SHOOT, getSoundSource(), 0.3f, random.nextFloat() * 0.4f + 0.8f);
+        level().playSound(null, getX(), getY(), getZ(), SoundEvents.BLAZE_SHOOT, getSoundSource(), 0.3f,
+                random.nextFloat() * 0.4f + 0.8f);
         setHealth(getHealth() - HEALTH_LOSS_PER_SHOT);
     }
 
@@ -203,8 +210,10 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
 
     @Override
     protected @NotNull InteractionResult mobInteract(Player player, @NotNull InteractionHand hand) {
-        if (super.mobInteract(player, hand).consumesAction()) return InteractionResult.SUCCESS;
-        if (level().isClientSide()) return InteractionResult.SUCCESS;
+        if (super.mobInteract(player, hand).consumesAction())
+            return InteractionResult.SUCCESS;
+        if (level().isClientSide())
+            return InteractionResult.SUCCESS;
         ItemStack stack = player.getItemInHand(hand);
 
         if (!player.isShiftKeyDown() && stack.isEmpty()) {
@@ -241,7 +250,8 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
 
     private class CandleGolemRangedAttackGoal extends RangedAttackGoal {
 
-        public CandleGolemRangedAttackGoal(RangedAttackMob rangedAttackMob, double speedModifier, int attackInterval, float attackRadius) {
+        public CandleGolemRangedAttackGoal(RangedAttackMob rangedAttackMob, double speedModifier, int attackInterval,
+                float attackRadius) {
             super(rangedAttackMob, speedModifier, attackInterval, attackRadius);
         }
 

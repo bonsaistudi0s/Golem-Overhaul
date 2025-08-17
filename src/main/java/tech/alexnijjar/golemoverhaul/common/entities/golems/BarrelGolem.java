@@ -57,12 +57,15 @@ import java.util.List;
 
 public class BarrelGolem extends BaseGolem {
 
-    private static final EntityDataAccessor<Boolean> ID_OPEN = SynchedEntityData.defineId(BarrelGolem.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> ID_DAY_START_TICKS = SynchedEntityData.defineId(BarrelGolem.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> ID_OPEN = SynchedEntityData.defineId(BarrelGolem.class,
+            EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ID_DAY_START_TICKS = SynchedEntityData.defineId(BarrelGolem.class,
+            EntityDataSerializers.INT);
 
     private static final Vec3i ITEM_PICKUP_REACH = new Vec3i(2, 0, 2);
 
-    public static final ResourceKey<LootTable> BARTERING_LOOT = ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "gameplay/barrel_golem_bartering"));
+    public static final ResourceKey<LootTable> BARTERING_LOOT = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "gameplay/barrel_golem_bartering"));
 
     public static final byte CHANGE_STATE_EVENT_ID = 8;
     public static final byte BARTER_EVENT_ID = 9;
@@ -86,14 +89,16 @@ public class BarrelGolem extends BaseGolem {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 40)
-            .add(Attributes.MOVEMENT_SPEED, 0.31)
-            .add(Attributes.ARMOR, 6)
-            .add(Attributes.ATTACK_DAMAGE, 1);
+                .add(Attributes.MAX_HEALTH, 40)
+                .add(Attributes.MOVEMENT_SPEED, 0.31)
+                .add(Attributes.ARMOR, 6)
+                .add(Attributes.ATTACK_DAMAGE, 1);
     }
 
-    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        if (!GolemOverhaulConfig.spawnBarrelGolems || !GolemOverhaulConfig.allowSpawning) return false;
+    public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level,
+            MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnBarrelGolems || !GolemOverhaulConfig.allowSpawning)
+            return false;
         return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
     }
 
@@ -134,17 +139,15 @@ public class BarrelGolem extends BaseGolem {
 
     @Override
     public PlayState getMoveAnimation(AnimationState<BaseGolem> state, boolean moving) {
-        if (!this.isOpen()) return PlayState.STOP;
+        if (!this.isOpen())
+            return PlayState.STOP;
         if (isBartering()) {
             state.resetCurrentAnimation();
             return PlayState.STOP;
         }
 
-        return state.setAndContinue(moving ?
-            ConstantAnimations.WALK :
-            isOpen() ?
-                ConstantAnimations.IDLE :
-                ConstantAnimations.IDLE_HIDDEN);
+        return state.setAndContinue(
+                moving ? ConstantAnimations.WALK : isOpen() ? ConstantAnimations.IDLE : ConstantAnimations.IDLE_HIDDEN);
     }
 
     @Override
@@ -211,7 +214,8 @@ public class BarrelGolem extends BaseGolem {
     }
 
     public void setOpen(boolean open, boolean playSound) {
-        if (!open && isOnFire()) return;
+        if (!open && isOnFire())
+            return;
         if (!level().isClientSide() && playSound && this.isOpen() != open) {
             if (open) {
                 playSound(SoundEvents.BARREL_OPEN);
@@ -257,7 +261,13 @@ public class BarrelGolem extends BaseGolem {
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public SoundEvent getRepairSound() {
+        return SoundEvents.AXE_STRIP;
+    }
+
+    @Override
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor,
+            DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
         setOpen(level().getSkyDarken() < 4, false);
         changeStateTicks = this.getRandomChangeInterval();
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData);
@@ -274,7 +284,8 @@ public class BarrelGolem extends BaseGolem {
                 amount /= 10;
             } else {
                 amount *= 2;
-                if (!this.isOpen()) this.setOpen(true, true);
+                if (!this.isOpen())
+                    this.setOpen(true, true);
             }
         }
         return super.hurt(source, amount);
@@ -315,7 +326,8 @@ public class BarrelGolem extends BaseGolem {
 
             if (this.barteringTicks == 24) {
                 throwItems(getBarterResponseItems());
-                ExperienceOrb orb = new ExperienceOrb(level(), this.getX(), this.getY(), this.getZ(), this.getRandom().nextInt(2) + 2);
+                ExperienceOrb orb = new ExperienceOrb(level(), this.getX(), this.getY(), this.getZ(),
+                        this.getRandom().nextInt(2) + 2);
                 level().addFreshEntity(orb);
                 if (this.barteringTarget != null) {
                     Vec3 targetPos = this.barteringTarget.position().subtract(this.position());
@@ -365,7 +377,8 @@ public class BarrelGolem extends BaseGolem {
 
     @Override
     public boolean wantsToPickUp(ItemStack stack) {
-        return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && stack.is(Items.EMERALD) && getMainHandItem().isEmpty() && isOpen() && !isBartering();
+        return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && stack.is(Items.EMERALD)
+                && getMainHandItem().isEmpty() && isOpen() && !isBartering();
     }
 
     @Override
@@ -390,7 +403,8 @@ public class BarrelGolem extends BaseGolem {
     }
 
     public void barter() {
-        if (this.isBartering()) return;
+        if (this.isBartering())
+            return;
         this.level().broadcastEntityEvent(this, BARTER_EVENT_ID);
         this.changeStateTicks = this.getRandomChangeInterval();
         this.barteringTicks = BARTERING_TICKS;
@@ -406,13 +420,14 @@ public class BarrelGolem extends BaseGolem {
             stack.shrink(1);
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
+        return super.mobInteract(player, hand);
     }
 
     private List<ItemStack> getBarterResponseItems() {
         if (level() instanceof ServerLevel level) {
             LootTable lootTable = level.getServer().reloadableRegistries().getLootTable(BARTERING_LOOT);
-            return lootTable.getRandomItems(new LootParams.Builder(level).withParameter(LootContextParams.THIS_ENTITY, this).create(LootContextParamSets.PIGLIN_BARTER));
+            return lootTable.getRandomItems(new LootParams.Builder(level)
+                    .withParameter(LootContextParams.THIS_ENTITY, this).create(LootContextParamSets.PIGLIN_BARTER));
         }
         return List.of();
     }
@@ -469,10 +484,12 @@ public class BarrelGolem extends BaseGolem {
         @Override
         public boolean canUse() {
             if (isOpen() && !isBartering()) {
-                ItemEntity nearest = level().getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(16), stack -> stack.getItem().is(Items.EMERALD))
-                    .stream()
-                    .findFirst()
-                    .orElse(null);
+                ItemEntity nearest = level()
+                        .getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(16),
+                                stack -> stack.getItem().is(Items.EMERALD))
+                        .stream()
+                        .findFirst()
+                        .orElse(null);
                 if (nearest != null) {
                     this.nearest = nearest;
                     return true;

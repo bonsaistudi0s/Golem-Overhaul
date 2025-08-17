@@ -36,7 +36,8 @@ import java.util.Locale;
 
 public class SlimeGolem extends BaseGolem {
 
-    private static final EntityDataAccessor<Byte> ID_SIZE = SynchedEntityData.defineId(SlimeGolem.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> ID_SIZE = SynchedEntityData.defineId(SlimeGolem.class,
+            EntityDataSerializers.BYTE);
     public static final EntityDimensions SMALL_DIMENSIONS = EntityDimensions.scalable(0.5f, 0.5f);
 
     @NotNull
@@ -48,39 +49,44 @@ public class SlimeGolem extends BaseGolem {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, Size.LARGE.health)
-            .add(Attributes.MOVEMENT_SPEED, Size.LARGE.speed)
-            .add(Attributes.ATTACK_KNOCKBACK, Size.LARGE.knockback)
-            .add(Attributes.ATTACK_DAMAGE, Size.LARGE.attackDamage);
+                .add(Attributes.MAX_HEALTH, Size.LARGE.health)
+                .add(Attributes.MOVEMENT_SPEED, Size.LARGE.speed)
+                .add(Attributes.ATTACK_KNOCKBACK, Size.LARGE.knockback)
+                .add(Attributes.ATTACK_DAMAGE, Size.LARGE.attackDamage);
     }
 
     @Override
     public AnimationController<?> getMovementController() {
         return super.getMovementController()
-            .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), this.getStepSound(), getSoundSource(), 0.3f, 1, false));
+                .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), this.getStepSound(),
+                        getSoundSource(), 0.3f, 1, false));
     }
 
-    public static boolean checkSlimeSpawnRules(EntityType<? extends Mob> type, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        if (!GolemOverhaulConfig.spawnSlimeGolems || !GolemOverhaulConfig.allowSpawning) return false;
+    public static boolean checkSlimeSpawnRules(EntityType<? extends Mob> type, LevelAccessor level,
+            MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        if (!GolemOverhaulConfig.spawnSlimeGolems || !GolemOverhaulConfig.allowSpawning)
+            return false;
 
         if (MobSpawnType.isSpawner(spawnType)) {
             return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
         }
 
         if (level.getBiome(pos).is(BiomeTags.ALLOWS_SURFACE_SLIME_SPAWNS)
-            && pos.getY() > 50
-            && pos.getY() < 70
-            && random.nextFloat() < 0.5f
-            && random.nextFloat() < level.getMoonBrightness()
-            && level.getMaxLocalRawBrightness(pos) <= random.nextInt(8)) {
+                && pos.getY() > 50
+                && pos.getY() < 70
+                && random.nextFloat() < 0.5f
+                && random.nextFloat() < level.getMoonBrightness()
+                && level.getMaxLocalRawBrightness(pos) <= random.nextInt(8)) {
             return checkMobSpawnRules(type, level, spawnType, pos, random);
         }
 
-        if (!(level instanceof WorldGenLevel)) return false;
+        if (!(level instanceof WorldGenLevel))
+            return false;
 
         // Slime chunk spawning taken from Slime#checkSlimeSpawnRules
         ChunkPos chunkpos = new ChunkPos(pos);
-        boolean isSlimeChunk = WorldgenRandom.seedSlimeChunk(chunkpos.x, chunkpos.z, ((WorldGenLevel) level).getSeed(), 987234911L).nextInt(10) == 0;
+        boolean isSlimeChunk = WorldgenRandom
+                .seedSlimeChunk(chunkpos.x, chunkpos.z, ((WorldGenLevel) level).getSeed(), 987234911L).nextInt(10) == 0;
         if (random.nextInt(10) == 0 && isSlimeChunk && pos.getY() < 40) {
             return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
         }
@@ -169,6 +175,11 @@ public class SlimeGolem extends BaseGolem {
         return 10;
     }
 
+    @Override
+    public SoundEvent getRepairSound() {
+        return SoundEvents.SLIME_BLOCK_BREAK;
+    }
+
     /**
      * Copy of Slime#remove but modified for the Slime Golem.
      */
@@ -205,7 +216,8 @@ public class SlimeGolem extends BaseGolem {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficultyInstance,
+            MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.setSize(level.getRandom().nextBoolean() ? Size.LARGE : Size.SMALL, true);
         return super.finalizeSpawn(level, difficultyInstance, mobSpawnType, spawnGroupData);
     }

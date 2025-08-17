@@ -54,7 +54,8 @@ public class KelpGolem extends BaseGolem {
     protected final WaterBoundPathNavigation waterNavigation;
     protected final GroundPathNavigation groundNavigation;
 
-    private static final EntityDataAccessor<Boolean> ID_CHARGED = SynchedEntityData.defineId(KelpGolem.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ID_CHARGED = SynchedEntityData.defineId(KelpGolem.class,
+            EntityDataSerializers.BOOLEAN);
 
     public KelpGolem(EntityType<? extends AbstractGolem> type, Level level) {
         super(type, level);
@@ -67,17 +68,20 @@ public class KelpGolem extends BaseGolem {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 30)
-            .add(Attributes.MOVEMENT_SPEED, 0.085)
-            .add(Attributes.ATTACK_DAMAGE, 8);
+                .add(Attributes.MAX_HEALTH, 30)
+                .add(Attributes.MOVEMENT_SPEED, 0.085)
+                .add(Attributes.ATTACK_DAMAGE, 8);
     }
 
     public static void trySpawnGolem(Level level, BlockPos pos) {
-        GolemConstructionRecipe recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(), new SingleEntityInput(ModEntityTypes.KELP_GOLEM.get()), level).orElseThrow().value();
+        GolemConstructionRecipe recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(),
+                new SingleEntityInput(ModEntityTypes.KELP_GOLEM.get()), level).orElseThrow().value();
         BlockPattern.BlockPatternMatch pattern = recipe.createPattern().find(level, pos);
-        if (pattern == null) return;
+        if (pattern == null)
+            return;
         KelpGolem golem = ModEntityTypes.KELP_GOLEM.get().create(level);
-        if (golem == null) return;
+        if (golem == null)
+            return;
         ModUtils.spawnGolemInWorld(level, pattern, golem, pattern.getBlock(1, 2, 0).getPos());
     }
 
@@ -86,7 +90,8 @@ public class KelpGolem extends BaseGolem {
         controllers.add(this.getMovementController());
 
         controllers.add(new AnimationController<>(this, "attack_controller", 0, state -> {
-            if (!hasAttackAnimation()) return PlayState.STOP;
+            if (!hasAttackAnimation())
+                return PlayState.STOP;
             if (attackAnimationTicks == 0) {
                 state.resetCurrentAnimation();
                 return PlayState.STOP;
@@ -106,7 +111,8 @@ public class KelpGolem extends BaseGolem {
     @Override
     public AnimationController<?> getMovementController() {
         return super.getMovementController()
-            .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.KELP_GOLEM_STEP.get(), getSoundSource(), 1, 1, false));
+                .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(),
+                        ModSoundEvents.KELP_GOLEM_STEP.get(), getSoundSource(), 1, 1, false));
     }
 
     @Override
@@ -117,11 +123,8 @@ public class KelpGolem extends BaseGolem {
             state.getController().setAnimation(ConstantAnimations.SWIM);
             return PlayState.CONTINUE;
         }
-        state.getController().setAnimation(moving ?
-            ConstantAnimations.WALK :
-            isInWater() ?
-                ConstantAnimations.IDLE_WATER :
-                ConstantAnimations.IDLE);
+        state.getController().setAnimation(moving ? ConstantAnimations.WALK
+                : isInWater() ? ConstantAnimations.IDLE_WATER : ConstantAnimations.IDLE);
 
         return PlayState.CONTINUE;
     }
@@ -144,10 +147,10 @@ public class KelpGolem extends BaseGolem {
         this.setCharged(compound.getBoolean("Charged"));
     }
 
-
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Mob.class, 3, true, false, this::shouldAttack));
+        this.goalSelector.addGoal(0,
+                new NearestAttackableTargetGoal<>(this, Mob.class, 3, true, false, this::shouldAttack));
         this.goalSelector.addGoal(0, new RandomSwimmingGoal(this, 1, 40));
         this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6));
@@ -168,7 +171,8 @@ public class KelpGolem extends BaseGolem {
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {}
+    protected void playStepSound(BlockPos pos, BlockState state) {
+    }
 
     @Override
     public boolean canFloatInWater() {
@@ -183,6 +187,11 @@ public class KelpGolem extends BaseGolem {
     @Override
     public float getRepairItemHealAmount() {
         return 5;
+    }
+
+    @Override
+    public SoundEvent getRepairSound() {
+        return ModSoundEvents.KELP_GOLEM_STEP.get();
     }
 
     @Override

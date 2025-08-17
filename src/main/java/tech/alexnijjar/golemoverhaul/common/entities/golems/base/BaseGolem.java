@@ -39,7 +39,8 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
 
     private final MeleeAttackGoal meleeAttackGoal = new MeleeAttackGoal(this, 1, true);
     private final HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this, BaseGolem.class);
-    private final NearestAttackableTargetGoal<Mob> attackTargetGoal = new NearestAttackableTargetGoal<>(this, Mob.class, 5, true, false, this::shouldAttack);
+    private final NearestAttackableTargetGoal<Mob> attackTargetGoal = new NearestAttackableTargetGoal<>(this, Mob.class,
+            5, true, false, this::shouldAttack);
 
     protected int attackAnimationTicks;
     protected int attackDelayTicks = -1;
@@ -54,7 +55,8 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
         controllers.add(this.getMovementController());
 
         controllers.add(new AnimationController<>(this, "attack_controller", 0, state -> {
-            if (!hasAttackAnimation()) return PlayState.STOP;
+            if (!hasAttackAnimation())
+                return PlayState.STOP;
             if (attackAnimationTicks == 0) {
                 state.resetCurrentAnimation();
                 return PlayState.STOP;
@@ -73,9 +75,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
     }
 
     public PlayState getMoveAnimation(AnimationState<BaseGolem> state, boolean moving) {
-        return state.setAndContinue(moving ?
-            ConstantAnimations.WALK :
-            ConstantAnimations.IDLE);
+        return state.setAndContinue(moving ? ConstantAnimations.WALK : ConstantAnimations.IDLE);
     }
 
     public PlayState getAttackAnimation(AnimationState<? extends BaseGolem> state) {
@@ -125,21 +125,25 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
 
     public Crackiness.Level getCrackiness() {
         float fraction = this.getHealth() / this.getMaxHealth();
-        if (fraction > 0.66) return Crackiness.Level.NONE;
-        if (fraction > 0.33) return Crackiness.Level.MEDIUM;
+        if (fraction > 0.66)
+            return Crackiness.Level.NONE;
+        if (fraction > 0.33)
+            return Crackiness.Level.MEDIUM;
         return Crackiness.Level.HIGH;
     }
 
     @Override
     public boolean doHurtTarget(@NotNull Entity target) {
-        if (isAttacking()) return false;
+        if (isAttacking())
+            return false;
         this.startAttacking();
         this.sendAttackEvent();
         return hasDelayedAttack() || super.doHurtTarget(target);
     }
 
     public void startAttacking() {
-        if (isAttacking()) return;
+        if (isAttacking())
+            return;
         this.attackAnimationTicks = getAttackTicks();
         if (hasDelayedAttack()) {
             this.attackDelayTicks = getAttackDelayTicks();
@@ -182,7 +186,8 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
         super.doHurtTarget(target);
     }
 
-    public void performAdditionalAttacks(LivingEntity target) {}
+    public void performAdditionalAttacks(LivingEntity target) {
+    }
 
     public boolean canFloatInWater() {
         return true;
@@ -234,16 +239,19 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
     }
 
     /**
-     * A modified version of IronGolem#mobInteract that takes a custom repair entity and heal amount.
+     * A modified version of IronGolem#mobInteract that takes a custom repair entity
+     * and heal amount.
      */
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!canRepair(stack)) return InteractionResult.PASS;
+        if (!canRepair(stack))
+            return InteractionResult.PASS;
 
         float health = this.getHealth();
         this.heal(getRepairItemHealAmount());
-        if (this.getHealth() == health) return InteractionResult.PASS;
+        if (this.getHealth() == health)
+            return InteractionResult.PASS;
 
         float pitch = 1 + (this.random.nextFloat() - this.random.nextFloat()) * 0.2f;
         this.playSound(getRepairSound(), 1, pitch);
@@ -259,7 +267,8 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
 
     @Nullable
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance,
+            MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.updateAttackGoals();
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData);
     }
