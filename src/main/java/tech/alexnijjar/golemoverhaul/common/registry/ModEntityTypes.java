@@ -82,7 +82,7 @@ public class ModEntityTypes {
             .build("terracotta_golem"));
 
     public static final RegistryEntry<EntityType<CandleFlameProjectile>> CANDLE_FLAME = PROJECTILES.register("candle_flame", () ->
-        EntityType.Builder.<CandleFlameProjectile>of(CandleFlameProjectile::new, MobCategory.CREATURE)
+        EntityType.Builder.<CandleFlameProjectile>of(CandleFlameProjectile::new, MobCategory.MISC)
             .sized(0.25F, 0.25F)
             .clientTrackingRange(4)
             .updateInterval(10)
