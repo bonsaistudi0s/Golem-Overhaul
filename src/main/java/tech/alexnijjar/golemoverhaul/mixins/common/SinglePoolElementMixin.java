@@ -14,6 +14,7 @@ import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,29 +45,38 @@ public abstract class SinglePoolElementMixin {
                     "Lnet/minecraft/world/level/levelgen/structure/templatesystem/LiquidSettings;Z)Z",
             at = @At("RETURN")
     )
-    private void golemoverhaul$place(StructureTemplateManager structureTemplateManager, WorldGenLevel level,
+    private void golemoverhaul$place(StructureTemplateManager structureTemplateManager, WorldGenLevel worldGenLevel,
                                      StructureManager structureManager, ChunkGenerator generator, BlockPos offset,
                                      BlockPos pos, Rotation rotation, BoundingBox box, RandomSource random,
                                      LiquidSettings liquidSettings, boolean keepJigsaws,
                                      CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValue()) return;
-        if (level.isClientSide()) return;
+        if (worldGenLevel.isClientSide()) return;
 
         this.template.left().ifPresent(templateLocation -> {
             if (!templateLocation.equals(IRON_GOLEM_STRUCTURE)) return;
 
-            var difficulty = level.getCurrentDifficultyAt(offset);
-            var serverLevel = level.getLevel();
+            var difficulty = worldGenLevel.getCurrentDifficultyAt(offset);
+            var serverLevel = worldGenLevel.getLevel();
+            var spawnPos = new Vec3(offset.getX() + 0.5, offset.getY() + 1, offset.getZ() + 0.5);
 
-            var barrelGolem = new BarrelGolem(ModEntityTypes.BARREL_GOLEM.get(), serverLevel);
-            barrelGolem.setPos(offset.getX() + 0.5, offset.getY() + 1, offset.getZ() + 0.5);
-            barrelGolem.finalizeSpawn(serverLevel, difficulty, MobSpawnType.STRUCTURE, null);
-            serverLevel.addFreshEntity(barrelGolem);
+            var barrelGolemEntityType = ModEntityTypes.BARREL_GOLEM.get();
+            if (BarrelGolem.checkMobSpawnRules(barrelGolemEntityType, worldGenLevel, MobSpawnType.SPAWNER, offset,
+                    worldGenLevel.getRandom())) { // MobSpawnType.SPAWNER bypasses lighting checks
+                var barrelGolem = new BarrelGolem(barrelGolemEntityType, serverLevel);
+                barrelGolem.setPos(spawnPos);
+                barrelGolem.finalizeSpawn(serverLevel, difficulty, MobSpawnType.STRUCTURE, null);
+                serverLevel.addFreshEntity(barrelGolem);
+            }
 
-            var hayGolem = new HayGolem(ModEntityTypes.HAY_GOLEM.get(), serverLevel);
-            hayGolem.setPos(offset.getX() + 0.5, offset.getY() + 1, offset.getZ() + 0.5);
-            hayGolem.finalizeSpawn(serverLevel, difficulty, MobSpawnType.STRUCTURE, null);
-            serverLevel.addFreshEntity(hayGolem);
+            var hayGolemEntityType = ModEntityTypes.HAY_GOLEM.get();
+            if (HayGolem.checkMobSpawnRules(hayGolemEntityType, worldGenLevel, MobSpawnType.SPAWNER, offset,
+                    worldGenLevel.getRandom())) {
+                var hayGolem = new HayGolem(hayGolemEntityType, serverLevel);
+                hayGolem.setPos(spawnPos);
+                hayGolem.finalizeSpawn(serverLevel, difficulty, MobSpawnType.STRUCTURE, null);
+                serverLevel.addFreshEntity(hayGolem);
+            }
         });
     }
 }
