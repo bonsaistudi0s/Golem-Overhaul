@@ -53,10 +53,10 @@ public class GolemOverhaulConfigLinks {
                     case CURSEFORGE -> "CurseForge";
                 },
                 switch (this) {
-                    case GITHUB -> "config.ad_astra.links.github";
-                    case DISCORD -> "config.ad_astra.links.discord";
-                    case MODRINTH -> "config.ad_astra.links.modrinth";
-                    case CURSEFORGE -> "config.ad_astra.links.curseforge";
+                    case GITHUB -> "config.golemoverhaul.links.github";
+                    case DISCORD -> "config.golemoverhaul.links.discord";
+                    case MODRINTH -> "config.golemoverhaul.links.modrinth";
+                    case CURSEFORGE -> "config.golemoverhaul.links.curseforge";
                 }
             );
         }

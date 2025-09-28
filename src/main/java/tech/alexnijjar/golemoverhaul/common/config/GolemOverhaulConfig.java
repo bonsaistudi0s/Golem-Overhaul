@@ -18,37 +18,37 @@ public final class GolemOverhaulConfig {
 
     @ConfigEntry(
         id = "spawnBarrelGolems",
-        translation = "config.endermanoverhaul.spawnBarrelGolems"
+        translation = "config.golemoverhaul.spawnBarrelGolems"
     )
     public static boolean spawnBarrelGolems = true;
 
     @ConfigEntry(
         id = "spawnCoalGolems",
-        translation = "config.endermanoverhaul.spawnCoalGolems"
+        translation = "config.golemoverhaul.spawnCoalGolems"
     )
     public static boolean spawnCoalGolems = true;
 
     @ConfigEntry(
         id = "spawnHayGolems",
-        translation = "config.endermanoverhaul.spawnHayGolems"
+        translation = "config.golemoverhaul.spawnHayGolems"
     )
     public static boolean spawnHayGolems = true;
 
     @ConfigEntry(
         id = "spawnHoneyGolems",
-        translation = "config.endermanoverhaul.spawnHoneyGolems"
+        translation = "config.golemoverhaul.spawnHoneyGolems"
     )
     public static boolean spawnHoneyGolems = true;
 
     @ConfigEntry(
         id = "spawnSlimeGolems",
-        translation = "config.endermanoverhaul.spawnSlimeGolems"
+        translation = "config.golemoverhaul.spawnSlimeGolems"
     )
     public static boolean spawnSlimeGolems = true;
 
     @ConfigEntry(
         id = "spawnTerracottaGolems",
-        translation = "config.endermanoverhaul.spawnTerracottaGolems"
+        translation = "config.golemoverhaul.spawnTerracottaGolems"
     )
     public static boolean spawnTerracottaGolems = true;
 }
