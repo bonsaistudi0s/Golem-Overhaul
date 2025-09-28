@@ -70,5 +70,12 @@ public class ModLangProvider extends LanguageProvider {
         add("config.golemoverhaul.spawnHoneyGolems", "Spawn Honey Golems");
         add("config.golemoverhaul.spawnSlimeGolems", "Spawn Slime Golems");
         add("config.golemoverhaul.spawnTerracottaGolems", "Spawn Terracotta Golems");
+        add("config.golemoverhaul.title", "Golem Overhaul");
+        add("config.golemoverhaul.client.title", "Golem Overhaul Client");
+        add("config.golemoverhaul.description", "Golem overhaul adds awesome Golems!");
+        add("config.golemoverhaul.links.github", "GitHub");
+        add("config.golemoverhaul.links.discord", "Discord");
+        add("config.golemoverhaul.links.modrinth", "Modrinth");
+        add("config.golemoverhaul.links.curseforge", "CurseForge");
     }
 }
