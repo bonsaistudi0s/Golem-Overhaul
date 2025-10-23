@@ -249,7 +249,6 @@ public class KelpGolem extends BaseGolem {
         } else {
             super.travel(travelVector);
         }
-        super.travel(travelVector);
     }
 
     @Override
