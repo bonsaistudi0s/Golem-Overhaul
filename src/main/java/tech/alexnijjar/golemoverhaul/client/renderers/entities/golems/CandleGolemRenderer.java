@@ -12,6 +12,7 @@ import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.client.renderers.entities.golems.base.BaseGolemModel;
 import tech.alexnijjar.golemoverhaul.client.renderers.entities.golems.base.BaseGolemRenderer;
+import tech.alexnijjar.golemoverhaul.client.utils.ModRenderTypes;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.CandleGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 
@@ -40,8 +41,8 @@ public class CandleGolemRenderer extends BaseGolemRenderer<CandleGolem> {
             @Override
             protected @Nullable RenderType getRenderType(CandleGolem golem, @Nullable MultiBufferSource bufferSource) {
                 return switch (golem.getCrackiness()) {
-                    case NONE, LOW -> RenderType.eyes(GLOW_1);
-                    case MEDIUM -> RenderType.eyes(GLOW_2);
+                    case NONE, LOW -> ModRenderTypes.eyesNoCull(GLOW_1);
+                    case MEDIUM -> ModRenderTypes.eyesNoCull(GLOW_2);
                     case HIGH -> super.getRenderType(golem, bufferSource);
                 };
             }
