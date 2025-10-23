@@ -151,7 +151,7 @@ public class KelpGolem extends BaseGolem {
     protected void registerGoals() {
         this.goalSelector.addGoal(0,
                 new NearestAttackableTargetGoal<>(this, Mob.class, 3, true, false, this::shouldAttack));
-        this.goalSelector.addGoal(0, new RandomSwimmingGoal(this, 1, 40));
+        this.goalSelector.addGoal(2, new RandomSwimmingGoal(this, 1, 40));
         this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.6));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -279,7 +279,7 @@ public class KelpGolem extends BaseGolem {
 
     @Override
     protected AABB getAttackBoundingBox() {
-        return super.getAttackBoundingBox().inflate(1.5, 0, 1.5);
+        return super.getAttackBoundingBox().inflate(2.0, 0, 2.0);
     }
 
     private class KelpGolemMoveControl extends MoveControl {
