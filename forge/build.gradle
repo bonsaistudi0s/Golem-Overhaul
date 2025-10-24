@@ -5,6 +5,7 @@ plugins {
 loom {
     forge {
         mixinConfig "golemoverhaul.mixins.json"
+        mixinConfig "golemoverhaul.forge.mixins.json"
     }
 }
 
@@ -30,21 +31,59 @@ configurations {
     }
 }
 
+repositories {
+    // Alex's Mobs
+    maven {
+        url = "https://cursemaven.com"
+        content {
+            includeGroup("curse.maven")
+        }
+    }
+}
+
 dependencies {
-    forge "net.minecraftforge:forge:$rootProject.forge_version"
+    forge "net.minecraftforge:forge:${rootProject.forge_version}"
 
     // Architectury API. This is optional, and you can comment it out if you don't need it.
-    modImplementation "dev.architectury:architectury-forge:$rootProject.architectury_api_version"
+    modImplementation "dev.architectury:architectury-forge:${rootProject.architectury_api_version}"
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
+
+    implementation(include("io.github.llamalad7:mixinextras-forge:0.5.0"))
+
+    modImplementation "com.teamresourceful.resourcefullib:resourcefullib-forge-${rootProject.minecraft_version}:${rootProject.resourcefullib_version}"
+    modImplementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-forge-${rootProject.minecraft_version}:${rootProject.resourcefulconfig_version}"
+
+    modImplementation "software.bernie.geckolib:geckolib-forge-${rootProject.minecraft_version}:${rootProject.geckolib_version}"
+    implementation "com.eliotlash.mclib:mclib:20"
+
+    modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}"
+    modRuntimeOnly "mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}"
+
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-forge:${rootProject.rei_version}"
+    //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-forge:${rei_version}"
+
+    modCompileOnly "curse.maven:alexs-mobs-426558:${alexsmobs_version_id}"
 }
 
 processResources {
-    inputs.property 'version', project.version
+    def props = [
+            'version'                  : project.version,
+            'architectury_api_version' : rootProject.architectury_api_version,
+            'minecraft_version'        : rootProject.minecraft_version,
+            'resourcefullib_version'   : rootProject.resourcefullib_version,
+            'resourcefulconfig_version': rootProject.resourcefulconfig_version,
+            'geckolib_version'         : rootProject.geckolib_version,
+            'jei_version'              : rootProject.jei_version,
+            'rei_version'              : rootProject.rei_version,
+            'alexsmobs_version'        : project.alexsmobs_version
+    ]
+
+    inputs.properties props
 
     filesMatching('META-INF/mods.toml') {
-        expand version: inputs.properties.version
+        expand props
     }
 }
 

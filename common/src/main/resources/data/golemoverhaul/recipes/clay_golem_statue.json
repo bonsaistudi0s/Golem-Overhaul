@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "minecraft:clay_ball"
+    },
+    "/": {
+      "item": "minecraft:clay"
+    }
+  },
+  "pattern": [
+    "/#/",
+    " # "
+  ],
+  "result": {
+    "item": "golemoverhaul:clay_golem_statue"
+  },
+  "show_notification": true
+}

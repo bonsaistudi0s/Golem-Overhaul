@@ -24,6 +24,14 @@ configurations {
     }
 }
 
+repositories {
+    // ModMenu
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
+}
+
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
@@ -35,13 +43,39 @@ dependencies {
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
+
+    modImplementation "com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.minecraft_version:$rootProject.resourcefullib_version"
+    modImplementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-fabric-$rootProject.minecraft_version:$rootProject.resourcefulconfig_version"
+
+    modImplementation "software.bernie.geckolib:geckolib-fabric-${rootProject.minecraft_version}:${rootProject.geckolib_version}"
+    implementation "com.eliotlash.mclib:mclib:20"
+
+    modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}-fabric-api:${rootProject.jei_version}"
+    //modRuntimeOnly "mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"
+
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rootProject.rei_version}"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
+
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
-    inputs.property 'version', project.version
+    def props = [
+            'version'                  : project.version,
+            'architectury_api_version' : rootProject.architectury_api_version,
+            'minecraft_version'        : rootProject.minecraft_version,
+            'resourcefullib_version'   : rootProject.resourcefullib_version,
+            'resourcefulconfig_version': rootProject.resourcefulconfig_version,
+            'geckolib_version'         : rootProject.geckolib_version,
+            'jei_version'              : rootProject.jei_version,
+            'rei_version'              : rootProject.rei_version,
+            'modmenu_version'          : project.modmenu_version
+    ]
+
+    inputs.properties props
 
     filesMatching('fabric.mod.json') {
-        expand version: inputs.properties.version
+        expand props
     }
 }
 

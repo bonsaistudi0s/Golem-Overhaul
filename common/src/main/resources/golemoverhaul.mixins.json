@@ -1,11 +1,18 @@
 {
   "required": true,
-  "package": "tech.alexnijjar.golemoverhaul.mixin",
+  "package": "tech.alexnijjar.golemoverhaul.mixins.common",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "client": [
   ],
   "mixins": [
+    "BeeAccessor",
+    "BeeMixin",
+    "CarvedPumpkinBlockMixin",
+    "ConduitBlockEntityMixin",
+    "NearestAttackableTargetGoalMixin",
+    "PiglinSpecificSensorMixin",
+    "SinglePoolElementMixin"
   ],
   "injectors": {
     "defaultRequire": 1

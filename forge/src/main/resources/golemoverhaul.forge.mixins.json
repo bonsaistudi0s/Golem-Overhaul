@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "tech.alexnijjar.golemoverhaul.mixins.forge",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "plugin": "tech.alexnijjar.golemoverhaul.mixins.forge.MixinPlugin",
+  "client": [
+  ],
+  "mixins": [
+    "alexsmobs.AITargetItemsMixin",
+    "alexsmobs.EntityCrowMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

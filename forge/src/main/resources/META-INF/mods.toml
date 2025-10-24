@@ -1,35 +1,77 @@
 modLoader = "javafml"
 loaderVersion = "[47,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+issueTrackerURL = "https://github.com/bonsaistudi0s/golem-overhaul/issues"
+license = "ARR"
 
 [[mods]]
-modId = "golemoverhaul"
-version = "${version}"
-displayName = "Golem Overhaul"
-authors = "Me!"
-description = '''
-This is an example description! Tell everyone what your mod is about!
-'''
-#logoFile = ""
+    modId = "golemoverhaul"
+    version = "${version}"
+    displayName = "Golem Overhaul"
+    authors = "Alex Nijjar, Joosh, 3xpl01t"
+    description = '''
+    Golem overhaul adds awesome Golems!
+    '''
+    logoFile = "icon.png"
 
 [[dependencies.golemoverhaul]]
-modId = "forge"
-mandatory = true
-versionRange = "[47,)"
-ordering = "NONE"
-side = "BOTH"
+    modId = "forge"
+    mandatory = true
+    versionRange = "[47,)"
+    ordering = "NONE"
+    side = "BOTH"
 
 [[dependencies.golemoverhaul]]
-modId = "minecraft"
-mandatory = true
-versionRange = "[1.20.1,)"
-ordering = "NONE"
-side = "BOTH"
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[$minecraft_version]"
+    ordering = "NONE"
+    side = "BOTH"
 
 [[dependencies.golemoverhaul]]
-modId = "architectury"
-mandatory = true
-versionRange = "[9.2.14,)"
-ordering = "AFTER"
-side = "BOTH"
+    modId = "architectury"
+    mandatory = true
+    versionRange = "[$architectury_api_version,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+    modId = "resourcefullib"
+    mandatory = true
+    versionRange = "[$resourcefullib_version,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+    modId = "resourcefulconfig"
+    mandatory = true
+    versionRange = "[$resourcefulconfig_version,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+    modId = "geckolib"
+    mandatory = true
+    versionRange = "[$geckolib_version,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+    modId = "jei"
+    mandatory = false
+    versionRange = "[$jei_version,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+    modId = "rei"
+    mandatory = false
+    versionRange = "[$rei_version,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+    modId = "alexsmobs"
+    mandatory = false
+    versionRange = "[alexsmobs_version,)"
+    ordering = "AFTER"
+    side = "BOTH"

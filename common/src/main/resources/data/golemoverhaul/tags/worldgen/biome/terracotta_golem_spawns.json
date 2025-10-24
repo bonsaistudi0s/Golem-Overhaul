@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#minecraft:has_structure/mineshaft_mesa",
+    {
+      "id": "biomeswevegone:atacama_outback",
+      "required": false
+    },
+    "#minecraft:is_badlands"
+  ]
+}

@@ -8,6 +8,19 @@ dependencies {
     // Do NOT use other classes from Fabric Loader.
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
-    // Architectury API. This is optional, and you can comment it out if you don't need it.
+    // Architectury API
     modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
+
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.5.0"))
+
+    modImplementation "com.teamresourceful.resourcefullib:resourcefullib-common-$rootProject.minecraft_version:$rootProject.resourcefullib_version"
+    modImplementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-common-$rootProject.minecraft_version:$rootProject.resourcefulconfig_version"
+
+    // https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)#1204-and-below
+    modCompileOnly "software.bernie.geckolib:geckolib-forge-${rootProject.minecraft_version}:${rootProject.geckolib_version}"
+
+    modCompileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    modRuntimeOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
+
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-forge:${rei_version}"
 }
