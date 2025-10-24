@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#golemoverhaul:honey_golem_spawns",
+  "spawners": {
+    "type": "golemoverhaul:honey_golem",
+    "weight": 6,
+    "minCount": 1,
+    "maxCount": 2
+  },
+  "entity_types": [
+    "golemoverhaul:honey_golem"
+  ]
+}

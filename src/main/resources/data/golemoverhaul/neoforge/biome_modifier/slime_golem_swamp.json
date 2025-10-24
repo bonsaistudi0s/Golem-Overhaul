@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#golemoverhaul:slime_golem_swamp_spawns",
+  "spawners": {
+    "type": "golemoverhaul:slime_golem",
+    "weight": 1,
+    "minCount": 1,
+    "maxCount": 1
+  },
+  "entity_types": [
+    "golemoverhaul:slime_golem"
+  ]
+}

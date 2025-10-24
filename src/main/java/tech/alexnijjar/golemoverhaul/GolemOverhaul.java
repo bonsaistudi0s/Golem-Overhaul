@@ -1,0 +1,63 @@
+package tech.alexnijjar.golemoverhaul;
+
+import com.teamresourceful.resourcefulconfig.api.loader.Configurator;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import tech.alexnijjar.golemoverhaul.client.GolemOverhaulClient;
+import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
+import tech.alexnijjar.golemoverhaul.common.entities.golems.HayGolem;
+import tech.alexnijjar.golemoverhaul.common.entities.golems.KelpGolem;
+import tech.alexnijjar.golemoverhaul.common.network.NetworkHandler;
+import tech.alexnijjar.golemoverhaul.common.registry.*;
+
+@Mod(GolemOverhaul.MOD_ID)
+public class GolemOverhaul {
+
+    public static final String MOD_ID = "golemoverhaul";
+    public static final Configurator CONFIGURATOR = new Configurator(MOD_ID);
+
+    public GolemOverhaul(IEventBus bus) {
+        CONFIGURATOR.register(GolemOverhaulConfig.class);
+
+        NetworkHandler.init();
+        ModBlocks.BLOCKS.init();
+        ModItems.ITEMS.init();
+        ModItems.TABS.init();
+        ModEntityTypes.ENTITY_TYPES.init();
+        ModParticleTypes.PARTICLE_TYPES.init();
+        ModSoundEvents.SOUND_EVENTS.init();
+        ModRecipeTypes.RECIPE_TYPES.init();
+        ModRecipeSerializers.RECIPE_SERIALIZERS.init();
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            NeoForge.EVENT_BUS.addListener(GolemOverhaulClient::onClientTick);
+        }
+        NeoForge.EVENT_BUS.addListener(GolemOverhaul::onFarmlandTrample);
+        NeoForge.EVENT_BUS.addListener(GolemOverhaul::onBlockPlace);
+    }
+
+    private static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
+        if (event.getLevel() instanceof Level level && (event.getPlacedBlock().is(Blocks.DRIED_KELP_BLOCK) || event.getPlacedBlock().is(Blocks.SEA_LANTERN))) {
+            KelpGolem.trySpawnGolem(level, event.getPos());
+        }
+    }
+
+    private static void onFarmlandTrample(BlockEvent.FarmlandTrampleEvent event) {
+        LevelAccessor level = event.getLevel();
+        if (level.isClientSide()) return;
+        BlockPos pos = event.getPos();
+        AABB bounds = event.getState().getCollisionShape(level, pos).bounds().move(pos).inflate(10);
+
+        if (!level.getEntitiesOfClass(HayGolem.class, bounds).isEmpty()) {
+            event.setCanceled(true);
+        }
+    }
+}
