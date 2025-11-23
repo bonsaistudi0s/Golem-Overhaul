@@ -29,7 +29,7 @@ public class BarrelGolemHeldItemLayer extends GeoRenderLayer<BarrelGolem> {
         ItemStack stack = golem.getMainHandItem();
         if (stack.isEmpty()) return;
 
-        GeoBone itemBone = getGeoModel().getBone("entity").orElse(null);
+        GeoBone itemBone = getGeoModel().getBone("item").orElse(null);
         if (itemBone == null) return;
 
         float lerped = Mth.rotLerp(partialTick, golem.yBodyRotO, golem.yBodyRot);
