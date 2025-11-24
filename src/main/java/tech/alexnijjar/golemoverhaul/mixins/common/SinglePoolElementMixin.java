@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -31,7 +32,8 @@ import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 @Mixin(SinglePoolElement.class)
 public abstract class SinglePoolElementMixin {
 
-    private static final ResourceLocation IRON_GOLEM_STRUCTURE =
+    @Unique
+    private static final ResourceLocation golemoverhaul$IRON_GOLEM_STRUCTURE =
             ResourceLocation.withDefaultNamespace("village/common/iron_golem");
 
     @Shadow
@@ -61,26 +63,27 @@ public abstract class SinglePoolElementMixin {
         if (worldGenLevel.isClientSide()) return;
 
         this.template.left().ifPresent(templateLocation -> {
-            if (!templateLocation.equals(IRON_GOLEM_STRUCTURE)) return;
+            if (!templateLocation.equals(golemoverhaul$IRON_GOLEM_STRUCTURE)) return;
 
             var settings = this.getSettings(rotation, box, liquidSettings, keepJigsaws);
 
             var barrelGolemEntityType = ModEntityTypes.BARREL_GOLEM.get();
             if (BarrelGolem.checkMobSpawnRules(barrelGolemEntityType, worldGenLevel, MobSpawnType.SPAWNER, offset,
                     worldGenLevel.getRandom())) {
-                spawnAdditionalGolem(barrelGolemEntityType, worldGenLevel, settings, offset);
+                golemoverhaul$spawnAdditionalGolem(barrelGolemEntityType, worldGenLevel, settings, offset);
             }
 
             var hayGolemEntityType = ModEntityTypes.HAY_GOLEM.get();
             if (HayGolem.checkMobSpawnRules(hayGolemEntityType, worldGenLevel, MobSpawnType.SPAWNER, offset,
                     worldGenLevel.getRandom())) {
-                spawnAdditionalGolem(hayGolemEntityType, worldGenLevel, settings, offset);
+                golemoverhaul$spawnAdditionalGolem(hayGolemEntityType, worldGenLevel, settings, offset);
             }
         });
     }
 
-    private <T extends BaseGolem> void spawnAdditionalGolem(EntityType<T> entityType, WorldGenLevel worldGenLevel,
-                                                            StructurePlaceSettings settings, BlockPos offset) {
+    @Unique
+    private <T extends BaseGolem> void golemoverhaul$spawnAdditionalGolem(EntityType<T> entityType, WorldGenLevel worldGenLevel,
+                                                                          StructurePlaceSettings settings, BlockPos offset) {
         var golem = entityType.create(worldGenLevel.getLevel());
         if (golem == null) return;
 
