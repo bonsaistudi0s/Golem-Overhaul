@@ -10,6 +10,7 @@ import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.client.renderers.entities.golems.base.BaseGolemModel;
 import tech.alexnijjar.golemoverhaul.client.renderers.entities.golems.base.BaseGolemRenderer;
+import tech.alexnijjar.golemoverhaul.client.utils.ModRenderTypes;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.CoalGolem;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 
@@ -24,7 +25,7 @@ public class CoalGolemRenderer extends BaseGolemRenderer<CoalGolem> {
         addRenderLayer(new AutoGlowingGeoLayer<>(this) {
             @Override
             protected RenderType getRenderType(CoalGolem golem, @Nullable MultiBufferSource bufferSource) {
-                return golem.isLit() ? RenderType.eyes(LIT_TEXTURE) : RenderType.entityCutout(TEXTURE);
+                return golem.isLit() ? ModRenderTypes.eyesNoCull(LIT_TEXTURE) : RenderType.entityCutout(TEXTURE);
             }
         });
     }
