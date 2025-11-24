@@ -66,7 +66,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
     }
 
     public AnimationController<?> getMovementController() {
-        return new AnimationController<>(this, 5, this::handleMovementController);
+        return new AnimationController<>(this, this::handleMovementController);
     }
 
     public PlayState handleMovementController(AnimationState<BaseGolem> state) {
