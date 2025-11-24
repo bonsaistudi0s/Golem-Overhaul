@@ -72,6 +72,6 @@ license = "ARR"
 [[dependencies.golemoverhaul]]
     modId = "alexsmobs"
     mandatory = false
-    versionRange = "[alexsmobs_version,)"
+    versionRange = "[$alexsmobs_version,)"
     ordering = "AFTER"
     side = "BOTH"
