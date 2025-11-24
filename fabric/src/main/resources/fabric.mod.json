@@ -35,7 +35,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.17.3",
-    "minecraft": "~1.20.1",
+    "minecraft": "=${minecraft_version}",
     "java": ">=17",
     "architectury": ">=${architectury_api_version}",
     "fabric-api": "*",
@@ -47,5 +47,19 @@
     "modmenu": ">=${modmenu_version}",
     "jei": ">=${jei_version}",
     "rei": ">=${rei_version}"
+  },
+  "custom": {
+    "mc-publish": {
+      "dependencies": [
+        "architectury#(ignore)",
+        "architectury-api@>={$architectury_api_version}(required)",
+        "resourcefullib#(ignore)",
+        "resourceful-lib@>=${resourcefullib_version}(required)",
+        "resourcefulconfig#(ignore)",
+        "resourceful-config@>=${resourcefulconfig_version}(required)",
+        "rei@>=${rei_version}(optional)#(ignore:curseforge)",
+        "roughly-enough-items@>=${rei_version}(optional)#(ignore:modrinth)"
+      ]
+    }
   }
 }
