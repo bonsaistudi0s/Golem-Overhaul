@@ -9,7 +9,8 @@
     "common.CarvedPumpkinBlockMixin",
     "common.ConduitBlockEntityMixin",
     "common.NearestAttackableTargetGoalMixin",
-    "common.PiglinSpecificSensorMixin"
+    "common.PiglinSpecificSensorMixin",
+    "common.SinglePoolElementMixin"
   ],
   "client": [
   ],
