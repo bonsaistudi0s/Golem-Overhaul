@@ -456,7 +456,7 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
 
     @Override
     public boolean canAttack(LivingEntity target) {
-        return !this.isVehicle();
+        return !this.isVehicle() && super.canAttack(target);
     }
 
     @Override
