@@ -132,7 +132,8 @@ public class BarrelGolem extends BaseGolem {
             }
             state.resetCurrentAnimation();
             return PlayState.STOP;
-        }));
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(),
+                ModSoundEvents.BARREL_GOLEM_BARTER.get(), getSoundSource(), 1, 1, false)));
     }
 
     @Override
@@ -405,7 +406,6 @@ public class BarrelGolem extends BaseGolem {
         this.level().broadcastEntityEvent(this, BARTER_EVENT_ID);
         this.changeStateTicks = this.getRandomChangeInterval();
         this.barteringTicks = BARTERING_TICKS;
-        playSound(ModSoundEvents.BARREL_GOLEM_BARTER.get());
     }
 
     @Override
