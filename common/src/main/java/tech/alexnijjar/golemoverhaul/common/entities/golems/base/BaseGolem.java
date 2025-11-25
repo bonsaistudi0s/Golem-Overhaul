@@ -105,10 +105,10 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
         this.targetSelector.removeGoal(this.attackTargetGoal);
 
         if (canMeleeAttack()) {
-            this.goalSelector.addGoal(1, this.meleeAttackGoal);
+            this.goalSelector.addGoal(2, this.meleeAttackGoal);
         }
         if (canTarget()) {
-            this.targetSelector.addGoal(2, this.hurtByTargetGoal);
+            this.targetSelector.addGoal(1, this.hurtByTargetGoal);
             this.targetSelector.addGoal(3, this.attackTargetGoal);
         }
     }
