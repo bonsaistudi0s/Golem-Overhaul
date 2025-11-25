@@ -409,7 +409,6 @@ public class BarrelGolem extends BaseGolem {
         this.level().broadcastEntityEvent(this, BARTER_EVENT_ID);
         this.changeStateTicks = this.getRandomChangeInterval();
         this.barteringTicks = BARTERING_TICKS;
-        playSound(ModSoundEvents.BARREL_GOLEM_BARTER.get());
     }
 
     @Override
