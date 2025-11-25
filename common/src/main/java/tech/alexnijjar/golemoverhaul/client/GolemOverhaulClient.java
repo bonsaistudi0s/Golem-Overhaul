@@ -34,6 +34,14 @@ public class GolemOverhaulClient {
         ConstantComponents.GOLEM_OVERHAUL_CATEGORY.getString());
 
     public static void init() {
+        registerKeyMappings();
+        registerEntityRenderers();
+        registerBlockRenderTypes();
+    }
+
+    private static void registerKeyMappings() {
+        KeyMappingRegistry.register(KEY_NETHERITE_GOLEM_SUMMON);
+
         ClientTickEvent.CLIENT_PRE.register(minecraft -> {
             if (KEY_NETHERITE_GOLEM_SUMMON.consumeClick()) {
                 LocalPlayer player = Minecraft.getInstance().player;
@@ -43,14 +51,9 @@ public class GolemOverhaulClient {
                 }
             }
         });
-
-        KeyMappingRegistry.register(KEY_NETHERITE_GOLEM_SUMMON);
-
-        registerEntityRenderers();
-        registerBlockRenderTypes();
     }
 
-    public static void registerEntityRenderers() {
+    private static void registerEntityRenderers() {
         EntityRendererRegistry.register(ModEntityTypes.BARREL_GOLEM, BarrelGolemRenderer::new);
         EntityRendererRegistry.register(ModEntityTypes.CANDLE_GOLEM, CandleGolemRenderer::new);
         EntityRendererRegistry.register(ModEntityTypes.COAL_GOLEM, CoalGolemRenderer::new);
@@ -60,13 +63,14 @@ public class GolemOverhaulClient {
         EntityRendererRegistry.register(ModEntityTypes.NETHERITE_GOLEM, NetheriteGolemRenderer::new);
         EntityRendererRegistry.register(ModEntityTypes.SLIME_GOLEM, SlimeGolemRenderer::new);
         EntityRendererRegistry.register(ModEntityTypes.TERRACOTTA_GOLEM, TerracottaGolemRenderer::new);
+
         EntityRendererRegistry.register(ModEntityTypes.CANDLE_FLAME, CandleFlameProjectileRenderer::new);
         EntityRendererRegistry.register(ModEntityTypes.MUD_BALL, context ->
                 new GeoEntityRenderer<>(context, new DefaultedEntityGeoModel<>(BuiltInRegistries.ENTITY_TYPE.getKey(ModEntityTypes.MUD_BALL.get()))));
         EntityRendererRegistry.register(ModEntityTypes.HONEY_BLOB, HoneyBlobProjectileRenderer::new);
     }
 
-    public static void registerBlockRenderTypes() {
+    private static void registerBlockRenderTypes() {
         registerBlockRenderType(ModBlocks.CANDLE_GOLEM_BLOCK, RenderType.cutout());
         registerBlockRenderType(ModBlocks.CLAY_GOLEM_STATUE, RenderType.cutout());
     }
