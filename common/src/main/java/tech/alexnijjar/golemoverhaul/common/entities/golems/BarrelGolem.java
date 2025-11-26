@@ -96,7 +96,7 @@ public class BarrelGolem extends BaseGolem {
     }
 
     public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level,
-            MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+                                             MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!GolemOverhaulConfig.spawnBarrelGolems || !GolemOverhaulConfig.allowSpawning)
             return false;
         return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
@@ -134,7 +134,8 @@ public class BarrelGolem extends BaseGolem {
             }
             state.resetCurrentAnimation();
             return PlayState.STOP;
-        }));
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(),
+                ModSoundEvents.BARREL_GOLEM_BARTER.get(), getSoundSource(), 1, 1, false)));
     }
 
     @Override
@@ -267,7 +268,8 @@ public class BarrelGolem extends BaseGolem {
 
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor serverLevelAccessor,
-            DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData spawnGroupData) {
+                                                  DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType,
+                                                  @Nullable SpawnGroupData spawnGroupData) {
         setOpen(level().getSkyDarken() < 4, false);
         changeStateTicks = this.getRandomChangeInterval();
         return super.finalizeSpawn(serverLevelAccessor, difficultyInstance, mobSpawnType, spawnGroupData);
@@ -408,7 +410,6 @@ public class BarrelGolem extends BaseGolem {
         this.level().broadcastEntityEvent(this, BARTER_EVENT_ID);
         this.changeStateTicks = this.getRandomChangeInterval();
         this.barteringTicks = BARTERING_TICKS;
-        playSound(ModSoundEvents.BARREL_GOLEM_BARTER.get());
     }
 
     @Override

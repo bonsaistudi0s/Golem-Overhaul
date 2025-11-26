@@ -28,11 +28,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.IShearable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
+import tech.alexnijjar.golemoverhaul.common.entities.IShearable;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.MudBallProjectile;
 import tech.alexnijjar.golemoverhaul.common.tags.ModItemTags;
@@ -171,7 +171,7 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
     }
 
     @Override
-    public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+    public @NotNull List<ItemStack> onSheared() {
         playSound(SoundEvents.SNOW_GOLEM_SHEAR);
         setTerracottaType(Type.NORMAL);
         if (!this.equippedStack.isEmpty()) {
@@ -181,7 +181,7 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
     }
 
     @Override
-    public boolean isShearable(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+    public boolean isShearable() {
         return this.getTerracottaType() != Type.NORMAL;
     }
 

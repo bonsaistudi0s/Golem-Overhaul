@@ -30,13 +30,13 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.IShearable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import tech.alexnijjar.golemoverhaul.common.constants.ConstantAnimations;
+import tech.alexnijjar.golemoverhaul.common.entities.IShearable;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.recipes.GolemConstructionRecipe;
 import tech.alexnijjar.golemoverhaul.common.recipes.SingleEntityInput;
@@ -323,7 +323,7 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     }
 
     @Override
-    public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+    public @NotNull List<ItemStack> onSheared() {
         playSound(SoundEvents.SNOW_GOLEM_SHEAR);
         playSound(SoundEvents.ARMOR_EQUIP_GOLD.value());
         setGilded(false);
@@ -331,7 +331,7 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     }
 
     @Override
-    public boolean isShearable(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+    public boolean isShearable() {
         return isGilded();
     }
 

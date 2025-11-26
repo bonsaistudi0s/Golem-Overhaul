@@ -12,7 +12,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
@@ -26,10 +29,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.neoforged.neoforge.common.IShearable;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
 import tech.alexnijjar.golemoverhaul.common.entities.AdditionalBeeData;
+import tech.alexnijjar.golemoverhaul.common.entities.IShearable;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.HoneyBlobProjectile;
 import tech.alexnijjar.golemoverhaul.common.registry.ModItems;
@@ -67,7 +70,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     }
 
     public static boolean checkMobSpawnRules(EntityType<? extends Mob> type, LevelAccessor level,
-            MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+                                             MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         if (!GolemOverhaulConfig.spawnHoneyGolems || !GolemOverhaulConfig.allowSpawning)
             return false;
         return Mob.checkMobSpawnRules(type, level, spawnType, pos, random);
@@ -245,21 +248,23 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     }
 
     @Override
-    public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
-        if (!isFullOfHoney())
+    public @NotNull List<ItemStack> onSheared() {
+        if (!isFullOfHoney()) {
             return List.of();
+        }
+
         playSound(SoundEvents.BEEHIVE_SHEAR);
 
         if (!level().isClientSide()) {
             setHoneyLevel((byte) 0);
         }
-        return List.of(
-                new ItemStack(ModItems.HONEY_BLOB.get(), 5 + level.random.nextInt(8)),
+
+        return List.of(new ItemStack(ModItems.HONEY_BLOB.get(), 5 + level().random.nextInt(8)),
                 new ItemStack(Items.HONEYCOMB, 3));
     }
 
     @Override
-    public boolean isShearable(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+    public boolean isShearable() {
         return isFullOfHoney();
     }
 

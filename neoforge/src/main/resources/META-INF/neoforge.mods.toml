@@ -1,0 +1,91 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "ARR"
+issueTrackerURL = "https://github.com/bonsaistudi0s/golem-overhaul/issues"
+
+[[mods]]
+modId = "$mod_id"
+version = "$version"
+displayName = "Golem Overhaul"
+updateJSONURL = "https://api.modrinth.com/updates/golem-overhaul/forge_updates.json"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/golem-overhaul"
+logoFile = "icon.png"
+authors = "Alex Nijjar, Joosh, 3xpl01t"
+description = '''
+Golem overhaul adds awesome Golems!
+'''
+
+[[mixins]]
+config = "golemoverhaul.mixins.json"
+
+[[dependencies.golemoverhaul]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+modId = "minecraft"
+type = "required"
+versionRange = "[$minecraft_version]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+modId = "architectury"
+type = "required"
+versionRange = "[$architectury_api_version,)"
+ordering = "AFTER"
+side = "BOTH"
+[dependencies.golemoverhaul.mc-publish]
+    ignore = false
+    modrinth = "architectury-api"
+    curseforge = "architectury-api"
+
+[[dependencies.golemoverhaul]]
+modId = "resourcefullib"
+type = "required"
+versionRange = "[$resourcefullib_version,)"
+ordering = "NONE"
+side = "BOTH"
+[dependencies.golemoverhaul.mc-publish]
+    ignore = false
+    modrinth = "resourceful-lib"
+    curseforge = "resourceful-lib"
+
+[[dependencies.golemoverhaul]]
+modId = "resourcefulconfig"
+type = "required"
+versionRange = "[$resourcefulconfig_version,)"
+ordering = "NONE"
+side = "BOTH"
+[dependencies.golemoverhaul.mc-publish]
+    ignore = false
+    modrinth = "resourceful-config"
+    curseforge = "resourceful-config"
+
+[[dependencies.golemoverhaul]]
+modId = "geckolib"
+type = "required"
+versionRange = "[$geckolib_version,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+modId = "jei"
+type = "optional"
+versionRange = "[$jei_version,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.golemoverhaul]]
+modId = "rei"
+type = "optional"
+versionRange = "[$rei_version,)"
+ordering = "NONE"
+side = "BOTH"
+[dependencies.golemoverhaul.mc-publish]
+    ignore = false
+    modrinth = "rei"
+    curseforge = "roughly-enough-items"

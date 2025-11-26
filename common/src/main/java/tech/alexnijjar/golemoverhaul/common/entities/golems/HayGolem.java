@@ -26,10 +26,11 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.IShearable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import tech.alexnijjar.golemoverhaul.common.config.GolemOverhaulConfig;
+import tech.alexnijjar.golemoverhaul.common.entities.IShearable;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.base.BaseGolem;
 import tech.alexnijjar.golemoverhaul.common.recipes.GolemConstructionRecipe;
 import tech.alexnijjar.golemoverhaul.common.recipes.SingleEntityInput;
@@ -168,14 +169,14 @@ public class HayGolem extends BaseGolem implements IShearable {
     }
 
     @Override
-    public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+    public @NotNull List<ItemStack> onSheared() {
         playSound(SoundEvents.SNOW_GOLEM_SHEAR);
         setSheared(true);
         return List.of(Items.CARVED_PUMPKIN.getDefaultInstance());
     }
 
     @Override
-    public boolean isShearable(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+    public boolean isShearable() {
         return !isSheared();
     }
 

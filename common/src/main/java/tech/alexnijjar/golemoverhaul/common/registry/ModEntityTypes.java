@@ -3,25 +3,29 @@ package tech.alexnijjar.golemoverhaul.common.registry;
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries;
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry;
+import dev.architectury.registry.level.biome.BiomeModifications;
+import dev.architectury.registry.level.entity.EntityAttributeRegistry;
+import dev.architectury.registry.level.entity.SpawnPlacementsRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
-import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.*;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.CandleFlameProjectile;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.HoneyBlobProjectile;
 import tech.alexnijjar.golemoverhaul.common.entities.projectiles.MudBallProjectile;
+import tech.alexnijjar.golemoverhaul.common.tags.ModBiomeTags;
 
-@EventBusSubscriber(modid = GolemOverhaul.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class ModEntityTypes {
 
-    public static final ResourcefulRegistry<EntityType<?>> ENTITY_TYPES = ResourcefulRegistries.create(BuiltInRegistries.ENTITY_TYPE, GolemOverhaul.MOD_ID);
+    public static final ResourcefulRegistry<EntityType<?>> ENTITY_TYPES =
+            ResourcefulRegistries.create(BuiltInRegistries.ENTITY_TYPE, GolemOverhaul.MOD_ID);
     public static final ResourcefulRegistry<EntityType<?>> GOLEMS = ResourcefulRegistries.create(ENTITY_TYPES);
     public static final ResourcefulRegistry<EntityType<?>> PROJECTILES = ResourcefulRegistries.create(ENTITY_TYPES);
 
@@ -102,29 +106,68 @@ public class ModEntityTypes {
             .updateInterval(10)
             .build("honey_blob"));
 
-    @SubscribeEvent
-    public static void onRegisterAttributes(EntityAttributeCreationEvent event) {
-        event.put(BARREL_GOLEM.get(), BarrelGolem.createAttributes().build());
-        event.put(CANDLE_GOLEM.get(), CandleGolem.createAttributes().build());
-        event.put(COAL_GOLEM.get(), CoalGolem.createAttributes().build());
-        event.put(HAY_GOLEM.get(), HayGolem.createAttributes().build());
-        event.put(HONEY_GOLEM.get(), HoneyGolem.createAttributes().build());
-        event.put(KELP_GOLEM.get(), KelpGolem.createAttributes().build());
-        event.put(NETHERITE_GOLEM.get(), NetheriteGolem.createAttributes().build());
-        event.put(SLIME_GOLEM.get(), SlimeGolem.createAttributes().build());
-        event.put(TERRACOTTA_GOLEM.get(), TerracottaGolem.createAttributes().build());
+    public static void init() {
+        ENTITY_TYPES.init();
+        registerAttributes();
+        registerSpawnPlacements();
+        registerBiomeModifications();
     }
 
-    @SubscribeEvent
-    public static void onRegisterSpawnPlacements(RegisterSpawnPlacementsEvent event) {
-        event.register(ModEntityTypes.BARREL_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarrelGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.CANDLE_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CandleGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.COAL_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CoalGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.HAY_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HayGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.HONEY_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HoneyGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.KELP_GOLEM.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, KelpGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.NETHERITE_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NetheriteGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.SLIME_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SlimeGolem::checkSlimeSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntityTypes.TERRACOTTA_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, TerracottaGolem::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+    private static void registerAttributes() {
+        EntityAttributeRegistry.register(BARREL_GOLEM, BarrelGolem::createAttributes);
+        EntityAttributeRegistry.register(CANDLE_GOLEM, CandleGolem::createAttributes);
+        EntityAttributeRegistry.register(COAL_GOLEM, CoalGolem::createAttributes);
+        EntityAttributeRegistry.register(HAY_GOLEM, HayGolem::createAttributes);
+        EntityAttributeRegistry.register(HONEY_GOLEM, HoneyGolem::createAttributes);
+        EntityAttributeRegistry.register(KELP_GOLEM, KelpGolem::createAttributes);
+        EntityAttributeRegistry.register(NETHERITE_GOLEM, NetheriteGolem::createAttributes);
+        EntityAttributeRegistry.register(SLIME_GOLEM, SlimeGolem::createAttributes);
+        EntityAttributeRegistry.register(TERRACOTTA_GOLEM, TerracottaGolem::createAttributes);
+    }
+
+    private static void registerSpawnPlacements() {
+        SpawnPlacementsRegistry.register(ModEntityTypes.BARREL_GOLEM, SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BarrelGolem::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(ModEntityTypes.CANDLE_GOLEM, SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CandleGolem::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(ModEntityTypes.COAL_GOLEM, SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CoalGolem::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(ModEntityTypes.HAY_GOLEM, SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HayGolem::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(ModEntityTypes.HONEY_GOLEM, SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, HoneyGolem::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(ModEntityTypes.KELP_GOLEM, SpawnPlacementTypes.IN_WATER,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, KelpGolem::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(ModEntityTypes.NETHERITE_GOLEM, SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NetheriteGolem::checkMobSpawnRules);
+        SpawnPlacementsRegistry.register(ModEntityTypes.SLIME_GOLEM, SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SlimeGolem::checkSlimeSpawnRules);
+        SpawnPlacementsRegistry.register(ModEntityTypes.TERRACOTTA_GOLEM, SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, TerracottaGolem::checkMobSpawnRules);
+    }
+
+    private static void registerBiomeModifications() {
+        addSpawn(ModEntityTypes.COAL_GOLEM, ModBiomeTags.COAL_GOLEM_SPAWNS, 20, 3, 5);
+        addSpawn(ModEntityTypes.HONEY_GOLEM, ModBiomeTags.HONEY_GOLEM_SPAWNS, 6, 1, 2);
+        addSpawn(ModEntityTypes.SLIME_GOLEM, ModBiomeTags.SLIME_GOLEM_SPAWNS, 25, 1, 2);
+        addSpawn(ModEntityTypes.SLIME_GOLEM, ModBiomeTags.SLIME_GOLEM_SWAMP_SPAWNS, 1, 1, 1);
+        addSpawn(ModEntityTypes.TERRACOTTA_GOLEM, ModBiomeTags.TERRACOTTA_GOLEM_SPAWNS, 6, 1, 2);
+    }
+
+    private static <T extends Entity> void addSpawn(RegistryEntry<EntityType<T>> entityType,
+                                                    TagKey<Biome> spawnBiomesTag, int weight, int minCount,
+                                                    int maxCount) {
+        BiomeModifications.addProperties(
+                biomeContext -> biomeContext.hasTag(spawnBiomesTag),
+                (context, properties) -> properties.getSpawnProperties().addSpawn(
+                        entityType.get().getCategory(),
+                        new MobSpawnSettings.SpawnerData(
+                                entityType.get(),
+                                weight,
+                                minCount,
+                                maxCount
+                        )
+                )
+        );
     }
 }
