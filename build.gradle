@@ -88,6 +88,23 @@ subprojects {
             mavenJava(MavenPublication) {
                 artifactId = base.archivesName.get()
                 from components.java
+
+                pom {
+                    name = "Golem Overhaul $project.name"
+                    url = "https://github.com/bonsaistudi0s/Golem-Overhaul"
+
+                    scm {
+                        connection = "git:https://github.com/bonsaistudi0s/Golem-Overhaul"
+                        developerConnection = "git:https://github.com/bonsaistudi0s/Golem-Overhaul.git"
+                        url = "https://github.com/bonsaistudi0s/Golem-Overhaul"
+                    }
+
+                    licenses {
+                        license {
+                            name = 'ARR'
+                        }
+                    }
+                }
             }
         }
 
@@ -97,6 +114,14 @@ subprojects {
             // Notice: This block does NOT have the same function as the block in the top level.
             // The repositories here will be used for publishing your artifact, not for
             // retrieving dependencies.
+
+            maven {
+                url = "https://maven.teamresourceful.com/repository/alexnijjar/"
+                credentials {
+                    username = System.getenv("MAVEN_USER")
+                    password = System.getenv("MAVEN_PASS")
+                }
+            }
         }
     }
 }
