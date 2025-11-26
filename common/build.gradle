@@ -26,5 +26,5 @@ dependencies {
 }
 
 processResources {
-    exclude(".cache")
+    exclude ".cache"
 }
