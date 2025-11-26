@@ -1,6 +1,0 @@
-- Fix dedicated server crash (#5)
-- Update barrel golem wake animation
-- Update hay golem texture
-- Fix hay golem trample protection not working (#4)
-- Fix crash with C2ME (#9)
-- Fix honey blob rotation

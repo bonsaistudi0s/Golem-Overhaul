@@ -24,12 +24,12 @@ jobs:
       - name: Setup Gradle Wrapper
         run: chmod +x gradlew
 
-      - name: Get Version and Platform
+      - name: Get Version
         id: properties
         uses: christian-draeger/read-properties@1.1.1
         with:
           path: "./gradle.properties"
-          properties: "version enabledPlatforms minecraftVersion"
+          properties: "version"
 
       - name: Publish Release
         run: ./gradlew publish
@@ -47,16 +47,24 @@ jobs:
           modrinth-id: ${{ vars.MODRINTH_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-          files: ./build/libs/!(*-@(dev|sources)).jar
+          files: ./neoforge/build/libs/!(*-@(dev-shadow|sources)).jar
           name: "[NeoForge] Golem Overhaul ${{ steps.properties.outputs.version }}"
           version: ${{ steps.properties.outputs.version }}
           version-type: release
           changelog-file: changelog.md
-          loaders: neoforge
-          game-versions: ${{ steps.properties.outputs.minecraftVersion }}
-          version-resolver: exact
 
-          dependencies: |
-            resourceful-lib | depends | *
-            resourceful-config | depends | *
-            geckolib | depends | *
+      - name: Upload Fabric Releases (Curse/Modrinth)
+        id: fabric_release
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          curseforge-id: ${{ vars.CURSE_ID }}
+          curseforge-token: ${{ secrets.CURSE_TOKEN }}
+
+          modrinth-id: ${{ vars.MODRINTH_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          files: ./fabric/build/libs/!(*-@(dev-shadow|sources)).jar
+          name: "[Fabric] Golem Overhaul ${{ steps.properties.outputs.version }}"
+          version: ${{ steps.properties.outputs.version }}
+          version-type: release
+          changelog-file: changelog.md

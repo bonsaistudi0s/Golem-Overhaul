@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation("tech.alexnijjar.golemoverhaul:golemoverhaul-neoforge-$minecraftVersion:$endermanOverhaulVersion")
+    implementation("tech.alexnijjar.golemoverhaul:golemoverhaul-neoforge-$minecraftVersion:$golemOverhaulVersion")
 }
 ```
 
@@ -20,6 +20,6 @@ repositories {
 }
 
 dependencies {
-    implementation "tech.alexnijjar.golemoverhaul:golemoverhaul-neoforge-$minecraftVersion:$endermanOverhaulVersion"
+    implementation "tech.alexnijjar.golemoverhaul:golemoverhaul-neoforge-$minecraftVersion:$golemOverhaulVersion"
 }
 ```
