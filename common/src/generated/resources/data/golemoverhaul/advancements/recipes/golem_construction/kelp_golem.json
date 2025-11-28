@@ -17,5 +17,6 @@
     "recipes": [
       "golemoverhaul:golem_construction/kelp_golem"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

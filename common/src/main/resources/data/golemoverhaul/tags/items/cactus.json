@@ -1,9 +1,0 @@
-{
-  "values": [
-    "minecraft:cactus",
-    {
-      "id": "creeperoverhaul:tiny_cactus",
-      "required": false
-    }
-  ]
-}

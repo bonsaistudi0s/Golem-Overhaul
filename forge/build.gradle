@@ -67,6 +67,17 @@ dependencies {
     modCompileOnly "curse.maven:alexs-mobs-426558:${alexsmobs_version_id}"
 }
 
+loom {
+    runs {
+        data {
+            data()
+            programArgs "--all", "--mod", "golemoverhaul"
+            programArgs "--output", file("../common/src/generated/resources").absolutePath
+            programArgs "--existing", file("../common/src/main/resources").absolutePath
+        }
+    }
+}
+
 processResources {
     def props = [
             'version'                  : project.version,
@@ -90,6 +101,8 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
+
+    exclude '**/golemoverhaul/datagen/**'
 }
 
 remapJar {

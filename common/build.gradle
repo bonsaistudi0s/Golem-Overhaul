@@ -24,3 +24,7 @@ dependencies {
 
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-forge:${rei_version}"
 }
+
+processResources {
+    exclude ".cache"
+}

@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "golemoverhaul:golem_construction/terracotta_golem"
+        "recipe": "golemoverhaul:golem_construction/hay_golem"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,8 @@
   ],
   "rewards": {
     "recipes": [
-      "golemoverhaul:golem_construction/terracotta_golem"
+      "golemoverhaul:golem_construction/hay_golem"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

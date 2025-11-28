@@ -42,8 +42,8 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "function": "minecraft:set_nbt",
-              "tag": "{Potion:\"minecraft:water\"}"
+              "function": "minecraft:set_potion",
+              "id": "minecraft:water"
             }
           ],
           "name": "minecraft:potion",
@@ -151,8 +151,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:diamond",
-          "weight": 1
+          "name": "minecraft:diamond"
         },
         {
           "type": "minecraft:item",
@@ -166,8 +165,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:totem_of_undying",
-          "weight": 1
+          "name": "minecraft:totem_of_undying"
         },
         {
           "type": "minecraft:item",

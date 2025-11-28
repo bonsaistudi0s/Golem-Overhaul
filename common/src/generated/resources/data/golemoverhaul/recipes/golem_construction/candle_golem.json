@@ -2,7 +2,8 @@
   "type": "golemoverhaul:golem_construction",
   "blockScale": 1.5,
   "entity": "golemoverhaul:candle_golem",
-  "item": "golemoverhaul:candle_golem_block",
+  "entityScale": 1.0,
+  "item": "golemoverhaul:candle_golem_spawn_egg",
   "key": {
     "#": "golemoverhaul:candle_golem_block"
   },
