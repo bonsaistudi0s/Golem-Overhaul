@@ -2,6 +2,7 @@ package tech.alexnijjar.golemoverhaul.datagen.provider.server;
 
 import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.EntityLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.LootTableSubProvider;
@@ -9,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -24,6 +26,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.jetbrains.annotations.NotNull;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.BarrelGolem;
+import tech.alexnijjar.golemoverhaul.common.registry.ModBlocks;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
 
 import java.util.List;
@@ -35,9 +38,31 @@ public class ModLootTableProvider extends LootTableProvider {
 
     public ModLootTableProvider(PackOutput output) {
         super(output, Set.of(), List.of(
+                new SubProviderEntry(BlockLootTables::new, LootContextParamSets.BLOCK),
                 new SubProviderEntry(EntityLootTables::new, LootContextParamSets.ENTITY),
                 new SubProviderEntry(BarrelGolemBarterLootProvider::new, LootContextParamSets.PIGLIN_BARTER)
         ));
+    }
+
+    private static class BlockLootTables extends BlockLootSubProvider {
+
+        protected BlockLootTables() {
+            super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+        }
+
+        @Override
+        protected void generate() {
+            dropSelf(ModBlocks.CANDLE_GOLEM_BLOCK.get());
+            dropSelf(ModBlocks.CLAY_GOLEM_STATUE.get());
+        }
+
+        @Override
+        protected @NotNull Iterable<Block> getKnownBlocks() {
+            return List.of(
+                    ModBlocks.CANDLE_GOLEM_BLOCK.get(),
+                    ModBlocks.CLAY_GOLEM_STATUE.get()
+            );
+        }
     }
 
     private static class EntityLootTables extends EntityLootSubProvider {

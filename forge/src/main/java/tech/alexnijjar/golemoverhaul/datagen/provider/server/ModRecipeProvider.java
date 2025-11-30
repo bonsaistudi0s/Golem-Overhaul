@@ -2,7 +2,10 @@ package tech.alexnijjar.golemoverhaul.datagen.provider.server;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
@@ -21,6 +24,32 @@ public class ModRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(@NotNull Consumer<FinishedRecipe> writer) {
+        buildBlockRecipes(writer);
+        buildGolemConstructionRecipes(writer);
+    }
+
+    private void buildBlockRecipes(@NotNull Consumer<FinishedRecipe> writer) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CANDLE_GOLEM_BLOCK.get())
+                .pattern(" / ")
+                .pattern("###")
+                .pattern("###")
+                .define('#', Items.HONEYCOMB)
+                .define('/', Items.STRING)
+                .showNotification(true)
+                .unlockedBy("has_honeycomb", has(Items.HONEYCOMB))
+                .save(writer);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CLAY_GOLEM_STATUE.get())
+                .pattern("/#/")
+                .pattern(" # ")
+                .define('#', Items.CLAY_BALL)
+                .define('/', Items.CLAY)
+                .showNotification(true)
+                .unlockedBy("has_clay_ball", has(Items.CLAY_BALL))
+                .save(writer);
+    }
+
+    private void buildGolemConstructionRecipes(@NotNull Consumer<FinishedRecipe> writer) {
         GolemConstructionRecipeBuilder
                 .golem(ModEntityTypes.NETHERITE_GOLEM.get(), ModItems.NETHERITE_GOLEM_SPAWN_EGG.get())
                 .pattern("~^~")
