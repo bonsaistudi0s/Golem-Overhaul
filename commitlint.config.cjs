@@ -20,6 +20,7 @@ module.exports = {
         'refactor',
         'test',
         'ci',
+        'build',
       ],
     ],
   },
