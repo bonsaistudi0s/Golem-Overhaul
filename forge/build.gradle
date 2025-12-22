@@ -50,7 +50,7 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
 
-    implementation(include("io.github.llamalad7:mixinextras-forge:0.5.0"))
+    implementation("io.github.llamalad7:mixinextras-forge:0.5.0")
 
     modImplementation "com.teamresourceful.resourcefullib:resourcefullib-forge-${rootProject.minecraft_version}:${rootProject.resourcefullib_version}"
     modImplementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-forge-${rootProject.minecraft_version}:${rootProject.resourcefulconfig_version}"
