@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.SnowGolem;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -97,6 +98,11 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
         this.goalSelector.addGoal(4, new RandomStrollGoal(this, 1));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 6));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return super.canAttack(target) && !(target instanceof BaseGolem || target instanceof IronGolem || target instanceof SnowGolem);
     }
 
     public final void updateAttackGoals() {
