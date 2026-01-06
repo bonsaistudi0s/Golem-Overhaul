@@ -246,14 +246,17 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
 
     @Override
     public @NotNull List<ItemStack> onSheared() {
-        if (!isFullOfHoney())
+        if (!isFullOfHoney()) {
             return List.of();
+        }
+
         playSound(SoundEvents.BEEHIVE_SHEAR);
+
         if (!level().isClientSide()) {
             setHoneyLevel((byte) 0);
         }
-        return List.of(
-                new ItemStack(ModItems.HONEY_BLOB.get(), 5 + level().random.nextInt(8)),
+
+        return List.of(new ItemStack(ModItems.HONEY_BLOB.get(), 5 + level().random.nextInt(8)),
                 new ItemStack(Items.HONEYCOMB, 3));
     }
 
@@ -283,7 +286,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (!bees.isEmpty() && source.getEntity() instanceof LivingEntity entity) {
+        if (!bees.isEmpty() && source.getEntity() instanceof LivingEntity entity && canAttack(entity)) {
             if (entity instanceof Player player && player.isCreative())
                 return super.hurt(source, amount);
             this.releaseAllBees().forEach(bee -> bee.setTarget(entity));

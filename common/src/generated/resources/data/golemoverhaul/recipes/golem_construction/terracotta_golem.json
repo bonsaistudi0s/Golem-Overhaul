@@ -1,0 +1,14 @@
+{
+  "type": "golemoverhaul:golem_construction",
+  "blockScale": 1.5,
+  "entity": "golemoverhaul:terracotta_golem",
+  "entityScale": 1.0,
+  "item": "golemoverhaul:terracotta_golem_spawn_egg",
+  "key": {
+    "#": "golemoverhaul:clay_golem_statue"
+  },
+  "pattern": [
+    "#"
+  ],
+  "visualOnly": true
+}

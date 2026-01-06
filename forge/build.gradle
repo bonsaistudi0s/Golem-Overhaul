@@ -50,7 +50,7 @@ dependencies {
     common(project(path: ':common', configuration: 'namedElements')) { transitive = false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
 
-    implementation(include("io.github.llamalad7:mixinextras-forge:0.5.0"))
+    implementation("io.github.llamalad7:mixinextras-forge:0.5.0")
 
     modImplementation "com.teamresourceful.resourcefullib:resourcefullib-forge-${rootProject.minecraft_version}:${rootProject.resourcefullib_version}"
     modImplementation "com.teamresourceful.resourcefulconfig:resourcefulconfig-forge-${rootProject.minecraft_version}:${rootProject.resourcefulconfig_version}"
@@ -65,6 +65,17 @@ dependencies {
     //modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-forge:${rei_version}"
 
     modCompileOnly "curse.maven:alexs-mobs-426558:${alexsmobs_version_id}"
+}
+
+loom {
+    runs {
+        data {
+            data()
+            programArgs "--all", "--mod", "golemoverhaul"
+            programArgs "--output", file("../common/src/generated/resources").absolutePath
+            programArgs "--existing", file("../common/src/main/resources").absolutePath
+        }
+    }
 }
 
 processResources {
@@ -90,6 +101,8 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowBundle]
     archiveClassifier = 'dev-shadow'
+
+    exclude '**/golemoverhaul/datagen/**'
 }
 
 remapJar {

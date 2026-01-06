@@ -33,6 +33,10 @@ license = "ARR"
     versionRange = "[$architectury_api_version,)"
     ordering = "AFTER"
     side = "BOTH"
+    [dependencies.golemoverhaul.mc-publish]
+        ignore = false
+        modrinth="architectury-api"
+        curseforge="architectury-api"
 
 [[dependencies.golemoverhaul]]
     modId = "resourcefullib"
@@ -40,6 +44,10 @@ license = "ARR"
     versionRange = "[$resourcefullib_version,)"
     ordering = "AFTER"
     side = "BOTH"
+    [dependencies.golemoverhaul.mc-publish]
+        ignore = false
+        modrinth="resourceful-lib"
+        curseforge="resourceful-lib"
 
 [[dependencies.golemoverhaul]]
     modId = "resourcefulconfig"
@@ -47,6 +55,10 @@ license = "ARR"
     versionRange = "[$resourcefulconfig_version,)"
     ordering = "AFTER"
     side = "BOTH"
+    [dependencies.golemoverhaul.mc-publish]
+        ignore = false
+        modrinth="resourceful-config"
+        curseforge="resourceful-config"
 
 [[dependencies.golemoverhaul]]
     modId = "geckolib"
@@ -68,10 +80,18 @@ license = "ARR"
     versionRange = "[$rei_version,)"
     ordering = "AFTER"
     side = "BOTH"
+    [dependencies.golemoverhaul.mc-publish]
+        ignore = false
+        modrinth="rei"
+        curseforge="roughly-enough-items"
 
 [[dependencies.golemoverhaul]]
     modId = "alexsmobs"
     mandatory = false
-    versionRange = "[alexsmobs_version,)"
+    versionRange = "[$alexsmobs_version,)"
     ordering = "AFTER"
     side = "BOTH"
+    [dependencies.golemoverhaul.mc-publish]
+        ignore = false
+        modrinth="alexs-mobs"
+        curseforge="alexs-mobs"

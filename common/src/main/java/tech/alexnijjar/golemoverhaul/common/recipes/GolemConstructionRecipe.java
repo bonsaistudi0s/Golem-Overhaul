@@ -35,6 +35,8 @@ public class GolemConstructionRecipe implements Recipe<SingleEntityInput> {
     private final Map<String, ResourceKey<Block>> key;
     private final ResourceKey<EntityType<?>> entity;
     private final ResourceKey<Item> item;
+
+    /// If true, this recipe is just for display in JEI and will not trigger pattern matching and spawning the golem
     private final boolean visualOnly;
     private final float blockScale;
     private final float entityScale;

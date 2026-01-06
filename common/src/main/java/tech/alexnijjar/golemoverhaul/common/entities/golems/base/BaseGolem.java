@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.SnowGolem;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -99,16 +100,21 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return super.canAttack(target) && !(target instanceof BaseGolem || target instanceof IronGolem || target instanceof SnowGolem);
+    }
+
     public final void updateAttackGoals() {
         this.goalSelector.removeGoal(this.meleeAttackGoal);
         this.targetSelector.removeGoal(this.hurtByTargetGoal);
         this.targetSelector.removeGoal(this.attackTargetGoal);
 
         if (canMeleeAttack()) {
-            this.goalSelector.addGoal(1, this.meleeAttackGoal);
+            this.goalSelector.addGoal(2, this.meleeAttackGoal);
         }
         if (canTarget()) {
-            this.targetSelector.addGoal(2, this.hurtByTargetGoal);
+            this.targetSelector.addGoal(1, this.hurtByTargetGoal);
             this.targetSelector.addGoal(3, this.attackTargetGoal);
         }
     }

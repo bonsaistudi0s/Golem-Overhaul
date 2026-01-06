@@ -104,7 +104,7 @@ public class BarrelGolem extends BaseGolem {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         super.registerControllers(controllers);
 
-        controllers.add(new AnimationController<>(this, "open_controller", 0, state -> {
+        controllers.add(new AnimationController<>(this, "open_controller", state -> {
             if (isBartering()) {
                 state.resetCurrentAnimation();
                 return PlayState.STOP;
@@ -126,13 +126,14 @@ public class BarrelGolem extends BaseGolem {
             return PlayState.STOP;
         }));
 
-        controllers.add(new AnimationController<>(this, "barter_controller", state -> {
+        controllers.add(new AnimationController<>(this, "barter_controller", 5, state -> {
             if (this.isBartering()) {
                 return state.setAndContinue(ConstantAnimations.BARTER);
             }
             state.resetCurrentAnimation();
             return PlayState.STOP;
-        }));
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(),
+                ModSoundEvents.BARREL_GOLEM_BARTER.get(), getSoundSource(), 1, 1, false)));
     }
 
     @Override
@@ -289,6 +290,11 @@ public class BarrelGolem extends BaseGolem {
     }
 
     @Override
+    protected boolean isImmobile() {
+        return super.isImmobile() || this.isBartering() || !this.isOpen();
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
 
@@ -333,6 +339,7 @@ public class BarrelGolem extends BaseGolem {
                 }
                 this.barteringTarget = null;
                 this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                this.setXRot(0);
             }
         }
     }
@@ -340,15 +347,16 @@ public class BarrelGolem extends BaseGolem {
     @Override
     public void tick() {
         super.tick();
-        if (level().isClientSide() && !this.isOpen()) {
-            this.setXRot(0);
-            this.yHeadRot = 0;
-            this.yBodyRot = 0;
-        }
 
-        ItemStack stack = getMainHandItem();
-        if (!level().isClientSide() && stack.is(Items.EMERALD) && !isBartering() && isOpen()) {
-            this.barter();
+        if (level().isClientSide()) {
+            if (!this.isOpen() || this.isBartering()) {
+                this.yBodyRot = this.yHeadRot;
+            }
+        } else {
+            ItemStack stack = getMainHandItem();
+            if (stack.is(Items.EMERALD) && !isBartering() && isOpen()) {
+                this.barter();
+            }
         }
     }
 
@@ -372,10 +380,13 @@ public class BarrelGolem extends BaseGolem {
         }
     }
 
+    private boolean canBarterWith(ItemStack stack) {
+        return stack.is(Items.EMERALD) && getMainHandItem().isEmpty() && isOpen() && !isBartering();
+    }
+
     @Override
     public boolean wantsToPickUp(ItemStack stack) {
-        return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && stack.is(Items.EMERALD)
-                && getMainHandItem().isEmpty() && isOpen() && !isBartering();
+        return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && canBarterWith(stack);
     }
 
     @Override
@@ -405,13 +416,12 @@ public class BarrelGolem extends BaseGolem {
         this.level().broadcastEntityEvent(this, BARTER_EVENT_ID);
         this.changeStateTicks = this.getRandomChangeInterval();
         this.barteringTicks = BARTERING_TICKS;
-        playSound(ModSoundEvents.BARREL_GOLEM_BARTER.get());
     }
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level().isClientSide() && wantsToPickUp(stack)) {
+        if (!level().isClientSide() && canBarterWith(stack)) {
             this.barteringTarget = player;
             this.setItemInHand(InteractionHand.MAIN_HAND, stack.copy());
             stack.shrink(1);
@@ -483,7 +493,7 @@ public class BarrelGolem extends BaseGolem {
             if (isOpen() && !isBartering()) {
                 ItemEntity nearest = level()
                         .getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(16),
-                                stack -> stack.getItem().is(Items.EMERALD))
+                                stack -> wantsToPickUp(stack.getItem()))
                         .stream()
                         .findFirst()
                         .orElse(null);

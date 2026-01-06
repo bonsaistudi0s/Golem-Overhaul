@@ -25,4 +25,7 @@ run
 # Files from Forge MDK
 forge*changelog.txt
 
+# datagen cache
+common/src/generated/resources/.cache
+
 node_modules
