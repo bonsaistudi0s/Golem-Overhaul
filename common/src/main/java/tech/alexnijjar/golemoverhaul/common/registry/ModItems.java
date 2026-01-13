@@ -15,6 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import org.apache.commons.lang3.NotImplementedException;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
+import tech.alexnijjar.golemoverhaul.common.items.CoalGolemItem;
 import tech.alexnijjar.golemoverhaul.common.items.HoneyBlobItem;
 
 import java.util.function.Supplier;
@@ -44,6 +45,7 @@ public class ModItems {
     public static final RegistryEntry<Item> CANDLE_GOLEM_BLOCK = ITEMS.register("candle_golem_block", () -> new BlockItem(ModBlocks.CANDLE_GOLEM_BLOCK.get(), new Item.Properties()));
     public static final RegistryEntry<Item> CLAY_GOLEM_STATUE = ITEMS.register("clay_golem_statue", () -> new BlockItem(ModBlocks.CLAY_GOLEM_STATUE.get(), new Item.Properties()));
     public static final RegistryEntry<Item> HONEY_BLOB = ITEMS.register("honey_blob", () -> new HoneyBlobItem(new Item.Properties()));
+    public static final RegistryEntry<Item> COAL_GOLEM = ITEMS.register("coal_golem", () -> new CoalGolemItem(new Item.Properties().stacksTo(16)));
 
     @ExpectPlatform
     public static SpawnEggItem createSpawnEgg(Supplier<? extends EntityType<? extends Mob>> type, int backgroundColor, int highlightColor, Item.Properties properties) {

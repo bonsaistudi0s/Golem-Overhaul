@@ -5,6 +5,7 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ public class ModRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes(@NotNull Consumer<FinishedRecipe> writer) {
         buildBlockRecipes(writer);
+        buildItemRecipes(writer);
         buildGolemConstructionRecipes(writer);
     }
 
@@ -46,6 +48,17 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('/', Items.CLAY)
                 .showNotification(true)
                 .unlockedBy("has_clay_ball", has(Items.CLAY_BALL))
+                .save(writer);
+    }
+
+    private void buildItemRecipes(@NotNull Consumer<FinishedRecipe> writer) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.COAL_GOLEM.get(), 4)
+                .pattern("###")
+                .pattern("###")
+                .pattern("# #")
+                .define('#', ItemTags.COALS)
+                .showNotification(true)
+                .unlockedBy("has_coal", has(ItemTags.COALS))
                 .save(writer);
     }
 

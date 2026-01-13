@@ -24,6 +24,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         ModItems.SPAWN_EGGS.getEntries().stream().map(RegistryEntry::get).forEach(this::spawnEggItem);
         basicItem(ModItems.HONEY_BLOB.get());
+        basicItem(ModItems.COAL_GOLEM.get());
 
         blockItemModel(ModBlocks.CANDLE_GOLEM_BLOCK.get());
         blockItemModel(ModBlocks.CLAY_GOLEM_STATUE.get());
