@@ -14,6 +14,7 @@ public class ConstantAnimations {
     public static final RawAnimation DIE = RawAnimation.begin().thenPlayAndHold("animation.golem.die");
     public static final RawAnimation SUMMON = RawAnimation.begin().thenPlay("animation.golem.summon");
     public static final RawAnimation SWIM = RawAnimation.begin().thenLoop("animation.golem.swim");
+    public static final RawAnimation FALL = RawAnimation.begin().thenLoop("animation.golem.fall");
 
     public static final RawAnimation IDLE_WATER = RawAnimation.begin().thenLoop("animation.golem.idle_water");
     public static final RawAnimation SPIN = RawAnimation.begin().thenLoop("animation.golem.spin");

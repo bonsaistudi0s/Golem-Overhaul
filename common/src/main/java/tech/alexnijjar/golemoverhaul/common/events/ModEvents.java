@@ -3,13 +3,17 @@ package tech.alexnijjar.golemoverhaul.common.events;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.BlockEvent;
 import dev.architectury.event.events.common.InteractionEvent;
+import dev.architectury.event.events.common.LifecycleEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ShearsItem;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DispenserBlock;
 import tech.alexnijjar.golemoverhaul.common.entities.IShearable;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.HayGolem;
 import tech.alexnijjar.golemoverhaul.common.entities.golems.KelpGolem;
+import tech.alexnijjar.golemoverhaul.common.items.CoalGolemItem;
+import tech.alexnijjar.golemoverhaul.common.registry.ModItems;
 
 import java.util.Random;
 
@@ -19,6 +23,7 @@ public class ModEvents {
         registerShearInteractions();
         registerKelpGolemPlacementDetection();
         registerHayGolemTramplePrevention();
+        registerDispenserBehaviours();
     }
 
     private static void registerShearInteractions() {
@@ -85,6 +90,12 @@ public class ModEvents {
             }
 
             return EventResult.pass();
+        });
+    }
+
+    private static void registerDispenserBehaviours() {
+        LifecycleEvent.SETUP.register(() -> {
+            DispenserBlock.registerBehavior(ModItems.COAL_GOLEM.get(), new CoalGolemItem.DispenseItemBehaviour());
         });
     }
 }
