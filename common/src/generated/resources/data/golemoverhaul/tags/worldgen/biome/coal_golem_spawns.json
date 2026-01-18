@@ -1,0 +1,11 @@
+{
+  "values": [
+    "#c:is_cave",
+    "#c:is_underground",
+    "#c:is_lush",
+    {
+      "id": "#terralith:caves",
+      "required": false
+    }
+  ]
+}

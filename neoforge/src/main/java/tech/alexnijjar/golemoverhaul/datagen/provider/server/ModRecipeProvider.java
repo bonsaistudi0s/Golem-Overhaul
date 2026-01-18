@@ -4,11 +4,15 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.NotNull;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.common.registry.ModBlocks;
 import tech.alexnijjar.golemoverhaul.common.registry.ModEntityTypes;
@@ -26,76 +30,113 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput output) {
+    protected void buildRecipes(@NotNull RecipeOutput output) {
+        buildBlockRecipes(output);
+        buildGolemConstructionRecipes(output);
+    }
+
+    private void buildBlockRecipes(RecipeOutput output) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CANDLE_GOLEM_BLOCK.get())
+                .pattern(" / ")
+                .pattern("###")
+                .pattern("###")
+                .define('#', Items.HONEYCOMB)
+                .define('/', Items.STRING)
+                .showNotification(true)
+                .unlockedBy("has_honeycomb", has(Items.HONEYCOMB))
+                .save(output);
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, ModBlocks.CLAY_GOLEM_STATUE.get())
+                .pattern("/#/")
+                .pattern(" # ")
+                .define('#', Items.CLAY_BALL)
+                .define('/', Items.CLAY)
+                .showNotification(true)
+                .unlockedBy("has_clay_ball", has(Items.CLAY_BALL))
+                .save(output);
+    }
+
+    private void buildGolemConstructionRecipes(RecipeOutput output) {
         new GolemConstructionRecipeBuilder(
-            List.of(
-                "~^~",
-                "###",
-                "~#~"
-            ),
-            Map.of(
-                "^", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.CARVED_PUMPKIN)),
-                "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.ANCIENT_DEBRIS)),
-                "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))
-            ),
-            ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.NETHERITE_GOLEM.getId()),
-            ResourceKey.create(Registries.ITEM, ModItems.NETHERITE_GOLEM_SPAWN_EGG.getId()),
-            false,
-            0.75f,
-            0.45f
-        ).save(output, ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "golem_construction/netherite_golem"));
+                List.of(
+                        "~^~",
+                        "###",
+                        "~#~"
+                ),
+                Map.of(
+                        "^", ResourceKey.create(Registries.BLOCK,
+                                BuiltInRegistries.BLOCK.getKey(Blocks.CARVED_PUMPKIN)),
+                        "#", ResourceKey.create(Registries.BLOCK,
+                                BuiltInRegistries.BLOCK.getKey(Blocks.ANCIENT_DEBRIS)),
+                        "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))
+                ),
+                ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.NETHERITE_GOLEM.getId()),
+                ResourceKey.create(Registries.ITEM, ModItems.NETHERITE_GOLEM_SPAWN_EGG.getId()),
+                false,
+                0.75f,
+                0.45f
+        ).save(output, ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "golem_construction" +
+                "/netherite_golem"));
 
         new GolemConstructionRecipeBuilder(
-            List.of(
-                "~^~",
-                "/#/",
-                "~/~"
-            ),
-            Map.of(
-                "^", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.CARVED_PUMPKIN)),
-                "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.HAY_BLOCK)),
-                "/", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.OAK_FENCE)),
-                "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))
-            ),
-            ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.HAY_GOLEM.getId()),
-            ResourceKey.create(Registries.ITEM, ModItems.HAY_GOLEM_SPAWN_EGG.getId()),
-            false,
-            0.75f,
-            0.6f
+                List.of(
+                        "~^~",
+                        "/#/",
+                        "~/~"
+                ),
+                Map.of(
+                        "^", ResourceKey.create(Registries.BLOCK,
+                                BuiltInRegistries.BLOCK.getKey(Blocks.CARVED_PUMPKIN)),
+                        "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.HAY_BLOCK)),
+                        "/", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.OAK_FENCE)),
+                        "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))
+                ),
+                ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.HAY_GOLEM.getId()),
+                ResourceKey.create(Registries.ITEM, ModItems.HAY_GOLEM_SPAWN_EGG.getId()),
+                false,
+                0.75f,
+                0.6f
         ).save(output, ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "golem_construction/hay_golem"));
 
         new GolemConstructionRecipeBuilder(
-            List.of(
-                "~~~",
-                "#^#",
-                "~#~"
-            ),
-            Map.of(
-                "^", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.SEA_LANTERN)),
-                "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.DRIED_KELP_BLOCK)), "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))), ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.KELP_GOLEM.getId()), ResourceKey.create(Registries.ITEM, ModItems.KELP_GOLEM_SPAWN_EGG.getId()),
-            false,
-            0.75f,
-            0.5f
+                List.of(
+                        "~~~",
+                        "#^#",
+                        "~#~"
+                ),
+                Map.of(
+                        "^", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.SEA_LANTERN)),
+                        "#", ResourceKey.create(Registries.BLOCK,
+                                BuiltInRegistries.BLOCK.getKey(Blocks.DRIED_KELP_BLOCK)), "~",
+                        ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))),
+                ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.KELP_GOLEM.getId()),
+                ResourceKey.create(Registries.ITEM, ModItems.KELP_GOLEM_SPAWN_EGG.getId()),
+                false,
+                0.75f,
+                0.5f
         ).save(output, ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "golem_construction/kelp_golem"));
 
         new GolemConstructionRecipeBuilder(
-            List.of("#"),
-            Map.of("#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(ModBlocks.CANDLE_GOLEM_BLOCK.get()))),
-            ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.CANDLE_GOLEM.getId()),
-            ResourceKey.create(Registries.ITEM, ModItems.CANDLE_GOLEM_BLOCK.getId()),
-            true,
-            1.5f,
-            1
+                List.of("#"),
+                Map.of("#", ResourceKey.create(Registries.BLOCK,
+                        BuiltInRegistries.BLOCK.getKey(ModBlocks.CANDLE_GOLEM_BLOCK.get()))),
+                ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.CANDLE_GOLEM.getId()),
+                ResourceKey.create(Registries.ITEM, ModItems.CANDLE_GOLEM_BLOCK.getId()),
+                true,
+                1.5f,
+                1
         ).save(output, ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "golem_construction/candle_golem"));
 
         new GolemConstructionRecipeBuilder(
-            List.of("#"),
-            Map.of("#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(ModBlocks.CLAY_GOLEM_STATUE.get()))),
-            ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.TERRACOTTA_GOLEM.getId()),
-            ResourceKey.create(Registries.ITEM, ModItems.CLAY_GOLEM_STATUE.getId()),
-            true,
-            1.5f,
-            1
-        ).save(output, ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "golem_construction/terracotta_golem"));
+                List.of("#"),
+                Map.of("#", ResourceKey.create(Registries.BLOCK,
+                        BuiltInRegistries.BLOCK.getKey(ModBlocks.CLAY_GOLEM_STATUE.get()))),
+                ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.TERRACOTTA_GOLEM.getId()),
+                ResourceKey.create(Registries.ITEM, ModItems.CLAY_GOLEM_STATUE.getId()),
+                true,
+                1.5f,
+                1
+        ).save(output, ResourceLocation.fromNamespaceAndPath(GolemOverhaul.MOD_ID, "golem_construction" +
+                "/terracotta_golem"));
     }
 }

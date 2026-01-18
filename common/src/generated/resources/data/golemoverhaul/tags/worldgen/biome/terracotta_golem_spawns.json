@@ -1,18 +1,14 @@
 {
   "values": [
     "#minecraft:has_structure/mineshaft_mesa",
+    "#c:is_badlands",
     {
       "id": "terralith:savanna_badlands",
       "required": false
     },
     {
-      "id": "byg:atacama_desert",
+      "id": "biomeswevegone:atacama_outback",
       "required": false
-    },
-    {
-      "id": "#c:in_mesa",
-      "required": false
-    },
-    "#c:is_badlands"
+    }
   ]
 }

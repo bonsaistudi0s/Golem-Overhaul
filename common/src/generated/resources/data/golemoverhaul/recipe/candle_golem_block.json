@@ -15,7 +15,7 @@
     "###"
   ],
   "result": {
+    "count": 1,
     "id": "golemoverhaul:candle_golem_block"
-  },
-  "show_notification": true
+  }
 }
