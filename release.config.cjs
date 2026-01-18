@@ -2,7 +2,8 @@
  * @type {import('semantic-release').GlobalConfig}
  */
 module.exports = {
-  branches: ['main'],
+  branches: ['1.20.1/main'],
+  tagFormat: "1.20.1-v${version}",
   plugins: [
     [
       '@semantic-release/commit-analyzer',
