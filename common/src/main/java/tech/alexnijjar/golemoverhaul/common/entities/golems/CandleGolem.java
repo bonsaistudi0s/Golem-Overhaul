@@ -49,7 +49,7 @@ public class CandleGolem extends BaseGolem implements RangedAttackMob {
     private final RangedAttackGoal rangedAttackGoal = new CandleGolemRangedAttackGoal(this, 1, 20, 15);
 
     public CandleGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, true, false);
         this.xpReward = 4;
         this.navigation = new CandleGolemGroundPathNavigation();
     }

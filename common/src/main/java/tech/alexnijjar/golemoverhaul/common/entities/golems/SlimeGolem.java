@@ -44,7 +44,7 @@ public class SlimeGolem extends BaseGolem {
     private RawAnimation attackArm = this.getRandomArmAnimation();
 
     public SlimeGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, false, true);
     }
 
     public static AttributeSupplier.Builder createAttributes() {

@@ -64,7 +64,7 @@ public class CoalGolem extends BaseGolem {
     private UUID summonerId;
 
     public CoalGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, true, true);
         this.xpReward = 1;
         this.setPathfindingMalus(PathType.LAVA, 0);
         this.setPathfindingMalus(PathType.DANGER_FIRE, 0);

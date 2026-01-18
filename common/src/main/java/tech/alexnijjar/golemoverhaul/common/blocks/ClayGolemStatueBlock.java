@@ -145,7 +145,11 @@ public class ClayGolemStatueBlock extends HorizontalDirectionalBlock {
 
     private void spawnGolem(Level level, BlockPos pos, BlockState state) {
         TerracottaGolem golem = ModEntityTypes.TERRACOTTA_GOLEM.get().create(level);
-        if (golem == null) return;
+        if (golem == null) {
+            return;
+        }
+
+        golem.setPlayerCreated();
         golem.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, state.getValue(FACING).toYRot(), 0);
         level.addFreshEntity(golem);
         level.destroyBlock(pos, false);

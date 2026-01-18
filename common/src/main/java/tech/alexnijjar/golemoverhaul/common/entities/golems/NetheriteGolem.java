@@ -54,8 +54,10 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     public static final int DEATH_TICKS = 50;
     public static final int SUMMONING_COOLDOWN_TICKS_LENGTH = 20 * 60;
 
-    private static final EntityDataAccessor<Boolean> ID_CHARGED = SynchedEntityData.defineId(NetheriteGolem.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> ID_GILDED = SynchedEntityData.defineId(NetheriteGolem.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ID_CHARGED = SynchedEntityData.defineId(NetheriteGolem.class,
+            EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> ID_GILDED = SynchedEntityData.defineId(NetheriteGolem.class,
+            EntityDataSerializers.BOOLEAN);
 
     private int summoningTicks;
     private int summonCooldown;
@@ -63,25 +65,27 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     private int lastJumpPower;
 
     public NetheriteGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, true, false);
         this.xpReward = 24;
         setPathfindingMalus(PathType.WATER, -1);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 320)
-            .add(Attributes.ARMOR, 20)
-            .add(Attributes.ARMOR_TOUGHNESS, 8)
-            .add(Attributes.MOVEMENT_SPEED, 0.14)
-            .add(Attributes.ATTACK_KNOCKBACK, 2)
-            .add(Attributes.KNOCKBACK_RESISTANCE, 1)
-            .add(Attributes.ATTACK_DAMAGE, 20)
-            .add(Attributes.STEP_HEIGHT, 1.5);
+                .add(Attributes.MAX_HEALTH, 320)
+                .add(Attributes.ARMOR, 20)
+                .add(Attributes.ARMOR_TOUGHNESS, 8)
+                .add(Attributes.MOVEMENT_SPEED, 0.14)
+                .add(Attributes.ATTACK_KNOCKBACK, 2)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 1)
+                .add(Attributes.ATTACK_DAMAGE, 20)
+                .add(Attributes.STEP_HEIGHT, 1.5);
     }
 
     public static void trySpawnGolem(Level level, BlockPos pos) {
-        GolemConstructionRecipe recipe = level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(), new SingleEntityInput(ModEntityTypes.NETHERITE_GOLEM.get()), level).orElseThrow().value();
+        GolemConstructionRecipe recipe =
+                level.getRecipeManager().getRecipeFor(ModRecipeTypes.GOLEM_CONSTRUCTION.get(),
+                        new SingleEntityInput(ModEntityTypes.NETHERITE_GOLEM.get()), level).orElseThrow().value();
         BlockPattern.BlockPatternMatch pattern = recipe.createPattern().find(level, pos);
         if (pattern == null) return;
         NetheriteGolem golem = ModEntityTypes.NETHERITE_GOLEM.get().create(level);
@@ -100,12 +104,14 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
                 return PlayState.STOP;
             }
             return getAttackAnimation(state);
-        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_HIT.get(), getSoundSource(), 1, 1, false)));
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(),
+                ModSoundEvents.NETHERITE_GOLEM_HIT.get(), getSoundSource(), 1, 1, false)));
 
         controllers.add(new AnimationController<>(this, "death_controller", 0, state -> {
             if (deathTime == 0) return PlayState.STOP;
             return state.setAndContinue(ConstantAnimations.DIE);
-        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_DEATH.get(), getSoundSource(), 1, 1, false)));
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(),
+                ModSoundEvents.NETHERITE_GOLEM_DEATH.get(), getSoundSource(), 1, 1, false)));
 
         controllers.add(new AnimationController<>(this, "summon_controller", 0, state -> {
             if (getSummoningTicks() == 0) {
@@ -113,13 +119,15 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
                 return PlayState.STOP;
             }
             return state.setAndContinue(ConstantAnimations.SUMMON);
-        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_SUMMON.get(), getSoundSource(), 1, 1, false)));
+        }).setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(),
+                ModSoundEvents.NETHERITE_GOLEM_SUMMON.get(), getSoundSource(), 1, 1, false)));
     }
 
     @Override
     public AnimationController<?> getMovementController() {
         return super.getMovementController()
-            .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(), ModSoundEvents.NETHERITE_GOLEM_STEP.get(), getSoundSource(), 1, 1, false));
+                .setSoundKeyframeHandler(event -> level().playLocalSound(blockPosition(),
+                        ModSoundEvents.NETHERITE_GOLEM_STEP.get(), getSoundSource(), 1, 1, false));
     }
 
     @Override
@@ -430,7 +438,8 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
                 y = 0.75f;
                 if (level() instanceof ServerLevel level) {
                     Vec3 lookAngle = getLookAngle();
-                    ModUtils.sendParticles(level, ParticleTypes.EXPLOSION, getX() + lookAngle.x * 0.5, getY() + 0.5, getZ() + lookAngle.z * 0.5, 10, 0.5, 0.5, 0.5, 0);
+                    ModUtils.sendParticles(level, ParticleTypes.EXPLOSION, getX() + lookAngle.x * 0.5, getY() + 0.5,
+                            getZ() + lookAngle.z * 0.5, 10, 0.5, 0.5, 0.5, 0);
                 }
             }
             doAoeAttack(null, 4 + (attackBonus / 6f), 1.5f + (rangeBonus / 40f), y);
@@ -488,10 +497,10 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
     private void spawnFireParticles() {
         Vec3 lookAngle = getLookAngle();
         this.level().addParticle(ParticleTypes.FLAME,
-            getRandomX(0.3) + lookAngle.x * 0.5,
-            getY() + 0.8,
-            getRandomZ(0.3) + lookAngle.z * 0.5,
-            lookAngle.x * 0.05, 0.05, lookAngle.z * 0.05);
+                getRandomX(0.3) + lookAngle.x * 0.5,
+                getY() + 0.8,
+                getRandomZ(0.3) + lookAngle.z * 0.5,
+                lookAngle.x * 0.05, 0.05, lookAngle.z * 0.05);
     }
 
     public void summon() {
@@ -518,11 +527,11 @@ public class NetheriteGolem extends BaseGolem implements IShearable, PlayerRidea
 
         for (int i = 0; i < 10; i++) {
             this.level().addParticle(ParticleTypes.LARGE_SMOKE,
-                this.getRandomX(0.5),
-                this.getRandomY() - 0.75,
-                this.getRandomZ(0.5),
-                (this.random.nextDouble() - 0.5) * 0.5, -this.random.nextDouble(),
-                (this.random.nextDouble() - 0.5) * 0.5);
+                    this.getRandomX(0.5),
+                    this.getRandomY() - 0.75,
+                    this.getRandomZ(0.5),
+                    (this.random.nextDouble() - 0.5) * 0.5, -this.random.nextDouble(),
+                    (this.random.nextDouble() - 0.5) * 0.5);
         }
     }
 }

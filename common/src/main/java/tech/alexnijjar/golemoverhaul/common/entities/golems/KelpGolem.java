@@ -58,7 +58,7 @@ public class KelpGolem extends BaseGolem {
             EntityDataSerializers.BOOLEAN);
 
     public KelpGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, true, false);
         this.xpReward = 14;
         setPathfindingMalus(PathType.WATER, 0);
         this.moveControl = new KelpGolemMoveControl();

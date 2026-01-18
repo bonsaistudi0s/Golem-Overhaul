@@ -82,7 +82,7 @@ public class BarrelGolem extends BaseGolem {
     private Player barteringTarget;
 
     public BarrelGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, false, true);
         this.xpReward = 10;
         setCanPickUpLoot(true);
     }
