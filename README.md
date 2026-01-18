@@ -10,5 +10,3 @@
 ## About
 
 Golem Overhaul adds 9 new golem types, all with their own unique mechanics!
-
-This is a backport for (Neo)Forge & Fabric 1.20.1 of the original version for NeoForge 1.21.1 which can be found here: https://github.com/bonsaistudi0s/Golem-Overhaul
