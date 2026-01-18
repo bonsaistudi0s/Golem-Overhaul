@@ -20,7 +20,7 @@ public class BarrelGolemRenderer extends BaseGolemRenderer<BarrelGolem> {
         super(renderManager, new BaseGolemModel<>(ModEntityTypes.BARREL_GOLEM, true, 10) {
             @Override
             public void setCustomAnimations(BarrelGolem golem, long instanceId, AnimationState<BarrelGolem> animationState) {
-                var shouldAnimationOverrideHeadRotation = !golem.isOpen() || golem.isBartering();
+                var shouldAnimationOverrideHeadRotation = golem.isWakingUp() || golem.isBartering();
                 if (shouldAnimationOverrideHeadRotation) {
                     return;
                 }
