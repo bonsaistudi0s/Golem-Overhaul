@@ -384,10 +384,13 @@ public class BarrelGolem extends BaseGolem {
         }
     }
 
+    private boolean canBarterWith(ItemStack stack) {
+        return stack.is(Items.EMERALD) && getMainHandItem().isEmpty() && isOpen() && !isBartering();
+    }
+
     @Override
     public boolean wantsToPickUp(ItemStack stack) {
-        return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && stack.is(Items.EMERALD)
-                && getMainHandItem().isEmpty() && isOpen() && !isBartering();
+        return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && canBarterWith(stack);
     }
 
     @Override
@@ -422,7 +425,7 @@ public class BarrelGolem extends BaseGolem {
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!level().isClientSide() && wantsToPickUp(stack)) {
+        if (!level().isClientSide() && canBarterWith(stack)) {
             this.barteringTarget = player;
             this.setItemInHand(InteractionHand.MAIN_HAND, stack.copy());
             stack.shrink(1);
@@ -494,7 +497,7 @@ public class BarrelGolem extends BaseGolem {
             if (isOpen() && !isBartering()) {
                 ItemEntity nearest = level()
                         .getEntitiesOfClass(ItemEntity.class, getBoundingBox().inflate(16),
-                                stack -> stack.getItem().is(Items.EMERALD))
+                                stack -> wantsToPickUp(stack.getItem()))
                         .stream()
                         .findFirst()
                         .orElse(null);
