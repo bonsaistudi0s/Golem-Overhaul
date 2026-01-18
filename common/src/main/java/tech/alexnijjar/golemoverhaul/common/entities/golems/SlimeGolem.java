@@ -255,7 +255,7 @@ public class SlimeGolem extends BaseGolem {
 
     @Override
     protected AABB getAttackBoundingBox() {
-        return super.getAttackBoundingBox().inflate(0.5f, 0, 0.5f);
+        return super.getAttackBoundingBox().inflate(0.66f, 0, 0.66f);
     }
 
     public enum Size {

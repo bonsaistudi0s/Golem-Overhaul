@@ -40,7 +40,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    private final MeleeAttackGoal meleeAttackGoal = new MeleeAttackGoal(this, 1, true);
+    private final BaseGolemMeleeAttackGoal meleeAttackGoal = new BaseGolemMeleeAttackGoal(this, 1, true);
     private final HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this, BaseGolem.class);
     private final NearestAttackableTargetGoal<Mob> attackTargetGoal = new NearestAttackableTargetGoal<>(this, Mob.class,
             5, true, false, this::shouldAttack);
@@ -315,5 +315,21 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
     @Override
     public boolean isWithinMeleeAttackRange(LivingEntity entity) {
         return this.getAttackBoundingBox().intersects(entity.getBoundingBox());
+    }
+
+    private static class BaseGolemMeleeAttackGoal extends MeleeAttackGoal {
+
+        public BaseGolemMeleeAttackGoal(BaseGolem mob, double speedModifier, boolean followingTargetEvenIfNotSeen) {
+            super(mob, speedModifier, followingTargetEvenIfNotSeen);
+        }
+
+        @Override
+        protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
+            if (mob.isWithinMeleeAttackRange(enemy) && this.getTicksUntilNextAttack() <= 0) {
+                this.resetAttackCooldown();
+                this.mob.swing(InteractionHand.MAIN_HAND);
+                this.mob.doHurtTarget(enemy);
+            }
+        }
     }
 }
