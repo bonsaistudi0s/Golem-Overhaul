@@ -47,7 +47,7 @@ public class HayGolem extends BaseGolem implements IShearable {
             EntityDataSerializers.BOOLEAN);
 
     public HayGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, true, false);
         this.xpReward = 8;
     }
 

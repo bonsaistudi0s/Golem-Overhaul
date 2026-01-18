@@ -77,6 +77,8 @@ public class CoalGolemItem extends Item {
                 return;
             }
 
+            coalGolem.setPlayerCreated();
+
             double offsetX = 0.0;
             double offsetY = 0.0;
             double offsetZ = 0.0;

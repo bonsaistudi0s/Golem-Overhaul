@@ -55,7 +55,7 @@ public class HoneyGolem extends BaseGolem implements RangedAttackMob, IShearable
     private boolean hasPopulatedInitialBees;
 
     public HoneyGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, false, true);
         this.xpReward = 8;
     }
 

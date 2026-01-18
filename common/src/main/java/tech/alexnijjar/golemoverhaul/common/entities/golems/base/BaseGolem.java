@@ -48,8 +48,19 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
     protected int attackAnimationTicks;
     protected int attackDelayTicks = -1;
 
-    protected BaseGolem(EntityType<? extends AbstractGolem> type, Level level) {
+    private final boolean canBeCreatedByPlayer;
+    private final boolean canSpawnNaturally;
+
+    protected boolean isPlayerCreated = false;
+
+    protected BaseGolem(EntityType<? extends AbstractGolem> type, Level level, boolean canBeCreatedByPlayer,
+                        boolean canSpawnNaturally) {
         super(type, level);
+        this.canBeCreatedByPlayer = canBeCreatedByPlayer;
+        this.canSpawnNaturally = canSpawnNaturally;
+        if (this.canBeCreatedByPlayer && !this.canSpawnNaturally) {
+            this.isPlayerCreated = true;
+        }
         this.updateAttackGoals();
     }
 
@@ -102,7 +113,9 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
 
     @Override
     public boolean canAttack(LivingEntity target) {
-        return super.canAttack(target) && !(target instanceof BaseGolem || target instanceof IronGolem || target instanceof SnowGolem);
+        return super.canAttack(target)
+                && !(target instanceof BaseGolem || target instanceof IronGolem || target instanceof SnowGolem)
+                && !(this.isPlayerCreated() && target instanceof Player);
     }
 
     public final void updateAttackGoals() {
@@ -269,14 +282,43 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
         return InteractionResult.sidedSuccess(this.level().isClientSide());
     }
 
+    public boolean isPlayerCreated() {
+        return this.isPlayerCreated;
+    }
+
+    public void setPlayerCreated() {
+        this.isPlayerCreated = true;
+    }
+
+    private boolean needsToPersistPlayerCreatedFlag() {
+        return this.canBeCreatedByPlayer && this.canSpawnNaturally;
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        if (this.needsToPersistPlayerCreatedFlag()) {
+            compound.putBoolean("PlayerCreated", this.isPlayerCreated);
+        }
+    }
+
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
+        if (this.needsToPersistPlayerCreatedFlag()) {
+            if (compound.contains("PlayerCreated")) {
+                this.isPlayerCreated = compound.getBoolean("PlayerCreated");
+            } else {
+                this.isPlayerCreated = false;
+            }
+        }
         this.updateAttackGoals();
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+                                                  MobSpawnType reason, @Nullable SpawnGroupData spawnData,
+                                                  @Nullable CompoundTag dataTag) {
         this.updateAttackGoals();
         return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
     }
@@ -293,7 +335,7 @@ public abstract class BaseGolem extends AbstractGolem implements GeoEntity {
 
     // This replicates the exact melee reach check from 1.21
 
-    private static final double DEFAULT_ATTACK_REACH = Math.sqrt(2.04F) - (double)0.6F;
+    private static final double DEFAULT_ATTACK_REACH = Math.sqrt(2.04F) - (double) 0.6F;
 
     protected AABB getAttackBoundingBox() {
         var vehicle = this.getVehicle();

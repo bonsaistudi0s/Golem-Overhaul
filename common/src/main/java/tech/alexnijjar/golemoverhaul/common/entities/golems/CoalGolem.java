@@ -63,7 +63,7 @@ public class CoalGolem extends BaseGolem {
     private float animationSpeed = 1.0F;
 
     public CoalGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level);
+        super(type, level, true, true);
         this.xpReward = 1;
         this.setPathfindingMalus(BlockPathTypes.LAVA, 0);
         this.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0);
