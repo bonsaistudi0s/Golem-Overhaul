@@ -24,7 +24,7 @@ public class HoneyBlobProjectileRenderer extends GeoEntityRenderer<HoneyBlobProj
 
     @Override
     public RenderType getRenderType(HoneyBlobProjectile animatable, ResourceLocation texture, MultiBufferSource bufferSource, float partialTick) {
-        return RenderType.entityTranslucentEmissive(texture);
+        return RenderType.entityTranslucent(texture);
     }
 
     @Override
