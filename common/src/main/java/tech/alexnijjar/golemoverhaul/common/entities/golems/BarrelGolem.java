@@ -106,7 +106,7 @@ public class BarrelGolem extends BaseGolem {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         super.registerControllers(controllers);
 
-        controllers.add(new AnimationController<>(this, "open_controller", 0, state -> {
+        controllers.add(new AnimationController<>(this, "open_controller", state -> {
             if (isBartering()) {
                 state.resetCurrentAnimation();
                 return PlayState.STOP;
@@ -128,7 +128,7 @@ public class BarrelGolem extends BaseGolem {
             return PlayState.STOP;
         }));
 
-        controllers.add(new AnimationController<>(this, "barter_controller", state -> {
+        controllers.add(new AnimationController<>(this, "barter_controller", 5, state -> {
             if (this.isBartering()) {
                 return state.setAndContinue(ConstantAnimations.BARTER);
             }
@@ -294,6 +294,11 @@ public class BarrelGolem extends BaseGolem {
     }
 
     @Override
+    protected boolean isImmobile() {
+        return super.isImmobile() || this.isBartering() || !this.isOpen();
+    }
+
+    @Override
     public void aiStep() {
         super.aiStep();
 
@@ -338,6 +343,7 @@ public class BarrelGolem extends BaseGolem {
                 }
                 this.barteringTarget = null;
                 this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                this.setXRot(0);
             }
         }
     }
@@ -345,15 +351,16 @@ public class BarrelGolem extends BaseGolem {
     @Override
     public void tick() {
         super.tick();
-        if (level().isClientSide() && !this.isOpen()) {
-            this.setXRot(0);
-            this.yHeadRot = 0;
-            this.yBodyRot = 0;
-        }
 
-        ItemStack stack = getMainHandItem();
-        if (!level().isClientSide() && stack.is(Items.EMERALD) && !isBartering() && isOpen()) {
-            this.barter();
+        if (level().isClientSide()) {
+            if (!this.isOpen() || this.isBartering()) {
+                this.yBodyRot = this.yHeadRot;
+            }
+        } else {
+            ItemStack stack = getMainHandItem();
+            if (stack.is(Items.EMERALD) && !isBartering() && isOpen()) {
+                this.barter();
+            }
         }
     }
 
