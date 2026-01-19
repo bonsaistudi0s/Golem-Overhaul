@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import tech.alexnijjar.golemoverhaul.GolemOverhaul;
 import tech.alexnijjar.golemoverhaul.common.registry.ModBlocks;
@@ -101,7 +102,7 @@ public class ModRecipeProvider extends RecipeProvider {
                         "^", ResourceKey.create(Registries.BLOCK,
                                 BuiltInRegistries.BLOCK.getKey(Blocks.CARVED_PUMPKIN)),
                         "#", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.HAY_BLOCK)),
-                        "/", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.OAK_FENCE)),
+                        "/", Tags.Blocks.FENCES_WOODEN,
                         "~", ResourceKey.create(Registries.BLOCK, BuiltInRegistries.BLOCK.getKey(Blocks.AIR))
                 ),
                 ResourceKey.create(Registries.ENTITY_TYPE, ModEntityTypes.HAY_GOLEM.getId()),

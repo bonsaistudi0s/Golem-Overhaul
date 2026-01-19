@@ -10,6 +10,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,7 @@ import tech.alexnijjar.golemoverhaul.common.recipes.GolemConstructionRecipe;
 import tech.alexnijjar.golemoverhaul.common.registry.ModItems;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public record GolemConstructionCategory(IGuiHelper guiHelper) implements IRecipeCategory<GolemConstructionRecipe> {
 
@@ -55,12 +57,15 @@ public record GolemConstructionCategory(IGuiHelper guiHelper) implements IRecipe
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, GolemConstructionRecipe recipe, IFocusGroup group) {
-        recipe.key().values()
-            .stream()
-            .map(BuiltInRegistries.BLOCK::get)
-            .filter(Objects::nonNull)
+        recipe.key().values().stream()
+            .flatMap(either -> either.map(
+                resourceKey -> Stream.of(Objects.requireNonNull(BuiltInRegistries.BLOCK.get(resourceKey))),
+                tagKey -> BuiltInRegistries.BLOCK.getTag(tagKey)
+                    .map(holders -> holders.stream().map(Holder::value))
+                    .orElse(Stream.empty())))
             .map(Block::asItem)
             .filter(item -> item != Items.AIR)
+            .distinct()
             .forEach(item -> builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addIngredients(Ingredient.of(item)));
 
         builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addIngredients(Ingredient.of(Objects.requireNonNull(BuiltInRegistries.ITEM.get(recipe.item()))));
