@@ -55,7 +55,7 @@ public class TerracottaGolem extends BaseGolem implements IShearable, RangedAtta
     private ItemStack equippedStack = ItemStack.EMPTY;
 
     public TerracottaGolem(EntityType<? extends AbstractGolem> type, Level level) {
-        super(type, level, true, true);
+        super(type, level, true, GolemOverhaulConfig.allowSpawning && GolemOverhaulConfig.spawnTerracottaGolems);
         this.xpReward = 6;
     }
 

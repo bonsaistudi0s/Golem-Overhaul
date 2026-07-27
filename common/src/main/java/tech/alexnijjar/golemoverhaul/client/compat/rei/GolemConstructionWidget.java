@@ -1,5 +1,6 @@
 package tech.alexnijjar.golemoverhaul.client.compat.rei;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
@@ -8,11 +9,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -60,10 +63,18 @@ public class GolemConstructionWidget extends Widget {
             String row = recipe.pattern().get(i);
             for (int j = 0; j < width; j++) {
                 char c = row.charAt(j);
-                ResourceKey<Block> key = recipe.key().get(String.valueOf(c));
-                if (key == null) throw new IllegalStateException("Invalid key: " + c);
-                if (!key.location().equals(BuiltInRegistries.BLOCK.getKey(Blocks.AIR))) {
-                    BlockState state = BuiltInRegistries.BLOCK.getOrThrow(key).defaultBlockState();
+                Either<ResourceKey<Block>, TagKey<Block>> eitherKey = recipe.key().get(String.valueOf(c));
+                if (eitherKey == null) throw new IllegalStateException("Invalid key: " + c);
+
+                Block blockToDisplay = eitherKey.map(
+                    resourceKey -> Objects.requireNonNull(BuiltInRegistries.BLOCK.get(resourceKey)),
+                    tagKey -> BuiltInRegistries.BLOCK.getTag(tagKey)
+                        .map(holders -> holders.stream().map(Holder::value).findFirst().orElse(Blocks.AIR))
+                        .orElse(Blocks.AIR)
+                );
+
+                if (blockToDisplay != Blocks.AIR) {
+                    BlockState state = blockToDisplay.defaultBlockState();
                     blocks.put(BlockPos.containing(
                             width - j - 1,
                             height - i - 1,

@@ -6,7 +6,7 @@
   "item": "golemoverhaul:hay_golem_spawn_egg",
   "key": {
     "#": "minecraft:hay_block",
-    "/": "minecraft:oak_fence",
+    "/": "#c:fences/wooden",
     "^": "minecraft:carved_pumpkin",
     "~": "minecraft:air"
   },
