@@ -23,6 +23,10 @@ import net.minecraft.world.level.block.state.predicate.BlockStatePredicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.datafixers.util.Either;
+import net.minecraft.tags.TagKey;
+import java.util.function.Predicate;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +36,7 @@ import java.util.stream.StreamSupport;
 public class GolemConstructionRecipe implements Recipe<SingleEntityInput> {
     private final ResourceLocation id;
     private final List<String> pattern;
-    private final Map<String, ResourceKey<Block>> key;
+    private final Map<String, Either<ResourceKey<Block>, TagKey<Block>>> key;
     private final ResourceKey<EntityType<?>> entity;
     private final ResourceKey<Item> item;
 
@@ -41,7 +45,7 @@ public class GolemConstructionRecipe implements Recipe<SingleEntityInput> {
     private final float blockScale;
     private final float entityScale;
 
-    public GolemConstructionRecipe(ResourceLocation id, List<String> pattern, Map<String, ResourceKey<Block>> key, ResourceKey<EntityType<?>> entity, ResourceKey<Item> item, boolean visualOnly, float blockScale, float entityScale) {
+    public GolemConstructionRecipe(ResourceLocation id, List<String> pattern, Map<String, Either<ResourceKey<Block>, TagKey<Block>>> key, ResourceKey<EntityType<?>> entity, ResourceKey<Item> item, boolean visualOnly, float blockScale, float entityScale) {
         this.id = id;
         this.pattern = pattern;
         this.key = key;
@@ -96,12 +100,17 @@ public class GolemConstructionRecipe implements Recipe<SingleEntityInput> {
     public BlockPattern createPattern() {
         var builder = BlockPatternBuilder.start();
         builder.aisle(this.pattern.toArray(new String[0]));
-        this.key.forEach((key, block_key) ->
-                builder.where(key.charAt(0), BlockInWorld.hasState(BlockStatePredicate.forBlock(Objects.requireNonNull(BuiltInRegistries.BLOCK.get(block_key))))));
+        this.key.forEach((k, v) -> {
+            Predicate<net.minecraft.world.level.block.state.BlockState> predicate = v.map(
+                key -> (Predicate<net.minecraft.world.level.block.state.BlockState>) BlockStatePredicate.forBlock(Objects.requireNonNull(BuiltInRegistries.BLOCK.get(key))),
+                tagKey -> (Predicate<net.minecraft.world.level.block.state.BlockState>) state -> state.is(tagKey)
+            );
+            builder.where(k.charAt(0), BlockInWorld.hasState(predicate));
+        });
         return builder.build();
     }
 
-    public Map<String, ResourceKey<Block>> getKey() {
+    public Map<String, Either<ResourceKey<Block>, TagKey<Block>>> getKey() {
         return key;
     }
 
@@ -140,12 +149,16 @@ public class GolemConstructionRecipe implements Recipe<SingleEntityInput> {
                     .collect(Collectors.toList());
 
             var keyJson = GsonHelper.getAsJsonObject(serializedRecipe, "key");
-            var key = keyJson.entrySet().stream()
+            Map<String, Either<ResourceKey<Block>, TagKey<Block>>> key = keyJson.entrySet().stream()
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             entry -> {
-                                var blockId = new ResourceLocation(GsonHelper.convertToString(entry.getValue(), "key value"));
-                                return ResourceKey.create(Registries.BLOCK, blockId);
+                                String value = GsonHelper.convertToString(entry.getValue(), "key value");
+                                if (value.startsWith("#")) {
+                                    return Either.right(TagKey.create(Registries.BLOCK, new ResourceLocation(value.substring(1))));
+                                } else {
+                                    return Either.left(ResourceKey.create(Registries.BLOCK, new ResourceLocation(value)));
+                                }
                             }
                     ));
 
@@ -166,9 +179,15 @@ public class GolemConstructionRecipe implements Recipe<SingleEntityInput> {
         public @Nullable GolemConstructionRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
             var pattern = buffer.readList(FriendlyByteBuf::readUtf);
 
-            var key = buffer.readMap(
+            Map<String, Either<ResourceKey<Block>, TagKey<Block>>> key = buffer.readMap(
                     FriendlyByteBuf::readUtf,
-                    (buf) -> ResourceKey.create(Registries.BLOCK, buf.readResourceLocation())
+                    (buf) -> {
+                        if (buf.readBoolean()) {
+                            return Either.right(TagKey.create(Registries.BLOCK, buf.readResourceLocation()));
+                        } else {
+                            return Either.left(ResourceKey.create(Registries.BLOCK, buf.readResourceLocation()));
+                        }
+                    }
             );
 
             var entity = ResourceKey.create(Registries.ENTITY_TYPE, buffer.readResourceLocation());
@@ -187,7 +206,13 @@ public class GolemConstructionRecipe implements Recipe<SingleEntityInput> {
 
             buffer.writeMap(recipe.key,
                     FriendlyByteBuf::writeUtf,
-                    (buf, resourceKey) -> buf.writeResourceLocation(resourceKey.location())
+                    (buf, either) -> either.ifLeft(resourceKey -> {
+                        buf.writeBoolean(false);
+                        buf.writeResourceLocation(resourceKey.location());
+                    }).ifRight(tagKey -> {
+                        buf.writeBoolean(true);
+                        buf.writeResourceLocation(tagKey.location());
+                    })
             );
 
             buffer.writeResourceLocation(recipe.entity.location());

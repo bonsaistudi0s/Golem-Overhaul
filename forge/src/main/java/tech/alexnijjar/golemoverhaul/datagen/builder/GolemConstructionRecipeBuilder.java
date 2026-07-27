@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tech.alexnijjar.golemoverhaul.common.registry.ModRecipeSerializers;
 
+import net.minecraft.tags.TagKey;
+import com.mojang.datafixers.util.Either;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -23,7 +25,7 @@ public class GolemConstructionRecipeBuilder implements RecipeBuilder {
     private final EntityType<?> entity;
     private final Item item;
     private final List<String> pattern = new ArrayList<>();
-    private final Map<Character, Block> key = new LinkedHashMap<>();
+    private final Map<Character, Either<Block, TagKey<Block>>> key = new LinkedHashMap<>();
     private final Advancement.Builder advancement = Advancement.Builder.advancement();
 
     private float blockScale = 1.0f;
@@ -45,7 +47,12 @@ public class GolemConstructionRecipeBuilder implements RecipeBuilder {
     }
 
     public GolemConstructionRecipeBuilder define(Character symbol, Block block) {
-        this.key.put(symbol, block);
+        this.key.put(symbol, Either.left(block));
+        return this;
+    }
+
+    public GolemConstructionRecipeBuilder define(Character symbol, TagKey<Block> tag) {
+        this.key.put(symbol, Either.right(tag));
         return this;
     }
 
@@ -113,14 +120,14 @@ public class GolemConstructionRecipeBuilder implements RecipeBuilder {
         private final EntityType<?> entity;
         private final Item item;
         private final List<String> pattern;
-        private final Map<Character, Block> key;
+        private final Map<Character, Either<Block, TagKey<Block>>> key;
         private final float blockScale;
         private final float entityScale;
         private final boolean visualOnly;
         private final Advancement.Builder advancement;
         private final ResourceLocation advancementId;
 
-        public Result(ResourceLocation id, EntityType<?> entity, Item item, List<String> pattern, Map<Character, Block> key, float blockScale, float entityScale, boolean visualOnly, Advancement.Builder advancement, ResourceLocation advancementId) {
+        public Result(ResourceLocation id, EntityType<?> entity, Item item, List<String> pattern, Map<Character, Either<Block, TagKey<Block>>> key, float blockScale, float entityScale, boolean visualOnly, Advancement.Builder advancement, ResourceLocation advancementId) {
             this.id = id;
             this.entity = entity;
             this.item = item;
@@ -152,7 +159,11 @@ public class GolemConstructionRecipeBuilder implements RecipeBuilder {
 
             var keyObject = new JsonObject();
             for (var entry : this.key.entrySet()) {
-                keyObject.addProperty(String.valueOf(entry.getKey()), Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(entry.getValue())).toString());
+                entry.getValue().ifLeft(block -> {
+                    keyObject.addProperty(String.valueOf(entry.getKey()), Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(block)).toString());
+                }).ifRight(tag -> {
+                    keyObject.addProperty(String.valueOf(entry.getKey()), "#" + tag.location().toString());
+                });
             }
             json.add("key", keyObject);
         }

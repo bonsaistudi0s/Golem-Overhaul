@@ -9,9 +9,9 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -60,10 +60,18 @@ public class GolemConstructionRenderer {
             String row = recipe.getPattern().get(i);
             for (int j = 0; j < width; j++) {
                 char c = row.charAt(j);
-                ResourceKey<Block> key = recipe.getKey().get(String.valueOf(c));
-                if (key == null) throw new IllegalStateException("Invalid key: " + c);
-                if (!key.location().equals(BuiltInRegistries.BLOCK.getKey(Blocks.AIR))) {
-                    BlockState state = BuiltInRegistries.BLOCK.getOrThrow(key).defaultBlockState();
+                var eitherKey = recipe.getKey().get(String.valueOf(c));
+                if (eitherKey == null) throw new IllegalStateException("Invalid key: " + c);
+
+                Block blockToDisplay = eitherKey.map(
+                    resourceKey -> Objects.requireNonNull(BuiltInRegistries.BLOCK.get(resourceKey)),
+                    tagKey -> BuiltInRegistries.BLOCK.getTag(tagKey)
+                        .map(holders -> holders.stream().map(Holder::value).findFirst().orElse(Blocks.AIR))
+                        .orElse(Blocks.AIR)
+                );
+
+                if (blockToDisplay != Blocks.AIR) {
+                    BlockState state = blockToDisplay.defaultBlockState();
                     blocks.put(BlockPos.containing(
                             width - j - 1,
                             height - i - 1,

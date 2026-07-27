@@ -6,6 +6,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
@@ -83,7 +84,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("~/~")
                 .define('^', Blocks.CARVED_PUMPKIN)
                 .define('#', Blocks.HAY_BLOCK)
-                .define('/', Blocks.OAK_FENCE)
+                .define('/', BlockTags.WOODEN_FENCES)
                 .define('~', Blocks.AIR)
                 .visualOnly(false)
                 .withBlockScale(0.75f)
