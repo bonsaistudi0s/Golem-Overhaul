@@ -40,6 +40,8 @@ public class SlimeGolem extends BaseGolem {
             EntityDataSerializers.BYTE);
     public static final EntityDimensions SMALL_DIMENSIONS = EntityDimensions.scalable(0.5f, 0.5f);
 
+    private boolean wasSplit = false;
+
     @NotNull
     private RawAnimation attackArm = this.getRandomArmAnimation();
 
@@ -210,6 +212,7 @@ public class SlimeGolem extends BaseGolem {
                     slime.setCustomName(name);
                     slime.setNoAi(noAi);
                     slime.setInvulnerable(this.isInvulnerable());
+                    slime.wasSplit = true;
                     slime.setSize(Size.SMALL, true);
                     slime.moveTo(this.getX() + x, this.getY() + 0.5, this.getZ() + z, this.random.nextFloat() * 360, 0);
                     this.level().addFreshEntity(slime);
@@ -222,7 +225,9 @@ public class SlimeGolem extends BaseGolem {
 
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-        this.setSize(level.getRandom().nextBoolean() ? Size.LARGE : Size.SMALL, true);
+        if (!this.wasSplit) {
+            this.setSize(level.getRandom().nextBoolean() ? Size.LARGE : Size.SMALL, true);
+        }
         return super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
     }
 
